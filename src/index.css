@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  #root {
+    max-width: max-content;
+    margin: 0;
+    padding: 0;
+  }
+}
