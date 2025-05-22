@@ -14,9 +14,10 @@
 }
 
 .login-container {
+  border: none;
   -webkit-backdrop-filter: blur(10px); /* Soporte para Safari */
   border-radius: 40px; /* Bordes redondeados */
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Borde suave pero visible */
+  /* border: 1px solid rgba(255, 255, 255, 0.3);  */
   padding: 20px; /* Espaciado interno */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
   background-color: rgba(255, 255, 255, 0.3); /* blanco con 30% de opacidad */
