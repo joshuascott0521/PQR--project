@@ -13,10 +13,9 @@ const Dashboard = () => {
   const moreOption = false;
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex">
       <ToastContainer />
 
-      {/* Lateral */}
       <div className="max-w-xs w-fulls">
         {tipoUsuId === "Administrador" ? <Aside /> : <AsidePublico />}
       </div>
@@ -32,7 +31,6 @@ const Dashboard = () => {
             <h2 className="text-center font-bold py-2 border-b">
               Notificaciones
             </h2>
-            {/* Notificaciones simuladas */}
           </div>
         )}
 
@@ -45,7 +43,7 @@ const Dashboard = () => {
         )}
 
         {/* Contenido dinámico */}
-        <div className="flex-grow overflow-y-auto bg-gray-100 p-4">
+        <div className="flex-grow overflow-y-auto  p-4">
           <Outlet />
         </div>
       </div>
