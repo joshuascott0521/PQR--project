@@ -82,7 +82,7 @@ const Aside = () => {
             </div>
             <Link
               to={item.path}
-              className="text-gray-500 font-bold flex items-center gap-2"
+              className="text-gray-500 font-semibold flex items-center gap-2"
             >
               {item.label}
             </Link>
