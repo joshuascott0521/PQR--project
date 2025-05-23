@@ -4,6 +4,7 @@ import Login from "./pages/login/Login";
 import Dashboard from "./pages/Dashboard/dashboard"; // Tu layout
 import PorVencer from "./features/PQR/PorVencer";
 import ATiempo from "./features/PQR/ATiempo";
+import PqrData from "./features/PQR/PqrData";
 
 // Importa las páginas internas
 import Vencidos from "./features/PQR/Vencidos";
@@ -23,6 +24,7 @@ function App() {
           <Route path="vencidos" element={<Vencidos />} />
           <Route path="por-vencer" element={<PorVencer />} />
           <Route path="a-tiempo" element={<ATiempo />} />
+          <Route path="PQR/detalle" element={<PqrData />} />
 
           {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
           {/* Más rutas aquí */}

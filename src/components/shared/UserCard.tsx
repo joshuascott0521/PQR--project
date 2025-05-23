@@ -1,7 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 const UserCard = () => {
+  const navigate = useNavigate();
   return (
     <div className="mb-5">
-      <div className=" mx-auto bg-white rounded-lg shadow-md border border-gray-200 flex items-center gap-6 p-4 sm:p-6">
+      <div
+        onClick={() => navigate("/dashboard/PQR/detalle")}
+        className=" mx-auto bg-white rounded-lg shadow-md border border-gray-200 flex items-center gap-6 p-4 sm:p-6 cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
+      >
         <div className="flex-shrink-0">
           <div className="w-[4.5rem] h-[4.5rem] rounded-full bg-red-500 flex items-center justify-center text-white font-semibold text-3xl -ml-1">
             -5
