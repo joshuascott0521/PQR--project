@@ -13,9 +13,9 @@ const PqrData = () => {
               13
             </div>
           </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-4">
-              <div className="flex flex-wrap gap-x-6 gap-y-1 items-center text-sm text-black font-sans max-w-[calc(100%-56px)]">
+          <div className="flex flex-col w-full">
+            <div className="flex items-center gap-4 justify-between">
+              <div className="flex flex-wrap gap-x-6 gap-y-1 items-center text-sm text-black font-sans w-full">
                 <span className="font-bold flex items-center gap-1 whitespace-nowrap">
                   <span className="font-normal">#</span> 20240011
                 </span>
@@ -28,13 +28,13 @@ const PqrData = () => {
                 </span>
                 <label
                   //   for="tipo"
-                  className="font-bold flex items-center gap-1 whitespace-nowrap cursor-pointer"
+                  className="font-bold flex items-center gap-1 whitespace-nowrap cursor-pointer max-w-[175px] w-full"
                 >
                   <span className="font-normal">Tipo:</span>
                   <select
                     id="tipo"
                     name="tipo"
-                    className="appearance-none bg-[#F3F4F6] rounded-full py-1 px-3 text-black text-sm font-normal cursor-pointer max-w-[120px] focus:outline-none"
+                    className="appearance-none bg-[#F3F4F6] rounded-full py-1 px-3 text-black text-sm font-normal cursor-pointer max-w-[120px] focus:outline-none w-full"
                     aria-label="Tipo select"
                   >
                     <option>Solicitud</option>
