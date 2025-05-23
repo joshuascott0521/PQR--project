@@ -23,7 +23,9 @@ const Dashboard = () => {
       {/* Contenido principal */}
       <div className="flex flex-col h-screen w-full overflow-hidden">
         {/* Header */}
-        <Header />
+        <div className="mb-2">
+          <Header />
+        </div>
 
         {/* Panel de notificaciones simulado */}
         {openNotification && (
