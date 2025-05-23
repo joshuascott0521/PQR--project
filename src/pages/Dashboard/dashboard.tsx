@@ -16,12 +16,12 @@ const Dashboard = () => {
     <div className="flex">
       <ToastContainer />
 
-      <div className="max-w-xs w-fulls">
+      <div className="max-w-xs w-full">
         {tipoUsuId === "Administrador" ? <Aside /> : <AsidePublico />}
       </div>
 
       {/* Contenido principal */}
-      <div className="flex flex-col wh-screen w-full overflow-hidden">
+      <div className="flex flex-col h-screen w-full overflow-hidden">
         {/* Header */}
         <Header />
 

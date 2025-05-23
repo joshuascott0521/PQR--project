@@ -10,24 +10,19 @@ const ATiempo = () => {
             <p>PQRS a tiempo</p>
           </div>
         </div>
-        <div className="flex justify-center bg-gray-100 p-4 flex-col max-h-[620px]  overflow-auto h-full">
-          <div className="mt-5 h-full">
+        <div className="flex-1 overflow-auto bg-gray-100 px-6 py-4">
+          <div className="space-y-4">
             <UserCard />
             <UserCard />
-
-            <UserCard />
-
             <UserCard />
             <UserCard />
-
             <UserCard />
-
             <UserCard />
-
+            <UserCard />
             <UserCard />
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 };
