@@ -14,6 +14,7 @@ import EnProceso from "./features/PQR/Proceso";
 import EnEspera from "./features/PQR/Espera";
 import Finalizado from "./features/PQR/Finalizado";
 import Anulado from "./features/PQR/Anulado";
+import NuevoPqr from "./features/PQR/NuevoPqr";
 // import LoginFrm from "./features/Usuarios/LoginFrm"; // ejemplo
 // Agrega más rutas internas según tus componentes
 
@@ -37,6 +38,7 @@ function App() {
           <Route path="en-espera" element={<EnEspera />} />
           <Route path="finalizado" element={<Finalizado />} />
           <Route path="anulado" element={<Anulado />} />
+          <Route path="nuevo-pqr" element={<NuevoPqr />} />
           {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
           {/* Más rutas aquí */}
         </Route>

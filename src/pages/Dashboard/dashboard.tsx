@@ -21,7 +21,7 @@ const Dashboard = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex flex-col h-screen w-full overflow-hidden">
+      <div className="flex flex-col h-screen w-full overflow-hidden bg-gray-50">
         {/* Header */}
         <div className="mb-2">
           <Header />

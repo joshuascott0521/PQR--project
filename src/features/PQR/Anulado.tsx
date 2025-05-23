@@ -11,7 +11,7 @@ const Anulado = () => {
                         <p>PQRS Anulados</p>
                     </div>
                 </div>
-                <div className="flex-1 overflow-auto bg-gray-100 px-6 py-4 rounded-lg">
+                <div className="flex-1 overflow-auto px-6 py-4 rounded-lg">
                     <div className="space-y-4">
                         <UserCard />
                         <UserCard />
