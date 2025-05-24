@@ -26,7 +26,7 @@ const menuItems = [
   {
     label: "A tiempo",
     path: "/dashboard/a-tiempo",
-    icon: <FaCircle className="text-green-500" />,
+    icon: <FaCircle className="text-amarillo-gg" />,
   },
   { label: "Registrados", path: "registrados", icon: <FiUserCheck /> },
   { label: "Asignados", path: "asignados", icon: <AiOutlineFolderView /> },
