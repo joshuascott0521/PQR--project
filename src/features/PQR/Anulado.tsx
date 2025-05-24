@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 // import UserCard from "../../components/shared/UserCard";
 import { getPqrByEstado } from "../../services/pqrServices"; // Ajusta la ruta según corresponda
-import type { GetPqr } from "../../interfaces/pqrInterfaces";
+import type { Pqr } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
 import { FaBan } from "react-icons/fa";
 
 const Anulado = () => {
-  const [pqrs, setPqrs] = useState<GetPqr[]>([]);
+  const [pqrs, setPqrs] = useState<Pqr[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
