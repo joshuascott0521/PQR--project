@@ -4,21 +4,21 @@ import React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
-// Utilidad para combinar clases
 const cn = (...classes: (string | undefined | null | false)[]) =>
   classes.filter(Boolean).join(" ");
 
 interface FloatingSelectProps {
-  label: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void | Promise<void>;
   options: { value: string; label: string }[];
   disabled?: boolean;
   className?: string;
   placeholder?: string;
+  showLabelPlaceholder?: boolean;
 }
 
-export const FloatingSelect: React.FC<FloatingSelectProps> = ({
+export const FloatingSelectLP: React.FC<FloatingSelectProps> = ({
   label,
   value,
   onChange,
@@ -26,9 +26,10 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
   disabled = false,
   className = "",
   placeholder = "",
+  showLabelPlaceholder = true, // ahora viene por props
 }) => {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-52">
       <SelectPrimitive.Root
         value={value}
         onValueChange={onChange}
@@ -36,11 +37,18 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
       >
         <SelectPrimitive.Trigger
           className={cn(
-            "peer pt-3 border border-gray-300 rounded-lg w-full h-10 px-3 text-xs bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500",
+            "peer pt-3 border border-gray-300 rounded-lg w-full h-8 px-3 bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500",
+            !showLabelPlaceholder && "pt-0", // elimina padding si no hay label/placeholder
             className
           )}
         >
-          <SelectPrimitive.Value placeholder={placeholder} />
+          <SelectPrimitive.Value
+            placeholder={showLabelPlaceholder ? placeholder : undefined}
+            className={cn(
+              !showLabelPlaceholder && "text-sm text-black" // aumenta tamaño si no hay placeholder/label
+            )}
+          />
+
           <SelectPrimitive.Icon>
             <ChevronDown className="h-4 w-4 opacity-50 -translate-y-[1px]" />
           </SelectPrimitive.Icon>
@@ -84,19 +92,21 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
         </SelectPrimitive.Portal>
       </SelectPrimitive.Root>
 
-      <label
-        className={`pointer-events-none absolute left-3 text-gray-500 top-1 text-xs text-muted-foreground transition-all
-          peer-placeholder-shown:top-2
-          peer-placeholder-shown:text-base
-          peer-placeholder-shown:text-gray-400
-          peer-focus:top-1
-          peer-focus:text-sm
-          peer-focus:text-blue-500
-          ${value ? "top-1 text-sm text-gray-400" : ""}
-        `}
-      >
-        {label}
-      </label>
+      {showLabelPlaceholder && label && (
+        <label
+          className={`pointer-events-none absolute left-3 text-gray-500 top-1 text-xs transition-all
+            peer-placeholder-shown:top-2
+            peer-placeholder-shown:text-base
+            peer-placeholder-shown:text-gray-400
+            peer-focus:top-1
+            peer-focus:text-sm
+            peer-focus:text-blue-500
+            ${value ? "top-1 text-sm text-gray-400" : ""}
+          `}
+        >
+          {label}
+        </label>
+      )}
     </div>
   );
 };

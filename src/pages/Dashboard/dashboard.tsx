@@ -45,7 +45,7 @@ const Dashboard = () => {
         )}
 
         {/* Contenido dinámico */}
-        <div className="flex-grow overflow-y-auto  p-4">
+        <div className="flex-grow overflow-y-auto  p-4 mb-0">
           <Outlet />
         </div>
       </div>

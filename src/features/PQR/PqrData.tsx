@@ -1,6 +1,26 @@
+import { useState } from "react";
+import { FloatingSelectLP } from "../../components/shared/FloatingSelectLP";
 import PqrChat from "../../components/shared/PqrChat";
 
 const PqrData = () => {
+  const [origen, setOrigen] = useState("");
+  const [origen2, setOrigen2] = useState("");
+
+  const origenes = [
+    { value: "web", label: "Portal Web" },
+    { value: "presencial", label: "Atención presencial" },
+    { value: "telefono", label: "Llamada telefónica" },
+    { value: "correo", label: "Correo electrónico" },
+    { value: "redes", label: "Redes sociales" },
+  ];
+  const origenes2 = [
+    { value: "web", label: "Portal Web" },
+    { value: "presencial", label: "Atención presencial" },
+    { value: "telefono", label: "Llamada telefónica" },
+    { value: "correo", label: "Correo electrónico" },
+    { value: "redes", label: "Redes sociales" },
+  ];
+
   return (
     <>
       <div>
@@ -87,7 +107,7 @@ const PqrData = () => {
         <div className="border border-gray-300 rounded-md p-4  mx-auto max-h-[317px] h-full mt-3">
           <form className="space-y-4">
             <div className="flex flex-wrap gap-6 items-center">
-              <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
+              {/* <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
                 Evento:
                 <select
                   name="evento"
@@ -95,17 +115,34 @@ const PqrData = () => {
                 >
                   <option>Asignar</option>
                 </select>
+              </label> */}
+              <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                Evento:{" "}
               </label>
+              <FloatingSelectLP
+                // label="Origen"
+                value={origen}
+                onChange={setOrigen}
+                options={origenes}
+                showLabelPlaceholder={false}
+              />
 
               <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
                 Asignar a:
-                <select
+                {/* <select
                   name="asignar"
                   className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option>Junior Euclides</option>
-                </select>
+                </select> */}
               </label>
+              <FloatingSelectLP
+                // label="Origen"
+                value={origen2}
+                onChange={setOrigen2}
+                options={origenes2}
+                showLabelPlaceholder={false}
+              />
             </div>
 
             <div>
