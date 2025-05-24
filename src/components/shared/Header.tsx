@@ -4,8 +4,12 @@ import { FaRegCircle, FaUser } from "react-icons/fa";
 import { MdExpandMore } from "react-icons/md";
 import Serch from "../../components/shared/Serch";
 
-const nombre = "Usuario";
-const tipoUsuId = "Administrador";
+
+const rawUser = localStorage.getItem("userData");
+const user = rawUser ? JSON.parse(rawUser) : null;
+
+const nombre = user.nombre;
+const tipoUsuId = user.tipoUsuId;
 
 const Header = () => {
   const navigate = useNavigate();
@@ -36,10 +40,11 @@ const Header = () => {
 
         <div className="flex items-center gap-2">
           <FaUser className="text-4xl" />
-          <div className="flex flex-col items-end">
-            <span className="text-xl font-bold">{nombre}</span>
+          <div className="flex flex-col items-center text-right leading-none">
+            <span className="text-sm font-semibold">{nombre}</span>
             <span className="text-xs text-gray-600">{tipoUsuId}</span>
           </div>
+
           <MdExpandMore className="text-[30px]" />
         </div>
       </div>
