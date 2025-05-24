@@ -93,6 +93,13 @@ export interface Municipio{
   nombre: string
 }
 
+export interface ArchivoSubido {
+  item: number;
+  nombre: string;
+  extension: string;
+  urlArchivo: string;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;

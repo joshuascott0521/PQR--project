@@ -1,5 +1,5 @@
 import apiClient from "../api/apiClient";
-import type { ApiResponse, departamento, Municipio, Pqr, tipoCliente, TipoPqr } from "../interfaces/pqrInterfaces";
+import type { ApiResponse, ArchivoSubido, CreatePqr, departamento, Municipio, Pqr, tipoCliente, TipoPqr } from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
   page: number;
@@ -56,7 +56,7 @@ export const TipoPqrServices = {
     try {
       const response = await apiClient.get("/TipoPQR/Get");
       return { success: true, data: response.data };
-    } catch(error: any) {
+    } catch (error: any) {
       return {
         success: false,
         data: [],
@@ -65,6 +65,63 @@ export const TipoPqrServices = {
     }
   }
 };
+/* Servicios Globales para la gestion de PQRs*/
+export const PqrServices = {
+  getByEstado: async ({
+    usuid,
+    page,
+    size,
+    estadoProceso,
+    estadoVencimiento,
+  }: GetPqrParams & { usuid: string }): Promise<Pqr[]> => {
+    const response = await apiClient.get<Pqr[]>("/PQR/GetByEstadoPQR", {
+      params: {
+        usuid,
+        pagenumber: page,
+        pagesize: size,
+        estadoProceso,
+        estadoVencimiento,
+      },
+    });
+
+    return response.data;
+  },
+
+  uploadFiles: async (archivos: File[]): Promise<ApiResponse<ArchivoSubido[]>> => {
+    const formData = new FormData();
+
+    archivos.forEach((archivo) => {
+      formData.append("files", archivo)
+    })
+
+    try {
+      const response = await apiClient.post("/PQR/UploadFiles", formData);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al subir archivos",
+      };
+    };
+  },
+
+  createPqr: async (pqr: CreatePqr): Promise<ApiResponse<string[]>> => {
+    try {
+      const response = await apiClient.post("/PQR/Create", pqr);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data:[],
+        error: error.response?.data?.message || "Error al crear el PQR",
+      };
+    }
+  }
+}
 
 export const getPqrByEstado = async ({
   usuid,
@@ -87,13 +144,13 @@ export const getPqrByEstado = async ({
 };
 
 export const Origen = {
-  getAll: async(): Promise<ApiResponse<string[]>> => {
+  getAll: async (): Promise<ApiResponse<string[]>> => {
     const constrainName = "chk_PQR_Origen"
-    try{
+    try {
       const response = await apiClient.get(`/Parametro/GetDominioByNombre/${constrainName}`)
-      return{success: true, data: response.data}
-    }catch(error: any){
-      return{
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
         success: false,
         data: [],
         error: error.response?.data?.message || "Error al cargar Origenes"
@@ -101,3 +158,4 @@ export const Origen = {
     }
   }
 }
+

@@ -5,8 +5,8 @@ import { FloatingSelect } from "../../components/shared/FloatingSelect";
 import { useEffect, useState } from "react";
 import { List, File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { CreatePqr, Municipio, departamento, tipoCliente, TipoPqr } from "../../interfaces/pqrInterfaces";
-import { Origen, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
+import type { CreatePqr, Municipio, departamento, tipoCliente, TipoPqr, ArchivoSubido } from "../../interfaces/pqrInterfaces";
+import { Origen, PqrServices, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
@@ -39,9 +39,15 @@ const NuevoPqr = () => {
   });
 
 
+
+
   useEffect(() => {
     const loadData = async () => {
       try {
+        const rawUser = localStorage.getItem("userData");
+        const user = rawUser ? JSON.parse(rawUser) : null;
+        console.log("Usuario???🔴🔴🔴🔴🔴", user)
+
         const tipoClienteRes = await TipoClienteServices.getall();
         if (!tipoClienteRes.success) throw new Error(tipoClienteRes.error);
 
@@ -52,12 +58,15 @@ const NuevoPqr = () => {
         if (!tipoPqrRes.success) throw new Error(tipoPqrRes.error);
 
         const origenRes = await Origen.getAll();
-        if(!origenRes.success) throw new Error(origenRes.error);
+        if (!origenRes.success) throw new Error(origenRes.error);
 
         setTipoCliente(tipoClienteRes.data);
         setListaDepartamentos(departamentosRes.data);
         setTipoPQRListado(tipoPqrRes.data);
         setOrigen(origenRes.data)
+
+
+
 
 
         setFormData({
@@ -76,7 +85,7 @@ const NuevoPqr = () => {
           asunto: "",
           descripcion: "",
           adjuntos: [],
-          usuarioId: "",
+          usuarioId: user?.id || "",
         });
 
       } catch (error) {
@@ -106,6 +115,47 @@ const NuevoPqr = () => {
     navigate("/dashboard");
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+
+      const rawUser = localStorage.getItem("userData");
+      const user = rawUser ? JSON.parse(rawUser) : null;
+
+      if (!user || !user.id) {
+        console.error("No se encontró ID de usuario");
+        alert("No se pudo identificar al usuario. Por favor vuelve a iniciar sesión.");
+        return;
+      }
+      let archivosSubidos: ArchivoSubido[] = [];
+
+      if (archivos.length > 0) {
+        const uploadRes = await PqrServices.uploadFiles(archivos);
+        if (!uploadRes.success) {
+          console.error("Error al subir archivos:", uploadRes.error);
+          return;
+        }
+        archivosSubidos = uploadRes.data;
+      }
+      const res = await PqrServices.createPqr({
+        ...formData,
+        usuarioId: user.id,
+        adjuntos: archivosSubidos,
+      });
+
+      if (res.success) {
+        alert("PQR Registrado Exitosamente");
+        console.log("Respuesta PQR ✅✅✅✅", res.data)
+        navigate("/dashboard");
+      } else {
+        console.error("Error al registrar el PQR:", res.error);
+      }
+    } catch (error) {
+      console.error("Error inesperado al guardar:", error);
+    }
+  };
+
 
   return (
     <div className="h-full flex flex-col">
@@ -117,7 +167,7 @@ const NuevoPqr = () => {
 
       {/* Formulario */}
       <div className="bg-white rounded-lg w-full h-[600px] overflow-y-auto p-6 shadow-md">
-        <form>
+        <form onSubmit={handleSubmit}>
           {/* Sección de Datos del Cliente */}
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">Datos del cliente</h2>
@@ -128,9 +178,11 @@ const NuevoPqr = () => {
                 <FloatingLabel
                   id="documentoCliente"
                   label="Documento Cliente"
-                  className="pr-12" // espacio para el botón
+                  className="pr-12"
+                  value={formData.documentoCliente}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, documentoCliente: e.target.value }))}
                 />
-
+                {/* Boton en el campo documento */}
                 <button
                   type="button"
                   title="Buscar cliente"
@@ -143,6 +195,8 @@ const NuevoPqr = () => {
                 id="nombresYApellidos"
                 label="Nombres y Apellidos"
                 className="w-lg"
+                value={formData.nombreCliente}
+                onChange={(e) => setFormData((prev) => ({ ...prev, nombreCliente: e.target.value }))}
               />
               <FloatingSelect
                 label="Tipo Cliente"
@@ -152,9 +206,27 @@ const NuevoPqr = () => {
                 placeholder="Elige una opción"
               />
 
-              <FloatingLabel id="email" label="Email" className="w-lg" />
-              <FloatingLabel id="celular" label="Celular" className="w-lg" />
-              <FloatingLabel id="direccion" label="Dirección" className="w-lg" />
+              <FloatingLabel
+                id="email"
+                label="Email"
+                className="w-lg"
+                value={formData.email}
+                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+              />
+              <FloatingLabel
+                id="celular"
+                label="Celular"
+                className="w-lg"
+                value={formData.celular}
+                onChange={(e) => setFormData((prev) => ({ ...prev, celular: e.target.value }))}
+              />
+              <FloatingLabel
+                id="direccion"
+                label="Dirección"
+                className="w-lg"
+                value={formData.direccion}
+                onChange={(e) => setFormData((prev) => ({ ...prev, direccion: e.target.value }))}
+              />
               <FloatingSelect
                 label="Departamento"
                 value={
@@ -205,7 +277,6 @@ const NuevoPqr = () => {
                     setFormData((prev) => ({
                       ...prev,
                       municipioCod: mun.cod,
-                      direccion: "", // opcional: limpiar campos dependientes
                     }));
                   }
                 }}
@@ -219,6 +290,8 @@ const NuevoPqr = () => {
                 id="noRadicado"
                 label="No. Radicado"
                 className="w-lg"
+                value={formData.radicado}
+                onChange={(e) => setFormData((prev) => ({ ...prev, radicado: e.target.value }))}
               />
               <FloatingLabel
                 id="fecha"
@@ -226,6 +299,8 @@ const NuevoPqr = () => {
                 type="date"
                 max={hoy}
                 className="w-lg"
+                value={formData.fecha}
+                onChange={(e) => setFormData((prev) => ({ ...prev, fecha: e.target.value }))}
               />
 
               <FloatingSelect
@@ -239,7 +314,7 @@ const NuevoPqr = () => {
               <FloatingSelect
                 label="Origen"
                 value={formData.origen}
-                onChange={(value) => setFormData((prev) => ({...prev, origen: value}))}
+                onChange={(value) => setFormData((prev) => ({ ...prev, origen: value }))}
                 options={origen.map(origen => ({
                   value: origen,
                   label: origen
@@ -255,7 +330,12 @@ const NuevoPqr = () => {
 
               {/* Campo de texto central (flex-grow para tomar el espacio restante) */}
               <div className="flex-grow">
-                <FloatingLabel id="asunto" label="Asunto" />
+                <FloatingLabel
+                  id="asunto"
+                  label="Asunto"
+                  value={formData.asunto}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, asunto: e.target.value }))}
+                />
               </div>
 
               {/* Ícono derecho */}
@@ -268,6 +348,10 @@ const NuevoPqr = () => {
                 <textarea
                   id="descripcion"
                   name="descripcion"
+                  value={formData.descripcion}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, descripcion: e.target.value }))
+                  }
                   rows={3}
                   placeholder=" "
                   className="peer w-full border border-gray-300 rounded-lg p-2 pt-5 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -328,7 +412,7 @@ const NuevoPqr = () => {
                 Cancelar
               </button>
               <button
-                type="button"
+                type="submit"
                 className="bg-green-500 hover:bg-green-600 hover:text-white w-[80px] h-[30px] rounded-md transition-colors"
               >
                 Guardar
