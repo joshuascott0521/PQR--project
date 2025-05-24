@@ -8,7 +8,7 @@ export interface GetPqrParams {
   estadoVencimiento?: string;
 }
 
-// Función reutilizable
+
 export const TipoClienteServices = {
   getall: async (): Promise<ApiResponse<tipoCliente[]>> => {
     try {
@@ -56,7 +56,7 @@ export const TipoPqrServices = {
     try {
       const response = await apiClient.get("/TipoPQR/Get");
       return { success: true, data: response.data };
-    } catch(error:any) {
+    } catch(error: any) {
       return {
         success: false,
         data: [],
@@ -64,7 +64,7 @@ export const TipoPqrServices = {
       }
     }
   }
-}
+};
 
 export const getPqrByEstado = async ({
   usuid,
@@ -85,3 +85,19 @@ export const getPqrByEstado = async ({
 
   return response.data;
 };
+
+export const Origen = {
+  getAll: async(): Promise<ApiResponse<string[]>> => {
+    const constrainName = "chk_PQR_Origen"
+    try{
+      const response = await apiClient.get(`/Parametro/GetDominioByNombre/${constrainName}`)
+      return{success: true, data: response.data}
+    }catch(error: any){
+      return{
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Origenes"
+      }
+    }
+  }
+}

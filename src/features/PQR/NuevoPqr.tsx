@@ -6,10 +6,8 @@ import { useEffect, useState } from "react";
 import { List, File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { CreatePqr, Municipio, departamento, tipoCliente, TipoPqr } from "../../interfaces/pqrInterfaces";
-import { RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
+import { Origen, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
 const NuevoPqr = () => {
-
-  const [origen, setOrigen] = useState("");
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const navigate = useNavigate();
@@ -19,7 +17,7 @@ const NuevoPqr = () => {
   const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>([]);
   const [listaMunicipios, setListaMunicipios] = useState<Municipio[]>([])
   const [tipoPQRListado, setTipoPQRListado] = useState<TipoPqr[]>([])
-
+  const [origen, setOrigen] = useState<string[]>([])
 
   const [formData, setFormData] = useState<CreatePqr>({
     documentoCliente: "",
@@ -53,9 +51,13 @@ const NuevoPqr = () => {
         const tipoPqrRes = await TipoPqrServices.getAll();
         if (!tipoPqrRes.success) throw new Error(tipoPqrRes.error);
 
+        const origenRes = await Origen.getAll();
+        if(!origenRes.success) throw new Error(origenRes.error);
+
         setTipoCliente(tipoClienteRes.data);
         setListaDepartamentos(departamentosRes.data);
         setTipoPQRListado(tipoPqrRes.data);
+        setOrigen(origenRes.data)
 
 
         setFormData({
@@ -87,13 +89,6 @@ const NuevoPqr = () => {
 
 
 
-  const origenes = [
-    { value: "web", label: "Portal Web" },
-    { value: "presencial", label: "Atención presencial" },
-    { value: "telefono", label: "Llamada telefónica" },
-    { value: "correo", label: "Correo electrónico" },
-    { value: "redes", label: "Redes sociales" },
-  ];
 
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
@@ -243,9 +238,13 @@ const NuevoPqr = () => {
 
               <FloatingSelect
                 label="Origen"
-                value={origen}
-                onChange={setOrigen}
-                options={origenes}
+                value={formData.origen}
+                onChange={(value) => setFormData((prev) => ({...prev, origen: value}))}
+                options={origen.map(origen => ({
+                  value: origen,
+                  label: origen
+                }))}
+                placeholder="Seleccionar Origen"
               />
             </div>
             <div className="w-full flex items-center gap-3 mt-2">
