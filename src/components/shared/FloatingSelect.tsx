@@ -51,7 +51,7 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
             side="bottom"
             position="popper"
             avoidCollisions={false}
-            className="z-50 mt-1 max-h-32 overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md"
+            className="z-50 mt-1 max-h-36 overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md"
             style={{ width: "var(--radix-select-trigger-width)" }}
           >
             <SelectPrimitive.ScrollUpButton className="flex items-center justify-center py-1">

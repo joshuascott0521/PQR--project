@@ -5,58 +5,87 @@ import { FloatingSelect } from "../../components/shared/FloatingSelect";
 import { useEffect, useState } from "react";
 import { List, File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import type { CreatePqr, Municipio, departamento, tipoCliente, TipoPqr } from "../../interfaces/pqrInterfaces";
+import { RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
 const NuevoPqr = () => {
-  const [rol, setRol] = useState("");
-  const [departamento, setDepartamento] = useState("");
-  const [municipio, setMunicipio] = useState("");
-  const [tipoPeticion, setTipoPeticion] = useState("");
+
   const [origen, setOrigen] = useState("");
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const navigate = useNavigate();
   const hoy = new Date().toISOString().split("T")[0];
 
-  const opciones = [
-    { value: "admin", label: "Administrador" },
-    { value: "user", label: "Usuario" },
-    { value: "guest", label: "Invitado" },
-  ];
+  const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([])
+  const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>([]);
+  const [listaMunicipios, setListaMunicipios] = useState<Municipio[]>([])
+  const [tipoPQRListado, setTipoPQRListado] = useState<TipoPqr[]>([])
 
-  const departamentos = [
-    { value: "antioquia", label: "Antioquia" },
-    { value: "cundinamarca", label: "Cundinamarca" },
-    { value: "valle", label: "Valle del Cauca" },
-  ];
 
-  const municipiosPorDepartamento: Record<
-    string,
-    { value: string; label: string }[]
-  > = {
-    antioquia: [
-      { value: "medellin", label: "Medellín" },
-      { value: "envigado", label: "Envigado" },
-      { value: "bello", label: "Bello" },
-    ],
-    cundinamarca: [
-      { value: "bogota", label: "Bogotá" },
-      { value: "soacha", label: "Soacha" },
-      { value: "chia", label: "Chía" },
-    ],
-    valle: [
-      { value: "cali", label: "Cali" },
-      { value: "palmira", label: "Palmira" },
-      { value: "tulua", label: "Tuluá" },
-    ],
-  };
+  const [formData, setFormData] = useState<CreatePqr>({
+    documentoCliente: "",
+    nombreCliente: "",
+    tipoClienteId: "",
+    email: "",
+    celular: "",
+    direccion: "",
+    departamentoCod: 0,
+    municipioCod: 0,
+    radicado: "",
+    fecha: new Date().toISOString(),
+    tipoPQRId: "",
+    origen: "",
+    asunto: "",
+    descripcion: "",
+    adjuntos: [],
+    usuarioId: "",
+  });
 
-  const tiposDePeticion = [
-    { value: "informacion", label: "Petición de información" },
-    { value: "reclamo", label: "Reclamo" },
-    { value: "queja", label: "Queja" },
-    { value: "sugerencia", label: "Sugerencia" },
-    { value: "felicitacion", label: "Felicitación" },
-  ];
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const tipoClienteRes = await TipoClienteServices.getall();
+        if (!tipoClienteRes.success) throw new Error(tipoClienteRes.error);
+
+        const departamentosRes = await RegionServices.getDepart();
+        if (!departamentosRes.success) throw new Error(departamentosRes.error);
+
+        const tipoPqrRes = await TipoPqrServices.getAll();
+        if (!tipoPqrRes.success) throw new Error(tipoPqrRes.error);
+
+        setTipoCliente(tipoClienteRes.data);
+        setListaDepartamentos(departamentosRes.data);
+        setTipoPQRListado(tipoPqrRes.data);
+
+
+        setFormData({
+          documentoCliente: "",
+          nombreCliente: "",
+          tipoClienteId: "",
+          email: "",
+          celular: "",
+          direccion: "",
+          departamentoCod: 0,
+          municipioCod: 0,
+          radicado: "",
+          fecha: new Date().toISOString(),
+          tipoPQRId: "",
+          origen: "",
+          asunto: "",
+          descripcion: "",
+          adjuntos: [],
+          usuarioId: "",
+        });
+
+      } catch (error) {
+        console.error("Error al cargar datos iniciales:", error);
+      }
+    };
+
+    loadData();
+  }, []);
+
+
 
   const origenes = [
     { value: "web", label: "Portal Web" },
@@ -82,9 +111,6 @@ const NuevoPqr = () => {
     navigate("/dashboard");
   };
 
-  useEffect(() => {
-    setMunicipio("");
-  }, [departamento]);
 
   return (
     <div className="h-full flex flex-col">
@@ -125,34 +151,71 @@ const NuevoPqr = () => {
               />
               <FloatingSelect
                 label="Tipo Cliente"
-                value={rol}
-                onChange={setRol}
-                options={opciones}
+                value={formData.tipoClienteId}
+                onChange={(value) => setFormData(prev => ({ ...prev, tipoClienteId: value }))}
+                options={tipoCliente.map(tc => ({ value: tc.id, label: tc.nombre }))}
                 placeholder="Elige una opción"
               />
+
               <FloatingLabel id="email" label="Email" className="w-lg" />
               <FloatingLabel id="celular" label="Celular" className="w-lg" />
-              <FloatingLabel
-                id="direccion"
-                label="Dirección"
-                className="w-lg"
-              />
+              <FloatingLabel id="direccion" label="Dirección" className="w-lg" />
               <FloatingSelect
                 label="Departamento"
-                value={departamento}
-                onChange={setDepartamento}
-                options={departamentos}
+                value={
+                  formData.departamentoCod === 0 ? "" : formData.departamentoCod.toString()
+                }
+                placeholder="Seleccionar Departamento"
+                onChange={async (value) => {
+                  const cod = Number(value);
+                  const dep = listaDepartamentos.find((d) => d.cod === cod);
+                  if (dep) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      departamentoCod: dep.cod,
+                      municipioCod: 0,
+                    }));
+                    try {
+                      const municipioRes = await RegionServices.getMun(dep.cod);
+                      if (municipioRes.success) {
+                        setListaMunicipios(municipioRes.data);
+                      } else {
+                        setListaMunicipios([]);
+                      }
+                    } catch {
+                      setListaMunicipios([]);
+                    }
+                  }
+                }}
+                options={listaDepartamentos.map(dep => ({
+                  value: dep.cod?.toString() || "",
+                  label: dep.nombre || ""
+                }))}
               />
+              <FloatingSelect
+                label="Municipio"
+                placeholder="Seleccionar Municipio"
+                value={
+                  formData.municipioCod === 0 ? "" : formData.municipioCod.toString()
+                }
 
-              {departamento && (
-                <FloatingSelect
-                  label="Municipio"
-                  value={municipio}
-                  onChange={setMunicipio}
-                  options={municipiosPorDepartamento[departamento] || []}
-                  disabled={!departamento}
-                />
-              )}
+                options={listaMunicipios.map((mun) => ({
+                  value: mun.cod.toString(),
+                  label: mun.nombre,
+                }))}
+                onChange={(value) => {
+                  const cod = parseInt(value, 10);
+                  const mun = listaMunicipios.find((m) => m.cod === cod);
+                  if (mun) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      municipioCod: mun.cod,
+                      direccion: "", // opcional: limpiar campos dependientes
+                    }));
+                  }
+                }}
+                className="w-full"
+              />
             </div>
             <h2 className="text-xl font-semibold my-2">Datos del PQR</h2>
             <div className="border-b-2 border-gray-300 mb-4" />
@@ -171,11 +234,13 @@ const NuevoPqr = () => {
               />
 
               <FloatingSelect
-                label="Tipo de Petición"
-                value={tipoPeticion}
-                onChange={setTipoPeticion}
-                options={tiposDePeticion}
+                label="Tipo Petición"
+                value={formData.tipoPQRId}
+                onChange={(value) => setFormData(prev => ({ ...prev, tipoPQRId: value }))}
+                options={tipoPQRListado.map(tc => ({ value: tc.id, label: tc.nombre }))}
+                placeholder="Elige una opción"
               />
+
               <FloatingSelect
                 label="Origen"
                 value={origen}

@@ -1,5 +1,5 @@
 import apiClient from "../api/apiClient";
-import type { Pqr } from "../interfaces/pqrInterfaces";
+import type { ApiResponse, departamento, Municipio, Pqr, tipoCliente, TipoPqr } from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
   page: number;
@@ -9,6 +9,63 @@ export interface GetPqrParams {
 }
 
 // Función reutilizable
+export const TipoClienteServices = {
+  getall: async (): Promise<ApiResponse<tipoCliente[]>> => {
+    try {
+      const response = await apiClient.get("/TipoCliente/Get");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener tipos de clientes"
+      };
+    }
+  }
+};
+
+export const RegionServices = {
+  getDepart: async (): Promise<ApiResponse<departamento[]>> => {
+    try {
+      const response = await apiClient.get("/Departamento/Get");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener listado de Departanentos"
+      };
+    }
+  },
+  getMun: async (id: number): Promise<ApiResponse<Municipio[]>> => {
+    try {
+      const response = await apiClient.get(`/Municipio/Get/${id}`);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener los municipios"
+      }
+    }
+  }
+};
+
+export const TipoPqrServices = {
+  getAll: async (): Promise<ApiResponse<TipoPqr[]>> => {
+    try {
+      const response = await apiClient.get("/TipoPQR/Get");
+      return { success: true, data: response.data };
+    } catch(error:any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener los tipos de PQR"
+      }
+    }
+  }
+}
+
 export const getPqrByEstado = async ({
   usuid,
   page,
@@ -28,4 +85,3 @@ export const getPqrByEstado = async ({
 
   return response.data;
 };
- 
