@@ -32,14 +32,16 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
       <SelectPrimitive.Root value={value} onValueChange={onChange} disabled={disabled}>
         <SelectPrimitive.Trigger
           className={cn(
-            "peer pt-5 border border-gray-300 rounded-lg w-full h-10 px-3 text-sm bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500",
+            "peer pt-3 border border-gray-300 rounded-lg w-full h-10 px-3 text-xs bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500"
+            ,
             className
           )}
         >
           <SelectPrimitive.Value placeholder={placeholder} />
           <SelectPrimitive.Icon>
-            <ChevronDown className="h-4 w-4 opacity-50" />
+            <ChevronDown className="h-4 w-4 opacity-50 -translate-y-[1px]" />
           </SelectPrimitive.Icon>
+
         </SelectPrimitive.Trigger>
 
         <SelectPrimitive.Portal>
@@ -47,8 +49,11 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
             side="bottom"
             position="popper"
             avoidCollisions={false}
-            className="z-50 max-h-60 w-full overflow-y-auto rounded-md border bg-white shadow-md"
+            className="z-50 mt-1 max-h-32 overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md"
+            style={{ width: "var(--radix-select-trigger-width)" }}
           >
+
+
             <SelectPrimitive.ScrollUpButton className="flex items-center justify-center py-1">
               <ChevronUp className="h-4 w-4" />
             </SelectPrimitive.ScrollUpButton>
@@ -78,16 +83,15 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
       </SelectPrimitive.Root>
 
       <label
-        className={cn(
-          `pointer-events-none absolute left-3 top-1 text-xs text-muted-foreground transition-all
+        className={`pointer-events-none absolute left-3 text-gray-500 top-1 text-xs text-muted-foreground transition-all
           peer-placeholder-shown:top-2
           peer-placeholder-shown:text-base
           peer-placeholder-shown:text-gray-400
           peer-focus:top-1
           peer-focus:text-sm
-          peer-focus:text-blue-500`,
-          value && "top-1 text-sm text-blue-500"
-        )}
+          peer-focus:text-blue-500
+          ${value ? "top-1 text-sm text-gray-400" : ""}
+        `}
       >
         {label}
       </label>
