@@ -1,41 +1,25 @@
-
 import type React from "react";
 
-interface FloatingLabelProps {
+interface FloatingLabelProps extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
-  type?: string;
-  value?: string;
-  autoComplete?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
-  required?: boolean;
-  disabled?: boolean;
 }
 
 export const FloatingLabel: React.FC<FloatingLabelProps> = ({
   id,
   label,
   type = "text",
-  value,
-  autoComplete,
-  onChange,
   className,
-  required = false,
-  disabled = false,
+  ...rest
 }) => {
   return (
     <div className="relative w-full">
       <input
         id={id}
         type={type}
-        value={value}
-        onChange={onChange}
-        required={required}
-        autoComplete={autoComplete}
         placeholder=" "
-        disabled={disabled}
         className={`peer w-full h-10 border border-gray-300 rounded-lg px-3 pt-4 pb-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        {...rest}
       />
       <label
         htmlFor={id}
