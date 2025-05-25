@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 // import UserCard from "../../components/shared/UserCard";
-import { getPqrByEstado } from "../../services/pqrServices"; // Ajusta la ruta según corresponda
 import type { Pqr } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
 // import { AiOutlineFolderView } from "react-icons/ai";
 import { CiCircleCheck } from "react-icons/ci";
+import { PqrServices } from "../../services/pqrServices";
 
 const Finalizado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -28,7 +28,7 @@ const Finalizado = () => {
           return;
         }
 
-        const data = await getPqrByEstado({
+        const data = await PqrServices.getByEstado({
           usuid,
           page: 1,
           size: 10,

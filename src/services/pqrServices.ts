@@ -123,25 +123,7 @@ export const PqrServices = {
   }
 }
 
-export const getPqrByEstado = async ({
-  usuid,
-  page,
-  size,
-  estadoProceso,
-  estadoVencimiento,
-}: GetPqrParams & { usuid: string }): Promise<Pqr[]> => {
-  const response = await apiClient.get<Pqr[]>("/PQR/GetByEstadoPQR", {
-    params: {
-      usuid,
-      pagenumber: page,
-      pagesize: size,
-      estadoProceso,
-      estadoVencimiento,
-    },
-  });
 
-  return response.data;
-};
 
 export const Origen = {
   getAll: async (): Promise<ApiResponse<string[]>> => {

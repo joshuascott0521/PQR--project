@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 // import UserCard from "../../components/shared/UserCard";
-import { getPqrByEstado } from "../../services/pqrServices"; // Ajusta la ruta según corresponda
+
 import type { Pqr } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
 import { FaBan } from "react-icons/fa";
+import { PqrServices } from "../../services/pqrServices";
 
 const Anulado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -27,7 +28,7 @@ const Anulado = () => {
           return;
         }
 
-        const data = await getPqrByEstado({
+        const data = await PqrServices.getByEstado({
           usuid,
           page: 1,
           size: 10,
