@@ -11,25 +11,27 @@ const Header = () => {
   };
 
   return (
-    <div className="h-[85px] flex items-center pl-8 border-b-2 bg-white">
-      <div className="w-2/4 mr-[30px]">
+    <div className="h-[85px] flex items-center justify-between px-4 sm:px-8 border-b-2 bg-white w-full">
+      {/* Buscador */}
+      <div className="w-full max-w-[400px] mr-4">
         <Serch />
       </div>
 
-      <div className="flex-1 flex justify-end items-center gap-4 pr-8">
+      {/* Acciones */}
+      <div className="flex items-center gap-2 sm:gap-4">
         <button
-          className="bg-green-500 px-[30px] py-[10px] rounded-lg text-white flex items-center gap-2 mr-[35px] text-2xl font-bold"
+          className="bg-green-500 px-4 sm:px-6 py-2 rounded-lg text-white text-sm sm:text-lg font-bold flex items-center gap-2"
           onClick={handleNew}
         >
-          <IoIosAddCircleOutline className="text-2xl h-[35px] w-[35px]" />
+          <IoIosAddCircleOutline className="text-xl sm:text-2xl" />
           <span>PQR</span>
         </button>
 
-        <button>
-          <IoIosNotifications className="text-5xl text-gray-500" />
-        </button>
-        
-        {/* Aquí se reemplaza el bloque estático por el dropdown */}
+        <div className="relative">
+          <IoIosNotifications className="text-3xl text-gray-500" />
+          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+        </div>
+
         <UserDropdownMenu />
       </div>
     </div>
