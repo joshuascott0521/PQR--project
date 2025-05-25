@@ -1,15 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { IoIosAddCircleOutline, IoIosNotifications } from "react-icons/io";
-import { FaRegCircle, FaUser } from "react-icons/fa";
-import { MdExpandMore } from "react-icons/md";
 import Serch from "../../components/shared/Serch";
-
-
-const rawUser = localStorage.getItem("userData");
-const user = rawUser ? JSON.parse(rawUser) : null;
-
-const nombre = user.nombre;
-const tipoUsuId = user.tipoUsuId;
+import UserDropdownMenu from "./UserDropDownMenu";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -36,17 +28,9 @@ const Header = () => {
         <button>
           <IoIosNotifications className="text-5xl text-gray-500" />
         </button>
-        <FaRegCircle className="text-red-500 text-lg ml-[-35px] mt-[-20px]" />
-
-        <div className="flex items-center gap-2">
-          <FaUser className="text-4xl" />
-          <div className="flex flex-col items-center text-right leading-none">
-            <span className="text-sm font-semibold">{nombre}</span>
-            <span className="text-xs text-gray-600">{tipoUsuId}</span>
-          </div>
-
-          <MdExpandMore className="text-[30px]" />
-        </div>
+        
+        {/* Aquí se reemplaza el bloque estático por el dropdown */}
+        <UserDropdownMenu />
       </div>
     </div>
   );
