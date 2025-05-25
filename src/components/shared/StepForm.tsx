@@ -41,33 +41,33 @@ export default function StepForm() {
   return (
     <div className="w-full h-screen flex justify-start items-center pl-[112px] ">
       <div className="w-[700px]">
-        <div className="bg-white/70  rounded-2xl shadow-lg w-full p-10 border border-gray-100">
+        <div className="bg-white/70  rounded-2xl shadow-lg w-full h-[480px] p-10 border border-gray-100">
           {/* Step Indicators */}
           <div className="relative flex justify-between mb-6">
             <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-300 z-0" />
-            {["STEP 1", "STEP 2", "STEP 3"].map((label, index) => (
+            {["Paso 1", "Paso 2", "Paso 3"].map((label, index) => (
               <div key={index} className="flex-1 flex flex-col items-center relative z-10">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
-                    index < step
-                      ? "bg-green-600 text-white border-green-600"
-                      : index === step
-                      ? "bg-white text-green-600 border-green-600"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${index < step
+                    ? "bg-blue-500 text-white border-blue-500"
+                    : index === step
+                      ? "bg-white text-blue-500 border-blue-500"
                       : "bg-gray-200 text-gray-500 border-gray-300"
-                  }`}
+                    }`}
                 >
                   {index + 1}
                 </div>
-                <span className="mt-2 text-sm font-medium text-gray-700">{label}</span>
+                <span className="mt-2 text-sm font-medium text-black">{label}</span>
               </div>
             ))}
           </div>
 
           {/* Form Steps */}
-          <form onSubmit={handleSubmit} className="space-y-4 text-gray-700 text-sm">
+          <form onSubmit={handleSubmit} className="space-y-4 text-black text-sm">
             {step === 0 && (
               <div>
-                <h2 className="text-md font-semibold mb-4 text-center">Datos del cliente</h2>
+                <h2 className="text-lg font-semibold mb-2 text-center">Datos del Solicitante</h2>
+                <div className="border-b border-gray-500 mb-2" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FloatingLabel id="documento" label="Documento" />
                   <FloatingLabel
@@ -88,7 +88,7 @@ export default function StepForm() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors"
+                    className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors"
                   >
                     Next
                   </button>
@@ -98,21 +98,34 @@ export default function StepForm() {
 
             {step === 1 && (
               <div>
-                <label htmlFor="email" className="relative block">
-                  <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder=" "
-                    required
-                    className="peer w-full border border-gray-300 rounded px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                <h2 className="text-lg font-semibold mb-2 text-center">Datos del PQR</h2>
+                <div className="border-b border-gray-500 mb-2" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <FloatingLabel
+                    id="fecha"
+                    label="Fecha Solicitud"
+                    type="date"
+                    value={new Date().toISOString().split("T")[0]} // "2025-05-25"
+                    readOnly
                   />
-                  <span className="absolute left-3 top-2 text-xs text-gray-500 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 transition-all">
-                    Your Email (required)
-                  </span>
-                </label>
+
+                  <FloatingLabel id="peticion" label="Tipo de Petición" />
+                  <div className="md:col-span-2">
+                    <FloatingLabel id="asunto" label="Asunto" />
+                  </div>
+                  <div className="mt-2 md:col-span-2">
+                    <div className="w-full">
+                      <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        rows={4}
+                        placeholder="Descripción"
+                        className="w-full border border-gray-300 rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 focus:ring-green-600"
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="mt-6 flex justify-between">
                   <button
                     onClick={handleBack}
@@ -124,7 +137,7 @@ export default function StepForm() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors"
+                    className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors"
                   >
                     Next
                   </button>
@@ -143,7 +156,7 @@ export default function StepForm() {
                     onChange={handleChange}
                     placeholder=" "
                     required
-                    className="peer w-full border border-gray-300 rounded px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-600"
+                    className="peer w-full border border-gray-300 rounded px-3 pt-5 pb-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <span className="absolute left-3 top-2 text-xs text-gray-500 peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400 transition-all">
                     Your Phone (required)
@@ -160,7 +173,7 @@ export default function StepForm() {
                         value="email"
                         checked={formData.contact === "email"}
                         onChange={handleChange}
-                        className="accent-green-600"
+                        className="accent-blue-500"
                         required
                       />
                       <span>Email</span>
@@ -172,7 +185,7 @@ export default function StepForm() {
                         value="phone"
                         checked={formData.contact === "phone"}
                         onChange={handleChange}
-                        className="accent-green-600"
+                        className="accent-blue-500"
                         required
                       />
                       <span>Phone</span>
@@ -190,7 +203,7 @@ export default function StepForm() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-colors"
+                    className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors"
                   >
                     Submit
                   </button>
