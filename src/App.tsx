@@ -15,6 +15,8 @@ import EnEspera from "./features/PQR/Espera";
 import Finalizado from "./features/PQR/Finalizado";
 import Anulado from "./features/PQR/Anulado";
 import NuevoPqr from "./features/PQR/NuevoPqr";
+
+import Portal from "./pages/portal";
 // import LoginFrm from "./features/Usuarios/LoginFrm"; // ejemplo
 // Agrega más rutas internas según tus componentes
 
@@ -42,6 +44,7 @@ function App() {
           {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
           {/* Más rutas aquí */}
         </Route>
+        <Route path="portal-pqr" element = {<Portal />}/>
       </Routes>
     </AuthProvider>
   );

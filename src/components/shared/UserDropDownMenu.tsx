@@ -42,9 +42,9 @@ const UserDropdownMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent side="bottom" sideOffset={12}>
         <DropdownMenuLabel className="text-xs">Mi cuenta</DropdownMenuLabel>
-        <DropdownMenuItem >
+        <DropdownMenuItem onClick={() => navigate("/portal-pqr")}>
           <User className="mr-2 h-4 w-4" />
-          <span>Perfil</span>
+          <span>Portal</span>
         </DropdownMenuItem>
         <DropdownMenuItem >
           <Settings className="mr-2 h-4 w-4" />
