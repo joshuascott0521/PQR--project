@@ -7,14 +7,14 @@ export interface CreatePqr {
   direccion: string;
   departamentoCod: number;
   municipioCod: number;
-  radicado: string;
+  radicado?: string;
   fecha: string;
   tipoPQRId: string;
   origen: string;
   asunto: string;
   descripcion: string;
   adjuntos: Adjunto[];
-  usuarioId: string | null; // ✅ clave para tu caso mixto
+  usuarioId: string | null;
 }
 
 
