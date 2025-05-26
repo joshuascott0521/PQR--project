@@ -46,7 +46,6 @@ const NuevoPqr = () => {
       try {
         const rawUser = localStorage.getItem("userData");
         const user = rawUser ? JSON.parse(rawUser) : null;
-        console.log("Usuario???🔴🔴🔴🔴🔴", user)
 
         const tipoClienteRes = await TipoClienteServices.getall();
         if (!tipoClienteRes.success) throw new Error(tipoClienteRes.error);

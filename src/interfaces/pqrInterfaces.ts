@@ -8,14 +8,15 @@ export interface CreatePqr {
   departamentoCod: number;
   municipioCod: number;
   radicado: string;
-  fecha: string; 
+  fecha: string;
   tipoPQRId: string;
   origen: string;
   asunto: string;
   descripcion: string;
   adjuntos: Adjunto[];
-  usuarioId: string;
+  usuarioId: string | null; // ✅ clave para tu caso mixto
 }
+
 
 export interface Pqr {
   id: string;
@@ -67,7 +68,7 @@ export interface Adjunto {
   urlArchivo: string;
 }
 
-export interface TipoPqr{
+export interface TipoPqr {
   id: string;
   nombre: string;
   dias: number
@@ -75,7 +76,7 @@ export interface TipoPqr{
   estado: number
 }
 
-export interface tipoCliente{
+export interface tipoCliente {
   id: string;
   nombre: string;
   estado: number
@@ -83,12 +84,12 @@ export interface tipoCliente{
 
 
 
-export interface departamento{
+export interface departamento {
   cod: number;
   nombre: string
 }
 
-export interface Municipio{
+export interface Municipio {
   cod: number;
   nombre: string
 }

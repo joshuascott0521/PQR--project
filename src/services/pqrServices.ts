@@ -116,8 +116,24 @@ export const PqrServices = {
     } catch (error: any) {
       return {
         success: false,
-        data:[],
+        data: [],
         error: error.response?.data?.message || "Error al crear el PQR",
+      };
+    }
+  },
+
+  createPqrPortal: async (pqr: CreatePqr): Promise<ApiResponse<string[]>> => {
+    try {
+      const response = await apiClient.post("/PQR/CreatePublic", pqr);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al crear el PQR por portal",
       };
     }
   }
