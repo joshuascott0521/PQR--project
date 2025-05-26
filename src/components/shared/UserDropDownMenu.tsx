@@ -33,13 +33,19 @@ const UserDropdownMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 outline-none hover:opacity-80">
         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-black font-semibold uppercase">
-          {user.nombre?.charAt(0)}
+          {user.nombre
+            ?.split(" ")
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((n) => n.charAt(0))
+            .join("")}
         </div>
         <div className="hidden sm:flex flex-col items-start">
           <span className="text-sm font-semibold">{user.nombre}</span>
           <span className="text-xs text-gray-500">Administrador</span>
         </div>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent side="bottom" sideOffset={12}>
         <DropdownMenuLabel className="text-xs">Mi cuenta</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => navigate("/portal-pqr")}>

@@ -5,6 +5,8 @@ import { PqrServices, RegionServices, TipoClienteServices, TipoPqrServices } fro
 import { FloatingSelect } from "./FloatingSelect";
 import { File, X, Paperclip } from "lucide-react";
 import RequisitosAdjuntos from "./RequisitosAdjuntos";
+import { mostrarAlertaConfirmacion, mostrarAlertaError, mostrarAlertaExito } from "../../libs/alerts";
+import toast from "react-hot-toast";
 
 export default function StepForm() {
   const [step, setStep] = useState(0);
@@ -15,6 +17,7 @@ export default function StepForm() {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const [autorizado, setAutorizado] = useState(false);
+  const [errores, setErrores] = useState<{ [key: string]: boolean }>({});
   const [formData, setFormData] = useState<CreatePqr>({
     documentoCliente: "",
     nombreCliente: "",
@@ -123,86 +126,109 @@ export default function StepForm() {
   };
 
   const validateStep = () => {
+    const nuevosErrores: { [key: string]: boolean } = {};
+
     if (step === 0) {
       if (!formData.documentoCliente.trim()) {
-        alert("Por favor ingresa el documento del cliente.");
-        return false;
+        toast.error("Por favor ingresa el documento del cliente.");
+        nuevosErrores.documentoCliente = true;
       }
       if (!formData.nombreCliente.trim()) {
-        alert("Por favor ingresa el nombre completo del cliente.");
-        return false;
+        toast.error("Por favor ingresa el nombre completo del cliente.");
+        nuevosErrores.nombreCliente = true;
       }
       if (!formData.tipoClienteId) {
-        alert("Por favor selecciona el tipo de cliente.");
-        return false;
+        toast.error("Por favor selecciona el tipo de cliente.");
+        nuevosErrores.tipoClienteId = true;
       }
       if (!formData.email.trim()) {
-        alert("Por favor ingresa el correo electrónico.");
-        return false;
-      }
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        alert("El correo electrónico no es válido.");
-        return false;
+        toast.error("Por favor ingresa el correo electrónico.");
+        nuevosErrores.email = true;
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+          toast.error("El correo electrónico no es válido.");
+          nuevosErrores.email = true;
+        }
       }
       if (!formData.celular.trim()) {
-        alert("Por favor ingresa el número de celular.");
-        return false;
+        toast.error("Por favor ingresa el número de celular.");
+        nuevosErrores.celular = true;
       }
       if (!formData.direccion.trim()) {
-        alert("Por favor ingresa la dirección.");
-        return false;
+        toast.error("Por favor ingresa la dirección.");
+        nuevosErrores.direccion = true;
       }
       if (formData.departamentoCod === 0) {
-        alert("Selecciona un departamento.");
-        return false;
+        toast.error("Selecciona un departamento.");
+        nuevosErrores.departamentoCod = true;
       }
       if (formData.municipioCod === 0) {
-        alert("Selecciona un municipio.");
-        return false;
+        toast.error("Selecciona un municipio.");
+        nuevosErrores.municipioCod = true;
       }
     }
 
     if (step === 1) {
       if (!formData.tipoPQRId) {
-        alert("Por favor selecciona el tipo de petición.");
-        return false;
+        toast.error("Por favor selecciona el tipo de petición.");
+        nuevosErrores.tipoPQRId = true;
       }
       if (!formData.asunto.trim()) {
-        alert("Por favor escribe un asunto para la solicitud.");
-        return false;
+        toast.error("Por favor escribe un asunto para la solicitud.");
+        nuevosErrores.asunto = true;
       }
       if (!formData.descripcion.trim()) {
-        alert("Por favor describe brevemente la solicitud.");
-        return false;
+        toast.error("Por favor describe brevemente la solicitud.");
+        nuevosErrores.descripcion = true;
       }
     }
 
     if (step === 2) {
       if (!autorizado) {
-        alert("Debes autorizar el tratamiento de datos para continuar.");
+        toast.error("Debes autorizar el tratamiento de datos.");
+      }
+
+      if (archivos.length === 0) {
+        toast.error("Debes subir al menos un archivo de soporte.");
         return false;
       }
     }
 
-    return true;
+
+    setErrores(nuevosErrores);
+
+    // Si no hay errores, retorna true
+    return Object.keys(nuevosErrores).length === 0;
   };
+
 
   const handleNext = () => {
-    if (validateStep()) setStep((prev) => prev + 1);
-    else alert("Please complete all required fields.");
+    if (validateStep()) {
+      setStep((prev) => prev + 1);
+    }
   };
 
+
   const handleBack = () => setStep((prev) => prev - 1);
+
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // ✅ Validar antes de continuar
     if (!validateStep()) {
-      alert("Complete el formulario antes de enviarlo.");
+      toast.error("Por favor, completa todos los campos obligatorios antes de continuar.");
       return;
     }
+
+    // ✅ Confirmación antes de enviar
+    const confirmado = await mostrarAlertaConfirmacion(
+      "¿Deseas enviar el PQR?",
+      "Una vez enviado, no podrás editarlo. Será procesado por la entidad correspondiente."
+    );
+    if (!confirmado) return;
 
     try {
       let archivosSubidos: ArchivoSubido[] = [];
@@ -210,7 +236,7 @@ export default function StepForm() {
       if (archivos.length > 0) {
         const uploadRes = await PqrServices.uploadFiles(archivos);
         if (!uploadRes.success) {
-          console.error("Error al subir archivos:", uploadRes.error);
+          mostrarAlertaError(uploadRes.error || "Error al subir archivos.");
           return;
         }
         archivosSubidos = uploadRes.data;
@@ -225,7 +251,8 @@ export default function StepForm() {
       });
 
       if (res.success) {
-        alert("PQR Registrado Exitosamente");
+        mostrarAlertaExito("¡PQR registrado exitosamente!");
+
         console.log("Respuesta PQR ✅✅✅✅", res.data);
 
         // Reiniciar formulario
@@ -244,17 +271,21 @@ export default function StepForm() {
           asunto: "",
           descripcion: "",
           adjuntos: [],
-          usuarioId: null, // ✅ reinicia como null
+          usuarioId: null,
         });
 
         setArchivos([]);
         setAutorizado(false);
         setStep(0);
+      } else {
+        mostrarAlertaError(res.error || "Ocurrió un error al registrar el PQR.");
       }
     } catch (error) {
       console.error("Error inesperado al guardar:", error);
+      mostrarAlertaError("Error inesperado al guardar el PQR.");
     }
   };
+
 
 
 
@@ -294,12 +325,14 @@ export default function StepForm() {
                     label="Documento"
                     value={formData.documentoCliente}
                     onChange={(e) => setFormData((prev) => ({ ...prev, documentoCliente: e.target.value }))}
+                    className={errores.documentoCliente ? "border-red-500" : ""}
                   />
                   <FloatingLabel
                     id="nombresYApellidos"
                     label="Nombres y Apellidos"
                     value={formData.nombreCliente}
                     onChange={(e) => setFormData((prev) => ({ ...prev, nombreCliente: e.target.value }))}
+                    className={errores.nombreCliente ? "border-red-500" : ""}
                   />
                   <FloatingSelect
                     label="Tipo Cliente"
@@ -307,24 +340,28 @@ export default function StepForm() {
                     onChange={(value) => setFormData(prev => ({ ...prev, tipoClienteId: value }))}
                     options={tipoCliente.map(tc => ({ value: tc.id, label: tc.nombre }))}
                     placeholder="Elige una opción"
+                    className={errores.tipoClienteId ? "border-red-500" : ""}
                   />
                   <FloatingLabel
                     id="email"
                     label="Email"
                     value={formData.email}
                     onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    className={errores.email ? "border-red-500" : ""}
                   />
                   <FloatingLabel
                     id="celular"
                     label="Celular"
                     value={formData.celular}
                     onChange={(e) => setFormData((prev) => ({ ...prev, celular: e.target.value }))}
+                    className={errores.celular ? "border-red-500" : ""}
                   />
                   <FloatingLabel
                     id="direccion"
                     label="Dirección"
                     value={formData.direccion}
                     onChange={(e) => setFormData((prev) => ({ ...prev, direccion: e.target.value }))}
+                    className={errores.direccion ? "border-red-500" : ""}
                   />
                   <FloatingSelect
                     label="Departamento"
@@ -357,6 +394,7 @@ export default function StepForm() {
                       value: dep.cod?.toString() || "",
                       label: dep.nombre || ""
                     }))}
+                    className={errores.departamentoCod ? "border-red-500" : ""}
                   />
                   <FloatingSelect
                     label="Municipio"
@@ -379,7 +417,7 @@ export default function StepForm() {
                         }));
                       }
                     }}
-                    className="w-full"
+                    className={errores.municipioCod ? "border-red-500" : ""}
                   />
                 </div>
                 <div className="mt-6 flex justify-end">
@@ -412,6 +450,7 @@ export default function StepForm() {
                     onChange={(value) => setFormData(prev => ({ ...prev, tipoPQRId: value }))}
                     options={tipoPQRListado.map(tc => ({ value: tc.id, label: tc.nombre }))}
                     placeholder="Elige una opción"
+                    className={errores.tipoPQRId ? "border-red-500" : ""}
                   />
                   <div className="md:col-span-2">
                     <FloatingLabel
@@ -419,6 +458,7 @@ export default function StepForm() {
                       label="Asunto"
                       value={formData.asunto}
                       onChange={(e) => setFormData((prev) => ({ ...prev, asunto: e.target.value }))}
+                      className={errores.asunto ? "border-red-500" : ""}
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -430,7 +470,8 @@ export default function StepForm() {
                         onChange={(e) => setFormData((prev) => ({ ...prev, descripcion: e.target.value }))}
                         rows={4}
                         placeholder="Descripción"
-                        className="w-full border border-gray-300 rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                          }`}
                       />
                     </div>
                   </div>
@@ -540,3 +581,5 @@ export default function StepForm() {
     </div>
   );
 }
+
+

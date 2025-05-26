@@ -1,6 +1,8 @@
 import StepForm from "../components/shared/StepForm"; // importa tu formulario multistep
 import "../Login.css"
 
+
+
 export default function Portal() {
   return (
     <div className="w-screen h-screen bg-neutral-800 flex justify-center items-center bg-image overflow-hidden">

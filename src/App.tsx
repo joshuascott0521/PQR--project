@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard/dashboard"; // Tu layout
 import PorVencer from "./features/PQR/PorVencer";
 import ATiempo from "./features/PQR/ATiempo";
 import PqrData from "./features/PQR/PqrData";
+import { Toaster } from "react-hot-toast";
 
 // Importa las páginas internas
 import Vencidos from "./features/PQR/Vencidos";
@@ -23,6 +24,20 @@ import Portal from "./pages/portal";
 function App() {
   return (
     <AuthProvider>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#fff",
+            color: "#333",
+            fontSize: "14px",
+            borderRadius: "8px",
+            padding: "12px 16px",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+          },
+        }}
+      />
       <Routes>
         {/* Ruta pública */}
         <Route path="/" element={<Login />} />
