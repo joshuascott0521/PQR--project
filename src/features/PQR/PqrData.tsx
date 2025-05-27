@@ -1,10 +1,31 @@
-import { useState } from "react";
 import { FloatingSelectLP } from "../../components/shared/FloatingSelectLP";
 import PqrChat from "../../components/shared/PqrChat";
+
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { PqrServices } from "../../services/pqrServices";
+import type { DetallePqr } from "../../interfaces/pqrInterfaces";
 
 const PqrData = () => {
   const [origen, setOrigen] = useState("");
   const [origen2, setOrigen2] = useState("");
+  const { id } = useParams();
+  const [pqr, setPqr] = useState<DetallePqr | null>(null);
+  const [, setError] = useState<string>("");
+
+  useEffect(() => {
+    const fetchPqr = async () => {
+      const result = await PqrServices.getById(id!);
+      if (result.success) {
+        setPqr(result.data);
+      } else {
+        setError(result.error || "Error desconocido");
+      }
+    };
+
+    fetchPqr();
+  }, [id]);
+  console.log("🤖🤖🤖", pqr);
 
   const origenes = [
     { value: "web", label: "Portal Web" },
@@ -30,43 +51,37 @@ const PqrData = () => {
               className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-black font-semibold text-2xl flex-shrink-0"
               aria-label="Number 13"
             >
-              13
+              {pqr?.diasRestantes}
             </div>
           </div>
           <div className="flex flex-col w-full">
             <div className="flex items-center gap-4 justify-between">
               <div className="flex flex-wrap gap-x-6 gap-y-1 items-center text-sm text-black font-sans w-full">
                 <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                  <span className="font-normal">#</span> 20240011
+                  <span className="font-normal">#</span> {pqr?.consecutivo}
                 </span>
                 <span className="font-bold flex items-center gap-1 whitespace-nowrap">
                   <span className="font-normal">No. Radicado:</span>{" "}
-                  2024034434099
+                  {pqr?.radicado}
                 </span>
                 <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                  <span className="font-normal">Fecha:</span> 20-11-2024
+                  <span className="font-normal">Fecha:</span> {pqr?.fecha}
                 </span>
                 <label
                   //   for="tipo"
                   className="font-bold flex items-center gap-1 whitespace-nowrap cursor-pointer max-w-[175px] w-full"
                 >
-                  <span className="font-normal">Tipo:</span>
-                  <select
-                    id="tipo"
-                    name="tipo"
-                    className="appearance-none bg-[#F3F4F6] rounded-full py-1 px-3 text-black text-sm font-normal cursor-pointer max-w-[120px] focus:outline-none w-full"
-                    aria-label="Tipo select"
-                  >
-                    <option>Solicitud</option>
-                  </select>
-                  <i
-                    className="fas fa-chevron-down text-black text-xs pointer-events-none ml-[-20px]"
-                    aria-hidden="true"
-                  ></i>
+                  <span className="font-bold flex items-center gap-1 whitespace-nowrap">
+                    <span className="font-normal">Tipo:</span>{" "}
+                    {pqr?.tipoPQRNombre}
+                  </span>
                 </label>
               </div>
-              <div className="px-4 py-1 rounded-full bg-gray-400 text-gray-900 text-sm font-normal">
-                Registrado
+              <div
+                className="px-4 py-1 rounded-full bg-gray-400 text-gray-900 text-sm font-normal"
+                style={{ backgroundColor: pqr?.codigoColorEstado }}
+              >
+                {pqr?.estado}
               </div>
             </div>
             <div className="flex">
@@ -77,8 +92,7 @@ const PqrData = () => {
                   title="   Solicitud para revisión prueba para que me devuelvan el dinero
                   porque me embargaron."
                 >
-                  Solicitud para revisión prueba para que me devuelvan el dinero
-                  porque me embargaron.
+                  {pqr?.asunto}
                 </span>
                 {/* <span className="text-gray-600 max-w-full whitespace-normal">
                   
@@ -89,20 +103,20 @@ const PqrData = () => {
                   Responsable:
                 </span>
                 <span className="font-normal whitespace-normal max-w-[calc(100%-5rem)]">
-                  Ronald Moreno
+                  {pqr?.funcionario?.nombre}
                 </span>
               </div>
             </div>
           </div>
         </div>
         <div className="flex mt-5 flex-col max-h-[300px] overflow-y-auto">
-          <PqrChat />
-          <PqrChat />
-          <PqrChat />
+          {/* <PqrChat pqr={pqr?.detalles} /> */}
+          {/* <PqrChat detalles={pqr?.detalle} /> */}
+          <div className="space-y-4">
+            {pqr?.detalle && <PqrChat key={pqr.id} detalles={pqr.detalle} />}
+          </div>
 
-          <PqrChat />
-
-          <PqrChat />
+          <div className="space-y-4"></div>
         </div>
         <div className="border border-gray-300 rounded-md p-4  mx-auto max-h-[317px] h-full mt-3">
           <form className="space-y-4">

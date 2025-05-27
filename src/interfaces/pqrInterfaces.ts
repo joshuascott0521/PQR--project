@@ -38,6 +38,31 @@ export interface Pqr {
   colorHex: string;
   fecha: string;
 }
+export interface DetallePqr {
+  id: string;
+  clienteId: string;
+  nombreCliente: string;
+  documentoCliente: string;
+  asunto: string;
+  tipoPQRId: string;
+  nombreTipoPQR: string;
+  estado: string;
+  usuarioId: string;
+  nombreFuncionario: string;
+  documentoFuncionario: string;
+  consecutivo: number;
+  radicado: string;
+  origen: string;
+  item: string;
+  diasRestantes: number;
+  estadoVencimiento: string;
+  colorHex: string;
+  fecha: string;
+  tipoPQRNombre?: string;
+  codigoColorEstado?: string;
+  detalle?: Detalle[];
+  funcionario?: Funcionario;
+}
 
 export interface GetPqr {
   id: string;
@@ -103,4 +128,30 @@ export interface ApiResponse<T> {
   data: T;
   message?: string;
   error?: string;
+}
+
+export interface Funcionario {
+  id: string;
+  documento: string;
+  nombre: string;
+  cargo: string;
+  tipoUsuario: string;
+  correo: string;
+  celular: string;
+}
+export interface Detalle {
+  item?: number;
+  orden?: number;
+  fechaCreacion?: string;
+  nombreEvento?: string;
+  descripcion?: string;
+  codigoColorEstado?: string;
+  tercero: Tercero;
+  abjuntos: Adjunto[];
+}
+export interface Tercero {
+  tipoTercero?: string;
+  id?: string;
+  nombre?: string;
+  codigoColorFondo?: string;
 }

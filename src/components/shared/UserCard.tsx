@@ -7,7 +7,7 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
   return (
     <div className="mb-5">
       <div
-        onClick={() => navigate(`/dashboard/PQR/detalle/`)}
+        onClick={() => navigate(`/dashboard/PQR/detalle/${pqr.id}`)}
         className="mx-auto bg-white rounded-lg shadow-md border border-gray-200 flex items-center gap-6 p-4 sm:p-6 cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
       >
         <div className="flex-shrink-0">

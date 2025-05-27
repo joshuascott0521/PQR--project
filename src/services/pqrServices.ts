@@ -1,5 +1,14 @@
 import apiClient from "../api/apiClient";
-import type { ApiResponse, ArchivoSubido, CreatePqr, departamento, Municipio, Pqr, tipoCliente, TipoPqr } from "../interfaces/pqrInterfaces";
+import type {
+  ApiResponse,
+  ArchivoSubido,
+  CreatePqr,
+  departamento,
+  Municipio,
+  Pqr,
+  tipoCliente,
+  TipoPqr,
+} from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
   page: number;
@@ -7,7 +16,6 @@ export interface GetPqrParams {
   estadoProceso?: string;
   estadoVencimiento?: string;
 }
-
 
 export const TipoClienteServices = {
   getall: async (): Promise<ApiResponse<tipoCliente[]>> => {
@@ -18,10 +26,11 @@ export const TipoClienteServices = {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al obtener tipos de clientes"
+        error:
+          error.response?.data?.message || "Error al obtener tipos de clientes",
       };
     }
-  }
+  },
 };
 
 export const RegionServices = {
@@ -33,7 +42,9 @@ export const RegionServices = {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al obtener listado de Departanentos"
+        error:
+          error.response?.data?.message ||
+          "Error al obtener listado de Departanentos",
       };
     }
   },
@@ -45,10 +56,11 @@ export const RegionServices = {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al obtener los municipios"
-      }
+        error:
+          error.response?.data?.message || "Error al obtener los municipios",
+      };
     }
-  }
+  },
 };
 
 export const TipoPqrServices = {
@@ -60,10 +72,11 @@ export const TipoPqrServices = {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al obtener los tipos de PQR"
-      }
+        error:
+          error.response?.data?.message || "Error al obtener los tipos de PQR",
+      };
     }
-  }
+  },
 };
 /* Servicios Globales para la gestion de PQRs*/
 export const PqrServices = {
@@ -87,12 +100,14 @@ export const PqrServices = {
     return response.data;
   },
 
-  uploadFiles: async (archivos: File[]): Promise<ApiResponse<ArchivoSubido[]>> => {
+  uploadFiles: async (
+    archivos: File[]
+  ): Promise<ApiResponse<ArchivoSubido[]>> => {
     const formData = new FormData();
 
     archivos.forEach((archivo) => {
-      formData.append("files", archivo)
-    })
+      formData.append("files", archivo);
+    });
 
     try {
       const response = await apiClient.post("/PQR/UploadFiles", formData);
@@ -103,7 +118,7 @@ export const PqrServices = {
         data: [],
         error: error.response?.data?.message || "Error al subir archivos",
       };
-    };
+    }
   },
 
   createPqr: async (pqr: CreatePqr): Promise<ApiResponse<string[]>> => {
@@ -133,27 +148,41 @@ export const PqrServices = {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al crear el PQR por portal",
+        error:
+          error.response?.data?.message || "Error al crear el PQR por portal",
       };
     }
-  }
-}
-
-
+  },
+  getById: async (id: string): Promise<ApiResponse<Pqr>> => {
+    try {
+      const response = await apiClient.get(`/PQR/GetItemById/${id}`);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Pqr,
+        error:
+          error.response?.data?.message ||
+          "Error al obtener el detalle del PQR",
+      };
+    }
+  },
+};
 
 export const Origen = {
   getAll: async (): Promise<ApiResponse<string[]>> => {
-    const constrainName = "chk_PQR_Origen"
+    const constrainName = "chk_PQR_Origen";
     try {
-      const response = await apiClient.get(`/Parametro/GetDominioByNombre/${constrainName}`)
-      return { success: true, data: response.data }
+      const response = await apiClient.get(
+        `/Parametro/GetDominioByNombre/${constrainName}`
+      );
+      return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al cargar Origenes"
-      }
+        error: error.response?.data?.message || "Error al cargar Origenes",
+      };
     }
-  }
-}
-
+  },
+};
