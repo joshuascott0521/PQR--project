@@ -19,6 +19,7 @@ import NuevoPqr from "./features/PQR/NuevoPqr";
 
 import Portal from "./pages/portal";
 import PrivateRoute from "./components/PrivateRoutes";
+import Clientes from "./features/Usuarios/Clientes";
 // import LoginFrm from "./features/Usuarios/LoginFrm"; // ejemplo
 // Agrega más rutas internas según tus componentes
 
@@ -59,6 +60,7 @@ function App() {
             <Route path="finalizado" element={<Finalizado />} />
             <Route path="anulado" element={<Anulado />} />
             <Route path="nuevo-pqr" element={<NuevoPqr />} />
+            <Route path="admin/cliente" element={<Clientes/>}/>
             {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
             {/* Más rutas aquí */}
           </Route>

@@ -6,14 +6,16 @@ import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("userData");
     if (storedToken && storedUser) {
-    setUser(JSON.parse(storedUser));
-  }
+      setUser(JSON.parse(storedUser));
+    }
+    setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -42,8 +44,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
+
   );
 };
