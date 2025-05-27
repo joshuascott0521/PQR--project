@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-// import UserCard from "../../components/shared/UserCard";
 import type { Pqr } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
-// import { AiOutlineFolderView } from "react-icons/ai";
 import { CiCircleCheck } from "react-icons/ci";
 import { PqrServices } from "../../services/pqrServices";
 
