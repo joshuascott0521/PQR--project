@@ -9,15 +9,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("userData");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    if (storedToken && storedUser) {
+    setUser(JSON.parse(storedUser));
+  }
   }, []);
 
   const login = async (email: string, password: string) => {
     try {
       const response = await loginService({ email, password });
+
+      // Guarda el token y los datos del usuario
+      localStorage.setItem("token", response.token); // o como se llame
+      localStorage.setItem("userData", JSON.stringify(response.userData));
+
       setUser(response.userData);
       navigate("/dashboard");
     } catch (error) {
@@ -25,6 +31,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw error;
     }
   };
+
+
 
   const logout = () => {
     setUser(null);

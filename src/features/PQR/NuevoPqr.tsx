@@ -7,6 +7,8 @@ import { List, File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { CreatePqr, Municipio, departamento, tipoCliente, TipoPqr, ArchivoSubido } from "../../interfaces/pqrInterfaces";
 import { Origen, PqrServices, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
+import toast from "react-hot-toast";
+import { mostrarAlertaConfirmacion, mostrarAlertaExito } from "../../libs/alerts";
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
@@ -18,6 +20,7 @@ const NuevoPqr = () => {
   const [listaMunicipios, setListaMunicipios] = useState<Municipio[]>([])
   const [tipoPQRListado, setTipoPQRListado] = useState<TipoPqr[]>([])
   const [origen, setOrigen] = useState<string[]>([])
+  const [errores, setErrores] = useState<{ [key: string]: boolean }>({});
 
   const [formData, setFormData] = useState<CreatePqr>({
     documentoCliente: "",
@@ -78,7 +81,7 @@ const NuevoPqr = () => {
           departamentoCod: 0,
           municipioCod: 0,
           radicado: "",
-          fecha: new Date().toISOString(),
+          fecha: "",
           tipoPQRId: "",
           origen: "",
           asunto: "",
@@ -100,7 +103,25 @@ const NuevoPqr = () => {
 
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
-    setArchivos((prev) => [...prev, ...nuevos]);
+
+    // Límite de cantidad de archivos
+    if (archivos.length + nuevos.length > 5) {
+      alert("Solo puedes subir hasta 5 archivos.");
+      return;
+    }
+
+    // Límite de tamaño (x MB = x * 1024 * 1024 bytes)
+    const size = 5;
+    const maxSizeBytes = size * 1024 * 1024;
+    const archivosValidos = nuevos.filter((file) => {
+      if (file.size > maxSizeBytes) {
+        alert(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    setArchivos((prev) => [...prev, ...archivosValidos]);
     setInputKey((prev) => prev + 1); // fuerza rerender del input
   };
 
@@ -114,8 +135,115 @@ const NuevoPqr = () => {
     navigate("/dashboard");
   };
 
+  const validateForm = () => {
+
+
+    if (!formData.documentoCliente.trim()) {
+      toast.error("Por favor ingresa el documento del cliente.");
+      setErrores({ documentoCliente: true });
+      return false;
+    }
+    if (!formData.nombreCliente.trim()) {
+      toast.error("Por favor ingresa el nombre completo del cliente.");
+      setErrores({ nombreCliente: true });
+      return false
+    }
+    if (!formData.tipoClienteId) {
+      toast.error("Por favor selecciona el tipo de cliente.");
+      setErrores({ tipoClienteId: true });
+      return false
+    }
+
+    if (!formData.email.trim()) {
+      toast.error("Por favor ingresa el correo electrónico.");
+      setErrores({ email: true });
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error("El correo electrónico no es válido.");
+      setErrores({ email: true });
+      return false;
+    }
+
+    if (!formData.celular.trim()) {
+      toast.error("Por favor ingresa el número de celular.");
+      setErrores({ celular: true });
+      return false
+    }
+
+    if (!formData.direccion.trim()) {
+      toast.error("Por favor ingresa la dirección.");
+      setErrores({ direccion: true });
+      return false
+    }
+
+    if (formData.departamentoCod === 0) {
+      toast.error("Selecciona un departamento.");
+      setErrores({ departamentoCod: true });
+      return false
+    }
+    if (formData.municipioCod === 0) {
+      toast.error("Selecciona un municipio.");
+      setErrores({ municipioCod: true });
+      return false
+    }
+
+    if (!formData.radicado?.trim()) {
+      toast.error("Por favor ingresa el radicado de la petición.");
+      setErrores({ radicado: true });
+      return false
+    }
+
+    if (!formData.fecha || formData.fecha.trim() === "") {
+      toast.error("Por favor ingresa la fecha de la petición.");
+      setErrores({ fecha: true });
+      return false;
+    }
+
+    if (!formData.tipoPQRId) {
+      toast.error("Por favor selecciona el tipo de petición.");
+      setErrores({ tipoPQRId: true });
+      return false
+    }
+
+    if (!formData.origen) {
+      toast.error("Por favor selecciona el origen de la petición.");
+      setErrores({ origen: true });
+      return false
+    }
+
+    if (!formData.asunto.trim()) {
+      toast.error("Por favor escribe un asunto para la solicitud.");
+      setErrores({ asunto: true });
+      return false
+    }
+    if (!formData.descripcion.trim()) {
+      toast.error("Por favor describe brevemente la solicitud.");
+      setErrores({ descripcion: true });
+      return false
+    }
+
+    if (archivos.length === 0) {
+      toast.error("Debes subir al menos un archivo de soporte.");
+      return false;
+    }
+
+    setErrores({});
+    return true;
+  };
+
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
+    const confirmado = await mostrarAlertaConfirmacion(
+          "¿Deseas enviar el PQR?",
+          "Una vez enviado, no podrás editarlo. Será procesado por la entidad correspondiente."
+        );
+        if (!confirmado) return;
 
     try {
 
@@ -144,7 +272,7 @@ const NuevoPqr = () => {
       });
 
       if (res.success) {
-        alert("PQR Registrado Exitosamente");
+        mostrarAlertaExito("¡PQR registrado exitosamente!");
         console.log("Respuesta PQR ✅✅✅✅", res.data)
         navigate("/dashboard");
       } else {
@@ -177,7 +305,7 @@ const NuevoPqr = () => {
                 <FloatingLabel
                   id="documentoCliente"
                   label="Documento Cliente"
-                  className="pr-12"
+                  className={`pr-12 ${errores.documentoCliente ? "border-red-500" : ""}`}
                   value={formData.documentoCliente}
                   onChange={(e) => setFormData((prev) => ({ ...prev, documentoCliente: e.target.value }))}
                 />
@@ -193,7 +321,7 @@ const NuevoPqr = () => {
               <FloatingLabel
                 id="nombresYApellidos"
                 label="Nombres y Apellidos"
-                className="w-lg"
+                className={`w-lg ${errores.nombreCliente ? "border-red-500" : ""}`}
                 value={formData.nombreCliente}
                 onChange={(e) => setFormData((prev) => ({ ...prev, nombreCliente: e.target.value }))}
               />
@@ -203,26 +331,27 @@ const NuevoPqr = () => {
                 onChange={(value) => setFormData(prev => ({ ...prev, tipoClienteId: value }))}
                 options={tipoCliente.map(tc => ({ value: tc.id, label: tc.nombre }))}
                 placeholder="Elige una opción"
+                className={`w-lg ${errores.tipoClienteId ? "border-red-500" : ""}`}
               />
 
               <FloatingLabel
                 id="email"
                 label="Email"
-                className="w-lg"
+                className={`w-lg ${errores.email ? "border-red-500" : ""}`}
                 value={formData.email}
                 onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
               />
               <FloatingLabel
                 id="celular"
                 label="Celular"
-                className="w-lg"
+                className={`w-lg ${errores.celular ? "border-red-500" : ""}`}
                 value={formData.celular}
                 onChange={(e) => setFormData((prev) => ({ ...prev, celular: e.target.value }))}
               />
               <FloatingLabel
                 id="direccion"
                 label="Dirección"
-                className="w-lg"
+                className={`w-lg ${errores.direccion ? "border-red-500" : ""}`}
                 value={formData.direccion}
                 onChange={(e) => setFormData((prev) => ({ ...prev, direccion: e.target.value }))}
               />
@@ -257,6 +386,7 @@ const NuevoPqr = () => {
                   value: dep.cod?.toString() || "",
                   label: dep.nombre || ""
                 }))}
+                className={`w-lg ${errores.departamentoCod ? "border-red-500" : ""}`}
               />
               <FloatingSelect
                 label="Municipio"
@@ -279,7 +409,7 @@ const NuevoPqr = () => {
                     }));
                   }
                 }}
-                className="w-full"
+                className={`w-full ${errores.municipioCod ? "border-red-500" : ""}`}
               />
             </div>
             <h2 className="text-xl font-semibold my-2">Datos del PQR</h2>
@@ -288,7 +418,7 @@ const NuevoPqr = () => {
               <FloatingLabel
                 id="noRadicado"
                 label="No. Radicado"
-                className="w-lg"
+                className={`w-lg ${errores.radicado ? "border-red-500" : ""}`}
                 value={formData.radicado}
                 onChange={(e) => setFormData((prev) => ({ ...prev, radicado: e.target.value }))}
               />
@@ -297,7 +427,7 @@ const NuevoPqr = () => {
                 label="Fecha"
                 type="date"
                 max={hoy}
-                className="w-lg"
+                className={`w-lg ${errores.fecha ? "border-red-500" : ""}`}
                 value={formData.fecha}
                 onChange={(e) => setFormData((prev) => ({ ...prev, fecha: e.target.value }))}
               />
@@ -308,6 +438,7 @@ const NuevoPqr = () => {
                 onChange={(value) => setFormData(prev => ({ ...prev, tipoPQRId: value }))}
                 options={tipoPQRListado.map(tc => ({ value: tc.id, label: tc.nombre }))}
                 placeholder="Elige una opción"
+                className={`w-lg ${errores.tipoPQRId ? "border-red-500" : ""}`}
               />
 
               <FloatingSelect
@@ -319,6 +450,7 @@ const NuevoPqr = () => {
                   label: origen
                 }))}
                 placeholder="Seleccionar Origen"
+                className={`w-lg ${errores.origen ? "border-red-500" : ""}`}
               />
             </div>
             <div className="w-full flex items-center gap-3 mt-2">
@@ -334,6 +466,7 @@ const NuevoPqr = () => {
                   label="Asunto"
                   value={formData.asunto}
                   onChange={(e) => setFormData((prev) => ({ ...prev, asunto: e.target.value }))}
+                  className={`${errores.asunto ? "border-red-500" : ""}`}
                 />
               </div>
 
@@ -343,27 +476,16 @@ const NuevoPqr = () => {
               </div>
             </div>
             <div className="mt-2">
-              <div className="relative w-full">
-                <textarea
-                  id="descripcion"
-                  name="descripcion"
-                  value={formData.descripcion}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, descripcion: e.target.value }))
-                  }
-                  rows={3}
-                  placeholder=" "
-                  className="peer w-full border border-gray-300 rounded-lg p-2 pt-5 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <label
-                  htmlFor="descripcion"
-                  className="absolute left-2 top-2 text-xs text-gray-500 transition-all
-      peer-placeholder-shown:top-3 peer-placeholder-shown:text-sm peer-placeholder-shown:text-gray-400
-      peer-focus:top-2 peer-focus:text-xs peer-focus:text-blue-500"
-                >
-                  Descripción
-                </label>
-              </div>
+             <textarea
+                        id="descripcion"
+                        name="descripcion"
+                        value={formData.descripcion}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, descripcion: e.target.value }))}
+                        rows={4}
+                        placeholder="Descripción"
+                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                          }`}
+                      />
             </div>
             <div className="space-y-3 mt-4">
               {/* Lista de archivos */}
