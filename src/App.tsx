@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import Login from "./pages/login/Login";
 import Dashboard from "./pages/Dashboard/dashboard"; // Tu layout
@@ -18,6 +18,7 @@ import Anulado from "./features/PQR/Anulado";
 import NuevoPqr from "./features/PQR/NuevoPqr";
 
 import Portal from "./pages/portal";
+import PrivateRoute from "./components/PrivateRoutes";
 // import LoginFrm from "./features/Usuarios/LoginFrm"; // ejemplo
 // Agrega más rutas internas según tus componentes
 
@@ -40,26 +41,29 @@ function App() {
       />
       <Routes>
         {/* Ruta pública */}
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Rutas protegidas bajo el layout Dashboard */}
-        <Route path="/dashboard" element={<Dashboard />}>
-          {/* <Route index element={<div>Inicio (Dashboard)</div>} /> */}
-          <Route path="vencidos" element={<Vencidos />} />
-          <Route path="por-vencer" element={<PorVencer />} />
-          <Route path="a-tiempo" element={<ATiempo />} />
-          <Route path="registrados" element={<Registrado />} />
-          <Route path="asignados" element={<Asignado />} />
-          <Route path="PQR/detalle" element={<PqrData />} />
-          <Route path="en-proceso" element={<EnProceso />} />
-          <Route path="en-espera" element={<EnEspera />} />
-          <Route path="finalizado" element={<Finalizado />} />
-          <Route path="anulado" element={<Anulado />} />
-          <Route path="nuevo-pqr" element={<NuevoPqr />} />
-          {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
-          {/* Más rutas aquí */}
+        <Route element={<PrivateRoute />}>
+          {/* Rutas protegidas bajo el layout Dashboard */}
+          <Route path="/dashboard" element={<Dashboard />}>
+            {/* <Route index element={<div>Inicio (Dashboard)</div>} /> */}
+            <Route path="vencidos" element={<Vencidos />} />
+            <Route path="por-vencer" element={<PorVencer />} />
+            <Route path="a-tiempo" element={<ATiempo />} />
+            <Route path="registrados" element={<Registrado />} />
+            <Route path="asignados" element={<Asignado />} />
+            <Route path="PQR/detalle" element={<PqrData />} />
+            <Route path="en-proceso" element={<EnProceso />} />
+            <Route path="en-espera" element={<EnEspera />} />
+            <Route path="finalizado" element={<Finalizado />} />
+            <Route path="anulado" element={<Anulado />} />
+            <Route path="nuevo-pqr" element={<NuevoPqr />} />
+            {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
+            {/* Más rutas aquí */}
+          </Route>
         </Route>
-        <Route path="portal-pqr" element = {<Portal />}/>
+        <Route path="portal-pqr" element={<Portal />} />
       </Routes>
     </AuthProvider>
   );

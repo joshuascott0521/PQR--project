@@ -19,8 +19,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await loginService({ email, password });
       setUser(response.userData);
-      console.log("paso de aqui pa dormir");
-
       navigate("/dashboard");
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
