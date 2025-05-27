@@ -22,22 +22,33 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
           <div className="flex flex-col items-start justify-center">
             <p className="mb-1 text-gray-900 text-xs font-normal">
               <span className="font-normal text-base"># Consecutivo: </span>
-              <span className="font-semibold text-base">{pqr.consecutivo}</span>
+              <span
+                className="font-semibold text-base "
+                title="{pqr.consecutivo}"
+              >
+                {pqr.consecutivo}
+              </span>
             </p>
-            <p className="font-semibold text-base whitespace-nowrap">
+            <p
+              className="font-semibold text-base whitespace-nowrap text-ellipsis truncate w-full"
+              title={pqr.asunto}
+            >
               Asunto: {pqr.asunto}
             </p>
           </div>
           <div className="space-y-1 text-gray-600 text-xs">
-            <p className="flex items-center gap-1 text-base whitespace-nowrap">
+            <p className="flex items-center gap-1 text-base whitespace-nowrap text-ellipsis truncate w-full">
               <i className="far fa-user text-gray-400"></i>
               Cliente {pqr.documentoCliente}{" "}
-              <span className="font-semibold text-base">
+              <span
+                className="font-semibold text-base"
+                title={pqr.nombreCliente}
+              >
                 {pqr.nombreCliente}
               </span>
             </p>
             <p className="flex items-center gap-1 text-base whitespace-nowrap">
-              Tipo: {pqr.nombreTipoPQR}
+              Fecha de ingreso: {pqr.fecha}
             </p>
           </div>
           <div className="flex flex-col items-start justify-between text-gray-900 text-xs font-normal space-y-1 min-w-[160px]">

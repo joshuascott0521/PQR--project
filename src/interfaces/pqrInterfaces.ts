@@ -8,7 +8,7 @@ export interface CreatePqr {
   departamentoCod: number;
   municipioCod: number;
   radicado?: string;
-  fecha: string;
+  fecha?: string;
   tipoPQRId: string;
   origen: string;
   asunto: string;
@@ -16,7 +16,6 @@ export interface CreatePqr {
   adjuntos: Adjunto[];
   usuarioId: string | null;
 }
-
 
 export interface Pqr {
   id: string;
@@ -37,6 +36,7 @@ export interface Pqr {
   diasRestantes: number;
   estadoVencimiento: string;
   colorHex: string;
+  fecha: string;
 }
 
 export interface GetPqr {
@@ -60,7 +60,6 @@ export interface GetPqr {
   colorHex: string;
 }
 
-
 export interface Adjunto {
   item: number;
   nombre: string;
@@ -71,27 +70,25 @@ export interface Adjunto {
 export interface TipoPqr {
   id: string;
   nombre: string;
-  dias: number
+  dias: number;
   tipodias: string;
-  estado: number
+  estado: number;
 }
 
 export interface tipoCliente {
   id: string;
   nombre: string;
-  estado: number
+  estado: number;
 }
-
-
 
 export interface departamento {
   cod: number;
-  nombre: string
+  nombre: string;
 }
 
 export interface Municipio {
   cod: number;
-  nombre: string
+  nombre: string;
 }
 
 export interface ArchivoSubido {
