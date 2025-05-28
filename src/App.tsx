@@ -65,7 +65,7 @@ function App() {
             <Route path="admin/cliente" element={<Clientes />} />
             <Route path="/dashboard/PQR/detalle/:id" element={<PqrData />} />
 
-            <Route path="cliente/detalle" element={<ClienteDetalle />} />
+            <Route path="/dashboard/cliente/detalle/:id" element={<ClienteDetalle />} />
             {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
             {/* Más rutas aquí */}
           </Route>

@@ -155,3 +155,16 @@ export interface Tercero {
   nombre?: string;
   codigoColorFondo?: string;
 }
+
+export interface Cliente {
+  id: string,
+  documento: string,
+  nombre: string,
+  email: string,
+  celular: string,
+  direccion: string,
+  departamentoCod?: 0,
+  municipioCod?: 0,
+  tipoClienteId: string
+  tiponame?: string
+}

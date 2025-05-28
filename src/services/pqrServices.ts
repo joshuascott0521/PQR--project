@@ -2,6 +2,7 @@ import apiClient from "../api/apiClient";
 import type {
   ApiResponse,
   ArchivoSubido,
+  Cliente,
   CreatePqr,
   departamento,
   Municipio,
@@ -167,6 +168,29 @@ export const PqrServices = {
       };
     }
   },
+
+  getByDocumento: async ({
+    doc,
+    page,
+    size,
+  }: GetPqrParams & { doc: string }): Promise<ApiResponse<Pqr[]>> => {
+    try {
+      const response = await apiClient.get("/PQR/GetByFilterPQR", {
+        params: {
+          doc,
+          pagenumber: page,
+          pagesize: size,
+        }
+      })
+      return {success: true, data: response.data}
+    }catch(error: any){
+      return{
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener PQR del Cliente"
+      }
+    }
+  }
 };
 
 export const Origen = {
@@ -186,3 +210,31 @@ export const Origen = {
     }
   },
 };
+
+export const ClientesServices = {
+  getAll: async (): Promise<ApiResponse<Cliente[]>> => {
+    try {
+      const response = await apiClient.get("/Cliente/ObtenerAllCliente");
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Clientes"
+      }
+    }
+  },
+
+  getById: async (id: string): Promise<ApiResponse<Cliente>> => {
+    try {
+      const response = await apiClient.get(`Cliente/ObtenerItemCliente/${id}`)
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Cliente,
+        error: error.response?.data?.message || "Error al cargar Clientes"
+      }
+    }
+  }
+}
