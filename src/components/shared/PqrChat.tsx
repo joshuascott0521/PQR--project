@@ -15,38 +15,59 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
               </div>
               <div>
                 <p className="font-semibold text-sm leading-tight text-gray-900">
-                  {/* Juancho de la Espriella (Cliente) */}
-                  {/* {detalles?.nombreEvento} */}
-                  {detalle.nombreEvento}
+                  {detalle.tercero.nombre +
+                    " " +
+                    "(" +
+                    detalle.tercero.tipoTercero +
+                    ")"}
                 </p>
                 <p className="text-xs text-gray-700 leading-tight">
-                  20/11/2024 : 8:55 AM
+                  {detalle.fechaCreacion}
                 </p>
               </div>
             </div>
             <div>
-              <span className="inline-block bg-gray-300 text-gray-800 text-xs font-normal rounded-full px-4 py-1">
-                Registrado
+              <span
+                className="inline-block bg-gray-300 text-gray-800 text-xs font-normal rounded-full px-4 py-1"
+                style={{ backgroundColor: detalle.codigoColorEstado }}
+              >
+                {detalle.estado}
               </span>
             </div>
           </div>
-          <div className="bg-green-50 rounded-md p-4 text-gray-900 text-sm font-normal whitespace-pre-line ml-9">
-            {/* {pqr?.asunto}c */}cwcqwcdcdv vfedvesfv
+          <div
+            className=" rounded-md p-4 text-gray-900 text-sm font-normal whitespace-pre-line ml-9 opacity-80"
+            style={{
+              backgroundColor:
+                detalle.tercero.tipoTercero === "Cliente"
+                  ? "#e2ffed"
+                  : detalle.tercero.tipoTercero === "Funcionario"
+                  ? "#fff1dc"
+                  : "gray",
+            }}
+          >
+            {/* {pqr?.asunto}c */}
+            {detalle.descripcion}
             <div className="mt-4 flex space-x-3">
-              <button
-                className="flex items-center space-x-2 bg-white border border-gray-300 rounded-md px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
-                type="button"
-              >
-                <i className="far fa-file-pdf text-gray-600 text-sm leading-none"></i>
-                <span className="leading-none">Soporte del pago.pdf</span>
-              </button>
-              <button
-                className="flex items-center space-x-2 bg-white border border-gray-300 rounded-md px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
-                type="button"
-              >
-                <i className="far fa-file-pdf text-gray-600 text-sm leading-none"></i>
-                <span className="leading-none">Documento de Id...pdf</span>
-              </button>
+              {detalle.adjuntos?.map((archivo) => (
+                <button
+                  className="flex items-center space-x-2 bg-white border border-gray-300 rounded-md px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+                  type="button"
+                  key={archivo.item}
+                  onClick={() => {
+                    const link = document.createElement("a");
+                    link.href = archivo.urlArchivo;
+                    link.download = archivo.nombre;
+                    // link.target = "_blank";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                >
+                  <i className="far fa-file-pdf text-gray-600 text-sm leading-none"></i>
+                  <span className="leading-none">{archivo.nombre}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>

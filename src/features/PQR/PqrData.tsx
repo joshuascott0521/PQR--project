@@ -48,7 +48,7 @@ const PqrData = () => {
         <div className="flex  gap-1 rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)] px-6 py-4 max-w-full  flex-row items-center">
           <div className="mr-[10px]">
             <div
-              className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-black font-semibold text-2xl flex-shrink-0"
+              className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-black font-semibold text-lg flex-shrink-0"
               aria-label="Number 13"
             >
               {pqr?.diasRestantes}
@@ -77,8 +77,14 @@ const PqrData = () => {
                   </span>
                 </label>
               </div>
-              <div
+              {/* <div
                 className="px-4 py-1 rounded-full bg-gray-400 text-gray-900 text-sm font-normal"
+                style={{ backgroundColor: pqr?.codigoColorEstado }}
+              >
+                {pqr?.estado}
+              </div> */}
+              <div
+                className="px-4 w-full flex justify-center max-w-32 py-1 rounded-full bg-gray-400 text-gray-900 text-sm font-normal whitespace-nowrap overflow-hidden text-ellipsis"
                 style={{ backgroundColor: pqr?.codigoColorEstado }}
               >
                 {pqr?.estado}
@@ -121,15 +127,6 @@ const PqrData = () => {
         <div className="border border-gray-300 rounded-md p-4  mx-auto max-h-[317px] h-full mt-3">
           <form className="space-y-4">
             <div className="flex flex-wrap gap-6 items-center">
-              {/* <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                Evento:
-                <select
-                  name="evento"
-                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  <option>Asignar</option>
-                </select>
-              </label> */}
               <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
                 Evento:{" "}
               </label>
@@ -143,12 +140,6 @@ const PqrData = () => {
 
               <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
                 Asignar a:
-                {/* <select
-                  name="asignar"
-                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  <option>Junior Euclides</option>
-                </select> */}
               </label>
               <FloatingSelectLP
                 // label="Origen"

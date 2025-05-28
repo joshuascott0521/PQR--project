@@ -46,7 +46,6 @@ export interface DetallePqr {
   asunto: string;
   tipoPQRId: string;
   nombreTipoPQR: string;
-  estado: string;
   usuarioId: string;
   nombreFuncionario: string;
   documentoFuncionario: string;
@@ -60,6 +59,7 @@ export interface DetallePqr {
   fecha: string;
   tipoPQRNombre?: string;
   codigoColorEstado?: string;
+  estado?: string;
   detalle?: Detalle[];
   funcionario?: Funcionario;
 }
@@ -147,7 +147,8 @@ export interface Detalle {
   descripcion?: string;
   codigoColorEstado?: string;
   tercero: Tercero;
-  abjuntos: Adjunto[];
+  estado?: string;
+  adjuntos: Adjunto[];
 }
 export interface Tercero {
   tipoTercero?: string;
