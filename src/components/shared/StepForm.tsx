@@ -505,10 +505,10 @@ export default function StepForm() {
                   {/* Botón de subir archivos */}
                   <label
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-    ${archivos.length >= 5
+                     ${archivos.length >= 5
                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                         : "bg-emerald-400 text-white hover:bg-emerald-500"}
-  `}
+                    `}
                   >
                     <Paperclip className="w-4 h-4" />
                     {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}
