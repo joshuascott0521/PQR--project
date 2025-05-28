@@ -1,4 +1,5 @@
 import type { DetallePqr } from "../../interfaces/pqrInterfaces";
+import { ArchivoServices } from "../../services/pqrServices";
 
 const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
   console.log(detalles);
@@ -48,27 +49,47 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
           >
             {/* {pqr?.asunto}c */}
             {detalle.descripcion}
-            <div className="mt-4 flex space-x-3">
-              {detalle.adjuntos?.map((archivo) => (
-                <button
-                  className="flex items-center space-x-2 bg-white border border-gray-300 rounded-md px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
-                  type="button"
-                  key={archivo.item}
-                  onClick={() => {
-                    const link = document.createElement("a");
-                    link.href = archivo.urlArchivo;
-                    link.download = archivo.nombre;
-                    // link.target = "_blank";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                  }}
-                >
-                  <i className="far fa-file-pdf text-gray-600 text-sm leading-none"></i>
-                  <span className="leading-none">{archivo.nombre}</span>
-                </button>
-              ))}
-            </div>
+            {detalle.terceroAsignado && (
+              <div className="flex max-w-96 mt-2 gap-3">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-400 text-yellow-700 bg-opacity-50">
+                  <i className="fas fa-user"></i>
+                </div>
+                <div>
+                  {detalle.terceroAsignado.accion && (
+                    <p className="text-xs text-gray-700 leading-tight">
+                      {detalle.terceroAsignado.accion}
+                    </p>
+                  )}
+                  <p className="font-semibold text-sm leading-tight text-gray-900">
+                    {`${detalle.terceroAsignado.nombre} (${detalle.terceroAsignado.tipoTercero})`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {detalle.adjuntos?.length > 0 && (
+              <div className="mt-4 flex space-x-3">
+                {detalle.adjuntos.map((archivo) => (
+                  <button
+                    className="flex items-center space-x-2 bg-white border border-gray-300 rounded-md px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
+                    type="button"
+                    key={archivo.item}
+                    onClick={async () => {
+                      const result = await ArchivoServices.descargar(
+                        archivo.urlArchivo,
+                        archivo.nombre
+                      );
+                      if (!result.success) {
+                        alert("Error al descargar el archivo"); // o usa un toast si tienes uno
+                      }
+                    }}
+                  >
+                    <i className="far fa-file-pdf text-gray-600 text-sm leading-none"></i>
+                    <span className="leading-none">{archivo.nombre}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       ))}

@@ -1,17 +1,28 @@
-import { FloatingSelectLP } from "../../components/shared/FloatingSelectLP";
-import PqrChat from "../../components/shared/PqrChat";
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { PqrServices } from "../../services/pqrServices";
-import type { DetallePqr } from "../../interfaces/pqrInterfaces";
+import { FloatingSelectLP } from "../../components/shared/FloatingSelectLP";
+import PqrChat from "../../components/shared/PqrChat";
+import { PqrServices, typeSelectComents } from "../../services/pqrServices";
+import type { DetallePqr, Evento } from "../../interfaces/pqrInterfaces";
 
 const PqrData = () => {
-  const [origen, setOrigen] = useState("");
-  const [origen2, setOrigen2] = useState("");
   const { id } = useParams();
+
   const [pqr, setPqr] = useState<DetallePqr | null>(null);
   const [, setError] = useState<string>("");
+
+  // Lista de eventos
+  const [eventos, setEventos] = useState<Evento[]>([]);
+  // Id del evento seleccionado (string)
+  const [eventoSeleccionado, setEventoSeleccionado] = useState<string>("");
+
+  const [origen2, setOrigen2] = useState("");
+
+  // Opciones para el select (label/value)
+  const opcionesEventos = eventos.map((evento) => ({
+    label: evento.nombre,
+    value: evento.id,
+  }));
 
   useEffect(() => {
     const fetchPqr = async () => {
@@ -23,28 +34,19 @@ const PqrData = () => {
       }
     };
 
+    const fetchEventos = async () => {
+      const response = await typeSelectComents.getEvento();
+      if (response.success && response.data) {
+        setEventos(response.data);
+      }
+    };
+
+    fetchEventos();
     fetchPqr();
   }, [id]);
-  console.log("🤖🤖🤖", pqr);
-
-  const origenes = [
-    { value: "web", label: "Portal Web" },
-    { value: "presencial", label: "Atención presencial" },
-    { value: "telefono", label: "Llamada telefónica" },
-    { value: "correo", label: "Correo electrónico" },
-    { value: "redes", label: "Redes sociales" },
-  ];
-  const origenes2 = [
-    { value: "web", label: "Portal Web" },
-    { value: "presencial", label: "Atención presencial" },
-    { value: "telefono", label: "Llamada telefónica" },
-    { value: "correo", label: "Correo electrónico" },
-    { value: "redes", label: "Redes sociales" },
-  ];
-
   return (
     <>
-      <div>
+      <div className="h-full max-h-[928px]">
         <div className="flex  gap-1 rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)] px-6 py-4 max-w-full  flex-row items-center">
           <div className="mr-[10px]">
             <div
@@ -77,12 +79,6 @@ const PqrData = () => {
                   </span>
                 </label>
               </div>
-              {/* <div
-                className="px-4 py-1 rounded-full bg-gray-400 text-gray-900 text-sm font-normal"
-                style={{ backgroundColor: pqr?.codigoColorEstado }}
-              >
-                {pqr?.estado}
-              </div> */}
               <div
                 className="px-4 w-full flex justify-center max-w-32 py-1 rounded-full bg-gray-400 text-gray-900 text-sm font-normal whitespace-nowrap overflow-hidden text-ellipsis"
                 style={{ backgroundColor: pqr?.codigoColorEstado }}
@@ -115,26 +111,24 @@ const PqrData = () => {
             </div>
           </div>
         </div>
-        <div className="flex mt-5 flex-col max-h-[300px] overflow-y-auto">
+        <div className="flex mt-5 flex-col max-h-[288px] overflow-y-auto h-full">
           {/* <PqrChat pqr={pqr?.detalles} /> */}
           {/* <PqrChat detalles={pqr?.detalle} /> */}
           <div className="space-y-4">
             {pqr?.detalle && <PqrChat key={pqr.id} detalles={pqr.detalle} />}
           </div>
-
-          <div className="space-y-4"></div>
         </div>
-        <div className="border border-gray-300 rounded-md p-4  mx-auto max-h-[317px] h-full mt-3">
+        <div className="border border-gray-300 rounded-md p-4  mx-auto  h-full mt-3 max-h-[280px]">
           <form className="space-y-4">
             <div className="flex flex-wrap gap-6 items-center">
               <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
                 Evento:{" "}
               </label>
+
               <FloatingSelectLP
-                // label="Origen"
-                value={origen}
-                onChange={setOrigen}
-                options={origenes}
+                value={eventoSeleccionado} // <-- valor seleccionado string
+                onChange={setEventoSeleccionado} // <-- recibe string y setea
+                options={opcionesEventos} // <-- opciones para el select
                 showLabelPlaceholder={false}
               />
 
@@ -142,10 +136,15 @@ const PqrData = () => {
                 Asignar a:
               </label>
               <FloatingSelectLP
-                // label="Origen"
                 value={origen2}
                 onChange={setOrigen2}
-                options={origenes2}
+                options={[
+                  { value: "web", label: "Portal Web" },
+                  { value: "presencial", label: "Atención presencial" },
+                  { value: "telefono", label: "Llamada telefónica" },
+                  { value: "correo", label: "Correo electrónico" },
+                  { value: "redes", label: "Redes sociales" },
+                ]}
                 showLabelPlaceholder={false}
               />
             </div>

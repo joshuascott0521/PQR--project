@@ -148,7 +148,9 @@ export interface Detalle {
   descripcion?: string;
   codigoColorEstado?: string;
   tercero: Tercero;
-  abjuntos: Adjunto[];
+  terceroAsignado: terceroAsignado;
+  estado?: string;
+  adjuntos: Adjunto[];
 }
 export interface Tercero {
   tipoTercero?: string;
@@ -156,16 +158,31 @@ export interface Tercero {
   nombre?: string;
   codigoColorFondo?: string;
 }
+export interface terceroAsignado {
+  tipoTercero?: string;
+  id?: string;
+  nombre?: string;
+  image?: string;
+  codigoColorFondo?: string;
+  accion?: string;
+}
 
 export interface Cliente {
-  id: string,
-  documento: string,
-  nombre: string,
-  email: string,
-  celular: string,
-  direccion: string,
-  departamentoCod: number,
-  municipioCod: number,
-  tipoClienteId: string
-  tiponame?: string
+  id: string;
+  documento: string;
+  nombre: string;
+  email: string;
+  celular: string;
+  direccion: string;
+  departamentoCod?: 0;
+  municipioCod?: 0;
+  tipoClienteId: string;
+  tiponame?: string;
+}
+
+export interface Evento {
+  id?: string;
+  nombre?: string;
+  accion?: string;
+  obligadoAnexo?: boolean;
 }

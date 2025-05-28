@@ -17,6 +17,21 @@ export interface GetPqrParams {
   estadoProceso?: string;
   estadoVencimiento?: string;
 }
+export const typeSelectComents = {
+  getEvento: async (): Promise<ApiResponse<tipoCliente[]>> => {
+    try {
+      const response = await apiClient.get("PQREvento/Get");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message || "Error al obtener tipos de clientes",
+      };
+    }
+  },
+};
 
 export const TipoClienteServices = {
   getall: async (): Promise<ApiResponse<tipoCliente[]>> => {
@@ -180,17 +195,18 @@ export const PqrServices = {
           valueFilter: value,
           pagenumber: page,
           pagesize: size,
-        }
-      })
-      return { success: true, data: response.data }
+        },
+      });
+      return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al obtener PQRs filtrados"
-      }
+        error:
+          error.response?.data?.message || "Error al obtener PQR del Cliente",
+      };
     }
-  }
+  },
 };
 
 export const Origen = {
@@ -215,52 +231,61 @@ export const ClientesServices = {
   getAll: async (): Promise<ApiResponse<Cliente[]>> => {
     try {
       const response = await apiClient.get("/Cliente/ObtenerAllCliente");
-      return { success: true, data: response.data }
+      return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al cargar Clientes"
-      }
+        error: error.response?.data?.message || "Error al cargar Clientes",
+      };
     }
   },
 
   getById: async (id: string): Promise<ApiResponse<Cliente>> => {
     try {
-      const response = await apiClient.get(`Cliente/ObtenerItemCliente/${id}`)
-      return { success: true, data: response.data }
+      const response = await apiClient.get(`Cliente/ObtenerItemCliente/${id}`);
+      return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: {} as Cliente,
-        error: error.response?.data?.message || "Error al cargar Clientes"
-      }
+        error: error.response?.data?.message || "Error al cargar Clientes",
+      };
     }
   },
-
-  getByDoc: async (doc: string): Promise<ApiResponse<Cliente>> => {
+};
+export const ArchivoServices = {
+  descargar: async (
+    urlArchivo: string,
+    nombreArchivo: string
+  ): Promise<ApiResponse<void>> => {
     try {
-      const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`)
-      return { success: true, data: response.data }
+      const encodedUrl = encodeURIComponent(urlArchivo);
+      const response = await apiClient.get(
+        `PQR/descargar?urlArchivo=${encodedUrl}`,
+        {
+          responseType: "blob", // 👈 esto es clave
+        }
+      );
+
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = nombreArchivo;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      return { success: true, data: undefined };
     } catch (error: any) {
       return {
         success: false,
-        data: {} as Cliente,
-        error: error.response?.data?.message || "Error al cargar cliente por documento"
-      }
+        data: undefined,
+        error: error.message || "Error al descargar el archivo",
+      };
     }
   },
-
-  update: async (cliente: Cliente): Promise<ApiResponse<Cliente>> => {
-    try {
-      const response = await apiClient.put("Cliente/ActualizarItemCliente", cliente)
-      return { success: true, data: response.data }
-    } catch (error: any) {
-      return {
-        success: false,
-        data: {} as Cliente,
-        error: error.response?.data?.message || "Error al actualizar Cliente"
-      }
-    }
-  }
-}
+};
