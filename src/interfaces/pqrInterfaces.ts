@@ -124,6 +124,7 @@ export interface ArchivoSubido {
 }
 
 export interface ApiResponse<T> {
+  length?: number;
   success: boolean;
   data: T;
   message?: string;
@@ -147,8 +148,7 @@ export interface Detalle {
   descripcion?: string;
   codigoColorEstado?: string;
   tercero: Tercero;
-  estado?: string;
-  adjuntos: Adjunto[];
+  abjuntos: Adjunto[];
 }
 export interface Tercero {
   tipoTercero?: string;
@@ -164,8 +164,8 @@ export interface Cliente {
   email: string,
   celular: string,
   direccion: string,
-  departamentoCod?: 0,
-  municipioCod?: 0,
+  departamentoCod: number,
+  municipioCod: number,
   tipoClienteId: string
   tiponame?: string
 }

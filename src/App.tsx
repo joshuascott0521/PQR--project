@@ -21,6 +21,8 @@ import Portal from "./pages/portal";
 import PrivateRoute from "./components/PrivateRoutes";
 import Clientes from "./features/Usuarios/Clientes";
 import ClienteDetalle from "./features/Usuarios/ClienteDetalle";
+import EditarCliente from "./features/Usuarios/EditarCliente";
+import ResultadosBusquedaPage from "./features/PQR/ResultadoBusquedaPg";
 // import PqrChat from "./components/shared/PqrChat";
 // import LoginFrm from "./features/Usuarios/LoginFrm"; // ejemplo
 // Agrega más rutas internas según tus componentes
@@ -64,8 +66,10 @@ function App() {
             <Route path="nuevo-pqr" element={<NuevoPqr />} />
             <Route path="admin/cliente" element={<Clientes />} />
             <Route path="/dashboard/PQR/detalle/:id" element={<PqrData />} />
-
             <Route path="/dashboard/cliente/detalle/:id" element={<ClienteDetalle />} />
+            <Route path="/dashboard/cliente/editar/:id" element={<EditarCliente />} />
+            <Route path="/dashboard/resultados-busqueda" element={<ResultadosBusquedaPage />} />
+
             {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
             {/* Más rutas aquí */}
           </Route>

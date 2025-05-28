@@ -87,7 +87,12 @@ const ClienteCard = ({ mostrarEditar = false, cliente }: ClienteCardProps) => {
         </div>
       </div>
       <div className="flex flex-wrap gap-3 items-center">
-        {mostrarEditar && <FaEdit size={30} color="#ffb700" />}
+        {mostrarEditar && 
+          <FaEdit
+            className="text-yellow-400 text-[30px] hover:text-yellow-500 cursor-pointer active:scale-90"
+            onClick={() => navigate(`/dashboard/cliente/editar/${cliente.id}`)}
+          />
+        }
       </div>
     </div>
   );

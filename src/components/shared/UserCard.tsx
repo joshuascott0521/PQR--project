@@ -5,60 +5,46 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="mb-5">
+    <div className="mb-5 w-full mx-auto max-w-7xl">
       <div
         onClick={() => navigate(`/dashboard/PQR/detalle/${pqr.id}`)}
-        className="mx-auto bg-white rounded-lg shadow-md border border-gray-200 flex items-center gap-6 p-4 sm:p-6 cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
+        className="bg-white rounded-lg shadow-md border border-gray-200 flex items-center gap-6 p-4 sm:p-6 cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
       >
+        {/* Días restantes */}
         <div className="flex-shrink-0">
           <div
-            className="w-[4.5rem] h-[4.5rem] rounded-full flex items-center justify-center text-white font-semibold text-3xl -ml-1"
+            className="w-[4.5rem] h-[4.5rem] rounded-full flex items-center justify-center text-white font-semibold text-3xl"
             style={{ backgroundColor: pqr.colorHex }}
           >
             {pqr.diasRestantes}
           </div>
         </div>
+
+        {/* Información */}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-y-1 text-gray-700 text-sm items-center gap-2.5">
-          <div className="flex flex-col items-start justify-center">
-            <p className="mb-1 text-gray-900 text-xs font-normal">
-              <span className="font-normal text-base"># Consecutivo: </span>
-              <span
-                className="font-semibold text-base "
-                title="{pqr.consecutivo}"
-              >
-                {pqr.consecutivo}
-              </span>
+          <div>
+            <p className="font-semibold">
+              # Consecutivo: <span className="font-normal">{pqr.consecutivo}</span>
             </p>
-            <p
-              className="font-semibold text-base whitespace-nowrap text-ellipsis truncate w-full"
-              title={pqr.asunto}
-            >
+            <p className="truncate" title={pqr.asunto}>
               Asunto: {pqr.asunto}
             </p>
+            <p>Radicado: {pqr.radicado}</p>
           </div>
-          <div className="space-y-1 text-gray-600 text-xs">
-            <p className="flex items-center gap-1 text-base whitespace-nowrap text-ellipsis truncate w-full">
-              <i className="far fa-user text-gray-400"></i>
-              Cliente {pqr.documentoCliente}{" "}
-              <span
-                className="font-semibold text-base"
-                title={pqr.nombreCliente}
-              >
-                {pqr.nombreCliente}
-              </span>
+
+          <div>
+            <p>
+              Cliente: {pqr.documentoCliente} - {pqr.nombreCliente}
             </p>
-            <p className="flex items-center gap-1 text-base whitespace-nowrap">
-              Fecha de ingreso: {pqr.fecha}
-            </p>
+            <p>Ingreso: {pqr.fecha}</p>
           </div>
-          <div className="flex flex-col items-start justify-between text-gray-900 text-xs font-normal space-y-1 min-w-[160px]">
-            <p className="font-semibold text-base">
-              Responsable: {pqr.nombreFuncionario}
-            </p>
-            <p className="text-[10px] text-base">
-              Estado del flujo:
+
+          <div>
+            <p>Responsable: {pqr.nombreFuncionario}</p>
+            <p>
+              Estado:{" "}
               <span
-                className="inline-block text-white rounded-full px-3 py-[2px] font-semibold leading-none ml-1 text-lg"
+                className="inline-block text-white rounded-full px-3 py-[2px] font-semibold text-xs"
                 style={{ backgroundColor: pqr.colorHex }}
               >
                 {pqr.estado}

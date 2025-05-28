@@ -18,7 +18,7 @@ export const FloatingLabel: React.FC<FloatingLabelProps> = ({
         id={id}
         type={type}
         placeholder=" "
-        className={`peer w-full h-10 border border-gray-300 rounded-lg px-3 pt-4 pb-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`peer w-full h-10 border border-gray-300 rounded-lg px-3 pt-4 pb-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 ${className}`}
         {...rest}
       />
       <label
@@ -29,7 +29,7 @@ export const FloatingLabel: React.FC<FloatingLabelProps> = ({
           peer-placeholder-shown:text-gray-400
           peer-focus:top-1
           peer-focus:text-xs
-          peer-focus:text-blue-500"
+          peer-focus:text-green-500"
       >
         {label}
       </label>

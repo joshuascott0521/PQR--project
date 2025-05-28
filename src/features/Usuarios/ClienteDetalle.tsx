@@ -4,6 +4,7 @@ import type { Cliente, Pqr } from "../../interfaces/pqrInterfaces";
 import { useEffect, useRef, useState } from "react";
 import { ClientesServices, PqrServices, TipoClienteServices } from "../../services/pqrServices";
 import ClienteCardSkeleton from "../../components/shared/ClienteCardSkeleton";
+import UserCard from "../../components/shared/UserCard";
 
 const ClienteDetalle = () => {
     const { id } = useParams();
@@ -69,22 +70,27 @@ const ClienteDetalle = () => {
 
     useEffect(() => {
         const fetchPqrs = async () => {
+            // No ejecutar si aún no se ha cargado el cliente
+            if (!cliente?.documento || !hasMore) return;
+
             setLoading(true);
             try {
-                
-
-                const data = await PqrServices.getByDocumento({
-                    usuid,
+                const response = await PqrServices.getByFilter({
+                    value: cliente.documento,
                     page: currentPage,
                     size: 10,
-                    estadoVencimiento: "Por vencer",
                 });
 
-                if (data.length < 10) {
+                if (!response.success) throw new Error(response.error);
+
+                const data = response.data;
+                console.log("Pruebitas", data)
+
+                if (Array.isArray(data) && data.length < 10) {
                     setHasMore(false);
                 }
 
-                // Eliminar duplicados usando el id
+
                 setPqrs((prev) => {
                     const combined = [...prev, ...data];
                     const unique = Array.from(
@@ -93,15 +99,14 @@ const ClienteDetalle = () => {
                     return unique;
                 });
             } catch (err) {
-                // setError("Error al cargar los PQRs");
-                console.error(err);
+                console.error("Error al cargar PQRs:", err);
             } finally {
                 setLoading(false);
             }
         };
 
         fetchPqrs();
-    }, [currentPage]);
+    }, [currentPage, cliente?.documento]);
 
     return (
         <div className="h-full flex flex-col">
@@ -124,8 +129,33 @@ const ClienteDetalle = () => {
                 <p>PQR Asociados (3)</p>
             </div>
 
-            <div className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg ">
-                {/* Aquí irán los UserCard */}
+            <div
+                className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg"
+                ref={scrollRef}
+            >
+                {error && <p className="text-red-600">{error}</p>}
+                {!loading && !error && pqrs.length === 0 && (
+                    <p className="text-center text-gray-500 mt-4">
+                        No hay PQRs por vencer.
+                    </p>
+                )}
+
+                <div className="space-y-4">
+                    {pqrs.map((pqr) => (
+                        <UserCard key={pqr.id} pqr={pqr} />
+                    ))}
+                </div>
+
+                {loading && (
+                    <p className="text-center text-gray-500 mt-4">
+                        Cargando más datos...
+                    </p>
+                )}
+                {!hasMore && (
+                    <p className="text-center text-gray-400 mt-4">
+                        No hay más resultados
+                    </p>
+                )}
             </div>
         </div>
     );

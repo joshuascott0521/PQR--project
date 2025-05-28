@@ -6,14 +6,18 @@ import { useEffect, useState } from "react";
 import { List, File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { CreatePqr, Municipio, departamento, tipoCliente, TipoPqr, ArchivoSubido } from "../../interfaces/pqrInterfaces";
-import { Origen, PqrServices, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
+import { ClientesServices, Origen, PqrServices, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
 import toast from "react-hot-toast";
 import { mostrarAlertaConfirmacion, mostrarAlertaExito } from "../../libs/alerts";
+import ClienteSkeleton from "../../components/shared/Spinner";
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const navigate = useNavigate();
   const hoy = new Date().toISOString().split("T")[0];
+
+  const [cargandoCliente, setCargandoCliente] = useState(false);
+
 
   const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([])
   const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>([]);
@@ -240,10 +244,10 @@ const NuevoPqr = () => {
     if (!validateForm()) return;
 
     const confirmado = await mostrarAlertaConfirmacion(
-          "¿Deseas enviar el PQR?",
-          "Una vez enviado, no podrás editarlo. Será procesado por la entidad correspondiente."
-        );
-        if (!confirmado) return;
+      "¿Deseas enviar el PQR?",
+      "Una vez enviado, no podrás editarlo. Será procesado por la entidad correspondiente."
+    );
+    if (!confirmado) return;
 
     try {
 
@@ -283,6 +287,49 @@ const NuevoPqr = () => {
     }
   };
 
+  const handleBuscarCliente = async () => {
+    if (!formData.documentoCliente.trim()) {
+      toast.error("Debes ingresar un documento para buscar.");
+      return;
+    }
+
+    setCargandoCliente(true); // <-- activar skeleton
+
+    try {
+      const res = await ClientesServices.getByDoc(formData.documentoCliente);
+      if (!res.success || !res.data) {
+        toast.error("No se encontró ningún cliente con ese documento.");
+        return;
+      }
+
+      const cliente = res.data;
+      setFormData((prev) => ({
+        ...prev,
+        nombreCliente: cliente.nombre,
+        tipoClienteId: cliente.tipoClienteId,
+        email: cliente.email,
+        celular: cliente.celular,
+        direccion: cliente.direccion,
+        departamentoCod: cliente.departamentoCod,
+        municipioCod: cliente.municipioCod,
+      }));
+
+      if (cliente.departamentoCod) {
+        const municipioRes = await RegionServices.getMun(cliente.departamentoCod);
+        if (municipioRes.success) {
+          setListaMunicipios(municipioRes.data);
+        }
+      }
+
+      toast.success("Cliente encontrado y datos cargados.");
+    } catch (error) {
+      console.error("Error al buscar cliente:", error);
+      toast.error("Hubo un error al buscar el cliente.");
+    } finally {
+      setCargandoCliente(false); // <-- desactivar skeleton
+    }
+  };
+
 
   return (
     <div className="h-full flex flex-col">
@@ -300,118 +347,123 @@ const NuevoPqr = () => {
             <h2 className="text-xl font-semibold mb-2">Datos del cliente</h2>
             <div className="border-b-2 border-gray-300 mb-4" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {/* Input con botón interno */}
-              <div className="relative w-full md:w-lg">
-                <FloatingLabel
-                  id="documentoCliente"
-                  label="Documento Cliente"
-                  className={`pr-12 ${errores.documentoCliente ? "border-red-500" : ""}`}
-                  value={formData.documentoCliente}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, documentoCliente: e.target.value }))}
-                />
-                {/* Boton en el campo documento */}
-                <button
-                  type="button"
-                  title="Buscar cliente"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black p-2 rounded-full hover:bg-gray-800 transition-colors"
-                >
-                  <FaSearch className="text-white text-lg" />
-                </button>
-              </div>
-              <FloatingLabel
-                id="nombresYApellidos"
-                label="Nombres y Apellidos"
-                className={`w-lg ${errores.nombreCliente ? "border-red-500" : ""}`}
-                value={formData.nombreCliente}
-                onChange={(e) => setFormData((prev) => ({ ...prev, nombreCliente: e.target.value }))}
-              />
-              <FloatingSelect
-                label="Tipo Cliente"
-                value={formData.tipoClienteId}
-                onChange={(value) => setFormData(prev => ({ ...prev, tipoClienteId: value }))}
-                options={tipoCliente.map(tc => ({ value: tc.id, label: tc.nombre }))}
-                placeholder="Elige una opción"
-                className={`w-lg ${errores.tipoClienteId ? "border-red-500" : ""}`}
-              />
+              {cargandoCliente ? (
+                <ClienteSkeleton />
+              ) : (
+                <>
+                  {/* Input con botón interno */}
+                  <div className="relative w-full md:w-lg">
+                    <FloatingLabel
+                      id="documentoCliente"
+                      label="Documento Cliente"
+                      className={`pr-12 ${errores.documentoCliente ? "border-red-500" : ""}`}
+                      value={formData.documentoCliente}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, documentoCliente: e.target.value }))}
+                    />
+                    {/* Boton en el campo documento */}
+                    <button
+                      type="button"
+                      title="Buscar cliente"
+                      onClick={handleBuscarCliente}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black p-2 rounded-full hover:bg-gray-800 transition-colors"
+                    >
+                      <FaSearch className="text-white text-lg" />
+                    </button>
+                  </div>
 
-              <FloatingLabel
-                id="email"
-                label="Email"
-                className={`w-lg ${errores.email ? "border-red-500" : ""}`}
-                value={formData.email}
-                onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-              />
-              <FloatingLabel
-                id="celular"
-                label="Celular"
-                className={`w-lg ${errores.celular ? "border-red-500" : ""}`}
-                value={formData.celular}
-                onChange={(e) => setFormData((prev) => ({ ...prev, celular: e.target.value }))}
-              />
-              <FloatingLabel
-                id="direccion"
-                label="Dirección"
-                className={`w-lg ${errores.direccion ? "border-red-500" : ""}`}
-                value={formData.direccion}
-                onChange={(e) => setFormData((prev) => ({ ...prev, direccion: e.target.value }))}
-              />
-              <FloatingSelect
-                label="Departamento"
-                value={
-                  formData.departamentoCod === 0 ? "" : formData.departamentoCod.toString()
-                }
-                placeholder="Seleccionar Departamento"
-                onChange={async (value) => {
-                  const cod = Number(value);
-                  const dep = listaDepartamentos.find((d) => d.cod === cod);
-                  if (dep) {
-                    setFormData((prev) => ({
-                      ...prev,
-                      departamentoCod: dep.cod,
-                      municipioCod: 0,
-                    }));
-                    try {
-                      const municipioRes = await RegionServices.getMun(dep.cod);
-                      if (municipioRes.success) {
-                        setListaMunicipios(municipioRes.data);
-                      } else {
-                        setListaMunicipios([]);
+                  <FloatingLabel
+                    id="nombresYApellidos"
+                    label="Nombres y Apellidos"
+                    className={`w-lg ${errores.nombreCliente ? "border-red-500" : ""}`}
+                    value={formData.nombreCliente}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, nombreCliente: e.target.value }))}
+                  />
+
+                  <FloatingSelect
+                    label="Tipo Cliente"
+                    value={formData.tipoClienteId}
+                    onChange={(value) => setFormData((prev) => ({ ...prev, tipoClienteId: value }))}
+                    options={tipoCliente.map((tc) => ({ value: tc.id, label: tc.nombre }))}
+                    placeholder="Elige una opción"
+                    className={`w-lg ${errores.tipoClienteId ? "border-red-500" : ""}`}
+                  />
+
+                  <FloatingLabel
+                    id="email"
+                    label="Email"
+                    className={`w-lg ${errores.email ? "border-red-500" : ""}`}
+                    value={formData.email}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                  />
+
+                  <FloatingLabel
+                    id="celular"
+                    label="Celular"
+                    className={`w-lg ${errores.celular ? "border-red-500" : ""}`}
+                    value={formData.celular}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, celular: e.target.value }))}
+                  />
+
+                  <FloatingLabel
+                    id="direccion"
+                    label="Dirección"
+                    className={`w-lg ${errores.direccion ? "border-red-500" : ""}`}
+                    value={formData.direccion}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, direccion: e.target.value }))}
+                  />
+
+                  <FloatingSelect
+                    label="Departamento"
+                    value={formData.departamentoCod === 0 ? "" : formData.departamentoCod.toString()}
+                    placeholder="Seleccionar Departamento"
+                    onChange={async (value) => {
+                      const cod = Number(value);
+                      const dep = listaDepartamentos.find((d) => d.cod === cod);
+                      if (dep) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          departamentoCod: dep.cod,
+                          municipioCod: 0,
+                        }));
+                        try {
+                          const municipioRes = await RegionServices.getMun(dep.cod);
+                          setListaMunicipios(municipioRes.success ? municipioRes.data : []);
+                        } catch {
+                          setListaMunicipios([]);
+                        }
                       }
-                    } catch {
-                      setListaMunicipios([]);
-                    }
-                  }
-                }}
-                options={listaDepartamentos.map(dep => ({
-                  value: dep.cod?.toString() || "",
-                  label: dep.nombre || ""
-                }))}
-                className={`w-lg ${errores.departamentoCod ? "border-red-500" : ""}`}
-              />
-              <FloatingSelect
-                label="Municipio"
-                placeholder="Seleccionar Municipio"
-                value={
-                  formData.municipioCod === 0 ? "" : formData.municipioCod.toString()
-                }
+                    }}
+                    options={listaDepartamentos.map((dep) => ({
+                      value: dep.cod?.toString() || "",
+                      label: dep.nombre || "",
+                    }))}
+                    className={`w-lg ${errores.departamentoCod ? "border-red-500" : ""}`}
+                  />
 
-                options={listaMunicipios.map((mun) => ({
-                  value: mun.cod.toString(),
-                  label: mun.nombre,
-                }))}
-                onChange={(value) => {
-                  const cod = parseInt(value, 10);
-                  const mun = listaMunicipios.find((m) => m.cod === cod);
-                  if (mun) {
-                    setFormData((prev) => ({
-                      ...prev,
-                      municipioCod: mun.cod,
-                    }));
-                  }
-                }}
-                className={`w-full ${errores.municipioCod ? "border-red-500" : ""}`}
-              />
+                  <FloatingSelect
+                    label="Municipio"
+                    placeholder="Seleccionar Municipio"
+                    value={formData.municipioCod === 0 ? "" : formData.municipioCod.toString()}
+                    options={listaMunicipios.map((mun) => ({
+                      value: mun.cod.toString(),
+                      label: mun.nombre,
+                    }))}
+                    onChange={(value) => {
+                      const cod = parseInt(value, 10);
+                      const mun = listaMunicipios.find((m) => m.cod === cod);
+                      if (mun) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          municipioCod: mun.cod,
+                        }));
+                      }
+                    }}
+                    className={`w-full ${errores.municipioCod ? "border-red-500" : ""}`}
+                  />
+                </>
+              )}
             </div>
+
             <h2 className="text-xl font-semibold my-2">Datos del PQR</h2>
             <div className="border-b-2 border-gray-300 mb-4" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -476,16 +528,16 @@ const NuevoPqr = () => {
               </div>
             </div>
             <div className="mt-2">
-             <textarea
-                        id="descripcion"
-                        name="descripcion"
-                        value={formData.descripcion}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, descripcion: e.target.value }))}
-                        rows={4}
-                        placeholder="Descripción"
-                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                          }`}
-                      />
+              <textarea
+                id="descripcion"
+                name="descripcion"
+                value={formData.descripcion}
+                onChange={(e) => setFormData((prev) => ({ ...prev, descripcion: e.target.value }))}
+                rows={4}
+                placeholder="Descripción"
+                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                  }`}
+              />
             </div>
             <div className="space-y-3 mt-4">
               {/* Lista de archivos */}

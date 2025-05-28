@@ -13,7 +13,7 @@ const Header = () => {
   return (
     <div className="h-[85px] flex items-center justify-between px-4 sm:px-8 border-b-2 bg-white w-full">
       {/* Buscador */}
-      <div className="w-full max-w-[400px] mr-4">
+      <div className="w-full mr-4">
         <Serch />
       </div>
 

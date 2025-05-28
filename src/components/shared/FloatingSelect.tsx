@@ -36,7 +36,7 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
       >
         <SelectPrimitive.Trigger
           className={cn(
-            "peer pt-3 border border-gray-300 rounded-lg w-full h-10 px-3 text-xs bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500",
+            "peer pt-3 border border-gray-300 rounded-lg w-full h-10 px-3 text-xs bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-green-500",
             className
           )}
         >
@@ -63,11 +63,11 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
                 <SelectPrimitive.Item
                   key={option.value}
                   value={option.value}
-                  className="relative cursor-pointer select-none rounded-sm py-1.5 pl-8 pr-2 text-sm text-gray-700 focus:bg-blue-100 focus:text-blue-900"
+                  className="relative cursor-pointer select-none rounded-sm py-1.5 pl-8 pr-2 text-sm text-gray-700 focus:bg-green-100 focus:text-green-900"
                 >
                   <span className="absolute left-2">
                     <SelectPrimitive.ItemIndicator>
-                      <Check className="h-4 w-4 text-blue-500" />
+                      <Check className="h-4 w-4 text-green-500" />
                     </SelectPrimitive.ItemIndicator>
                   </span>
                   <SelectPrimitive.ItemText>
@@ -91,7 +91,7 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
           peer-placeholder-shown:text-gray-400
           peer-focus:top-1
           peer-focus:text-sm
-          peer-focus:text-blue-500
+          peer-focus:text-green-500
           ${value ? "top-1 text-sm text-gray-400" : ""}
         `}
       >

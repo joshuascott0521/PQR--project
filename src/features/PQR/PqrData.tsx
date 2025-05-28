@@ -161,7 +161,7 @@ const PqrData = () => {
                 id="descripcion"
                 name="descripcion"
                 rows={3}
-                className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-green-400"
               >
                 Se procede a asignar PQR
               </textarea>

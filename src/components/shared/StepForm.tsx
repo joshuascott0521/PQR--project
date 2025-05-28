@@ -300,9 +300,9 @@ export default function StepForm() {
               <div key={index} className="flex-1 flex flex-col items-center relative z-10">
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${index < step
-                    ? "bg-blue-500 text-white border-blue-500"
+                    ? "bg-green-500 text-white border-green-500"
                     : index === step
-                      ? "bg-white text-blue-500 border-blue-500"
+                      ? "bg-white text-green-500 border-green-500"
                       : "bg-gray-200 text-gray-500 border-gray-300"
                     }`}
                 >
@@ -424,7 +424,7 @@ export default function StepForm() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors"
+                    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
                   >
                     Siguiente
                   </button>
@@ -470,7 +470,7 @@ export default function StepForm() {
                         onChange={(e) => setFormData((prev) => ({ ...prev, descripcion: e.target.value }))}
                         rows={4}
                         placeholder="Descripción"
-                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
+                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-green-500"
                           }`}
                       />
                     </div>
@@ -488,7 +488,7 @@ export default function StepForm() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors"
+                    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
                   >
                     Siguiente
                   </button>
@@ -568,7 +568,7 @@ export default function StepForm() {
                   </button>
                   <button
                     type="submit"
-                    className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-colors"
+                    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
                   >
                     Enviar PQR
                   </button>

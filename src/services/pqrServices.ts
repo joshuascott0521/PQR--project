@@ -169,25 +169,25 @@ export const PqrServices = {
     }
   },
 
-  getByDocumento: async ({
-    doc,
+  getByFilter: async ({
+    value,
     page,
     size,
-  }: GetPqrParams & { doc: string }): Promise<ApiResponse<Pqr[]>> => {
+  }: GetPqrParams & { value: string }): Promise<ApiResponse<Pqr[]>> => {
     try {
       const response = await apiClient.get("/PQR/GetByFilterPQR", {
         params: {
-          doc,
+          valueFilter: value,
           pagenumber: page,
           pagesize: size,
         }
       })
-      return {success: true, data: response.data}
-    }catch(error: any){
-      return{
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al obtener PQR del Cliente"
+        error: error.response?.data?.message || "Error al obtener PQRs filtrados"
       }
     }
   }
@@ -234,6 +234,32 @@ export const ClientesServices = {
         success: false,
         data: {} as Cliente,
         error: error.response?.data?.message || "Error al cargar Clientes"
+      }
+    }
+  },
+
+  getByDoc: async (doc: string): Promise<ApiResponse<Cliente>> => {
+    try {
+      const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`)
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Cliente,
+        error: error.response?.data?.message || "Error al cargar cliente por documento"
+      }
+    }
+  },
+
+  update: async (cliente: Cliente): Promise<ApiResponse<Cliente>> => {
+    try {
+      const response = await apiClient.put("Cliente/ActualizarItemCliente", cliente)
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Cliente,
+        error: error.response?.data?.message || "Error al actualizar Cliente"
       }
     }
   }
