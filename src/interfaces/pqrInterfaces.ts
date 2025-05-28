@@ -174,8 +174,8 @@ export interface Cliente {
   email: string;
   celular: string;
   direccion: string;
-  departamentoCod?: 0;
-  municipioCod?: 0;
+  departamentoCod: number;
+  municipioCod: number;
   tipoClienteId: string;
   tiponame?: string;
 }

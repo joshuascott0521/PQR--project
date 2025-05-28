@@ -241,6 +241,18 @@ export const ClientesServices = {
     }
   },
 
+  getByDoc: async (doc: string): Promise<ApiResponse<Cliente>> => {
+    try {
+      const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`)
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Cliente,
+        error: error.response?.data?.message || "Error al cargar cliente por documento"
+      }
+    }
+  },
   getById: async (id: string): Promise<ApiResponse<Cliente>> => {
     try {
       const response = await apiClient.get(`Cliente/ObtenerItemCliente/${id}`);
@@ -253,7 +265,20 @@ export const ClientesServices = {
       };
     }
   },
-};
+  update: async (cliente: Cliente): Promise<ApiResponse<Cliente>> => {
+    try {
+      const response = await apiClient.put("Cliente/ActualizarItemCliente", cliente)
+      return { success: true, data: response.data }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Cliente,
+        error: error.response?.data?.message || "Error al actualizar Cliente"
+      }
+    };
+  },
+}
+
 export const ArchivoServices = {
   descargar: async (
     urlArchivo: string,
@@ -287,5 +312,5 @@ export const ArchivoServices = {
         error: error.message || "Error al descargar el archivo",
       };
     }
-  },
-};
+  }
+}

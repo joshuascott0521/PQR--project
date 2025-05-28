@@ -37,7 +37,7 @@ const ClienteForm = () => {
         const fetchData = async () => {
             try {
 
-                const clientRes = await ClientesServices.getById(id!);
+                const clientRes = await ClientesServices.getByDoc(id!);
                 if (!clientRes.success) throw new Error(clientRes.error);
 
                 const tipoClienteRes = await TipoClienteServices.getall();
