@@ -104,10 +104,7 @@ const PqrData = () => {
       if (!uploadResponse.success) {
         console.log(uploadResponse);
 
-        toast.error(
-          uploadResponse.error ||
-            "El archivo excede el limite de tamaño por archivo"
-        );
+        toast.error(uploadResponse.error || "Error al subir archivos");
         return;
       }
 
@@ -138,8 +135,8 @@ const PqrData = () => {
         usuarioId: usuid, // Aquí pon el ID del usuario que crea esto si aplica
         funcionarioAsignadoId: user,
         fechaCreacion: new Date().toISOString(),
-        tipoNotificacion: "", // o el tipo que corresponda
-        fechaNotificacion: "",
+        tipoNotificacion: null, // o el tipo que corresponda
+        fechaNotificacion: null,
         diasAmpliacion: 0,
         adjuntos,
       };
@@ -210,13 +207,13 @@ const PqrData = () => {
           </div>
         </div>
       </div>
-      <div className="flex mt-5 flex-col max-h-[288px] overflow-y-auto h-full">
+      <div className="flex mt-5 flex-col max-h-[300px] overflow-y-auto h-full">
         <div className="space-y-4">
           {pqr?.detalle && <PqrChat key={pqr.id} detalles={pqr.detalle} />}
         </div>
       </div>
-      <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[300px]">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[265px]">
+        <form className="" onSubmit={handleSubmit}>
           <div className="flex flex-wrap gap-6 items-center">
             <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
               Evento:
@@ -258,7 +255,7 @@ const PqrData = () => {
             />
           </div>
 
-          <div className="space-y-3  mt-0">
+          <div className=" mt-0">
             {/* Contenedor de archivos */}
             <div className="flex gap-2 overflow-x-auto flex-nowrap py-2 min-h-[52px] items-center">
               {archivos.length > 0 ? (
