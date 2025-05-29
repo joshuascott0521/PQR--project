@@ -21,7 +21,7 @@ import Portal from "./pages/portal";
 import PrivateRoute from "./components/PrivateRoutes";
 import Clientes from "./features/Usuarios/Clientes";
 import ClienteDetalle from "./features/Usuarios/ClienteDetalle";
-import ResultadosBusquedaPage from "./features/PQR/ResultadoBusquedaPg";
+// import ResultadosBusquedaPage from "./features/PQR/ResultadoBusquedaPg";
 import Solicitud from "./pages/Solicitud";
 import Funcionarios from "./features/Usuarios/Funcionarios";
 import FuncionarioResumen from "./features/Usuarios/FuncionarioResumen";
@@ -39,7 +39,7 @@ function App() {
           duration: 4000,
           style: {
             margin: 0,
-            padding: '8px 12px',
+            padding: "8px 12px",
             background: "#fff",
             color: "#333",
             fontSize: "14px",
@@ -71,10 +71,19 @@ function App() {
             <Route path="admin/cliente" element={<Clientes />} />
             <Route path="admin/funcionarios" element={<Funcionarios />} />
             <Route path="/dashboard/PQR/detalle/:id" element={<PqrData />} />
-            <Route path="/dashboard/cliente/detalle/:id" element={<ClienteDetalle />} />
-            <Route path="/dashboard/cliente/editar/:id" element={<EditarCliente />} />
-            <Route path="/dashboard/funcionarios/resumen/:id" element={<FuncionarioResumen />} />
-            <Route path="/dashboard/resultados-busqueda" element={<ResultadosBusquedaPage />} />
+            <Route
+              path="/dashboard/cliente/detalle/:id"
+              element={<ClienteDetalle />}
+            />
+            <Route
+              path="/dashboard/cliente/editar/:id"
+              element={<EditarCliente />}
+            />
+            <Route
+              path="/dashboard/funcionarios/resumen/:id"
+              element={<FuncionarioResumen />}
+            />
+            {/* <Route path="/dashboard/resultados-busqueda" element={<ResultadosBusquedaPage />} /> */}
 
             {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}
             {/* Más rutas aquí */}
