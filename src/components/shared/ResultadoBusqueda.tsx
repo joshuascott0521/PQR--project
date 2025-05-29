@@ -5,9 +5,11 @@ import CompactUserCard from "./CompactUserCard";
 interface ResultadoBusquedaProps {
   resultados: Pqr[];
   loading: boolean;
+  onCardClick: () => void;
 }
 
-const ResultadoBusqueda: React.FC<ResultadoBusquedaProps> = ({ resultados, loading }) => {
+
+const ResultadoBusqueda: React.FC<ResultadoBusquedaProps> = ({ resultados, loading, onCardClick }) => {
   if (loading) {
     return <p className="text-center text-gray-500 py-2">Buscando resultados...</p>;
   }
@@ -23,7 +25,7 @@ const ResultadoBusqueda: React.FC<ResultadoBusquedaProps> = ({ resultados, loadi
       </h3>
       <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scroll">
         {resultados.map((pqr) => (
-          <CompactUserCard key={pqr.id} pqr={pqr}  />
+          <CompactUserCard key={pqr.id} pqr={pqr} onClick={onCardClick} />
         ))}
       </div>
     </div>

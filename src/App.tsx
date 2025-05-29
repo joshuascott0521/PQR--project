@@ -23,6 +23,7 @@ import Clientes from "./features/Usuarios/Clientes";
 import ClienteDetalle from "./features/Usuarios/ClienteDetalle";
 import EditarCliente from "./features/Usuarios/EditarCliente";
 import ResultadosBusquedaPage from "./features/PQR/ResultadoBusquedaPg";
+import Solicitud from "./pages/Solicitud";
 // import PqrChat from "./components/shared/PqrChat";
 // import LoginFrm from "./features/Usuarios/LoginFrm"; // ejemplo
 // Agrega más rutas internas según tus componentes
@@ -35,11 +36,12 @@ function App() {
         toastOptions={{
           duration: 4000,
           style: {
+            margin: 0,
+            padding: '8px 12px',
             background: "#fff",
             color: "#333",
             fontSize: "14px",
             borderRadius: "8px",
-            padding: "12px 16px",
             boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
           },
         }}
@@ -75,6 +77,7 @@ function App() {
           </Route>
         </Route>
         <Route path="portal-pqr" element={<Portal />} />
+        <Route path="solicitud-pqr" element={<Solicitud />} />
       </Routes>
     </AuthProvider>
   );

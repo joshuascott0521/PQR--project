@@ -23,10 +23,13 @@ const Search = () => {
       setLoading(true);
       try {
         const res = await PqrServices.getByFilter({ value: query, page: 1, size: 10 });
-        if (res.success) {
+        if (res.success && Array.isArray(res.data)) {
           setPqrs(res.data);
-          setShowDropdown(true);
+        } else {
+          setPqrs([]);
         }
+        setShowDropdown(true);
+
       } catch (err) {
         console.error("Error en búsqueda:", err);
       } finally {
@@ -77,11 +80,12 @@ const Search = () => {
         )}
       </div>
 
-      {showDropdown && pqrs.length > 0 && (
+      {showDropdown && (
         <div className="absolute top-full left-0 mt-2 w-full z-50 bg-white rounded-lg shadow-lg border border-gray-300">
-          <ResultadoBusqueda resultados={pqrs} loading={loading} />
+          <ResultadoBusqueda resultados={pqrs} loading={loading} onCardClick={clearSearch} />
         </div>
       )}
+
     </div>
   );
 };
