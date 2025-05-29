@@ -15,6 +15,7 @@ export interface CreatePqr {
   descripcion: string;
   adjuntos: Adjunto[];
   usuarioId: string | null;
+  DependenciaId?: number;
 }
 
 export interface Pqr {
@@ -200,4 +201,15 @@ export interface Usuario {
     [estado: string]: number; // Ejemplo: "VENCIDO": 44
   };
 }
-
+export interface DetallePqrCreate {
+  pqrId: string;
+  eventoId: string;
+  descripcion: string;
+  usuarioId: string;
+  funcionarioAsignadoId: string;
+  fechaCreacion: string;
+  tipoNotificacion: null;
+  fechaNotificacion: null;
+  diasAmpliacion: number;
+  adjuntos: Adjunto[];
+}

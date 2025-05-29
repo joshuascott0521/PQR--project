@@ -23,7 +23,7 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
                     ")"}
                 </p>
                 <p className="text-xs text-gray-700 leading-tight">
-                  {detalle.fechaCreacion}
+                  {detalle.fechaCreacion?.slice(0, 10)}
                 </p>
               </div>
             </div>

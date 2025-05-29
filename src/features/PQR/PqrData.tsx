@@ -8,6 +8,9 @@ import { Paperclip, X, File } from "lucide-react";
 import toast from "react-hot-toast";
 
 const PqrData = () => {
+  const [loading, setLoading] = useState(false);
+  const [refreshChat, setRefreshChat] = useState(false);
+
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const { id } = useParams();
@@ -96,28 +99,46 @@ const PqrData = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      // Subir archivos antes de enviar los datos
-      const uploadResponse = await PqrServices.uploadFiles(archivos);
-
-      if (!uploadResponse.success) {
-        console.log(uploadResponse);
-
-        toast.error(uploadResponse.error || "Error al subir archivos");
+      // Validar que si el evento es "Asignar" (por label), haya al menos un archivo
+      const eventoAsignar =
+        eventos.find((ev) => ev.id === eventoSeleccionado)?.nombre ===
+        "Asignar";
+      if (eventoAsignar && archivos.length === 0) {
+        toast.error(
+          "Debe adjuntar al menos un archivo para el evento 'Asignar'"
+        );
+        setLoading(false);
         return;
       }
 
-      // Formatear los archivos subidos
+      if (descripcion.trim().length < 6) {
+        toast.error("La descripción debe tener al menos 6 caracteres");
+        setLoading(false);
+        return;
+      }
+
+      const uploadResponse = await PqrServices.uploadFiles(archivos);
+
+      if (!uploadResponse.success) {
+        toast.error(uploadResponse.error || "Error al subir archivos");
+        setLoading(false);
+        return;
+      }
+
       const adjuntos = uploadResponse.data.map((archivo, index) => ({
-        item: index,
+        item: index + 1,
         nombre: archivo.nombre,
         extension: archivo.extension,
         urlArchivo: archivo.urlArchivo,
       }));
+
       const userData = localStorage.getItem("userData");
       if (!userData) {
         setError("Usuario no encontrado");
+        setLoading(false);
         return;
       }
 
@@ -125,6 +146,7 @@ const PqrData = () => {
       const usuid = userStorage?.id;
       if (!usuid) {
         setError("ID de usuario inválido");
+        setLoading(false);
         return;
       }
 
@@ -132,21 +154,43 @@ const PqrData = () => {
         pqrId: id || "",
         eventoId: eventoSeleccionado,
         descripcion,
-        usuarioId: usuid, // Aquí pon el ID del usuario que crea esto si aplica
+        usuarioId: usuid,
         funcionarioAsignadoId: user,
         fechaCreacion: new Date().toISOString(),
-        tipoNotificacion: null, // o el tipo que corresponda
+        tipoNotificacion: null,
         fechaNotificacion: null,
         diasAmpliacion: 0,
         adjuntos,
       };
 
-      console.log("📦 Datos a enviar:", datos);
-      // Aquí puedes llamar al método para guardar los datos, por ejemplo:
-      // const response = await PqrServices.crearEvento(datos);
-    } catch (error) {
-      toast.error("Ocurrió un error al procesar el formulario");
-      console.error(error);
+      const response = await PqrServices.getDetallePqrCreate(datos);
+
+      if (response.success) {
+        toast.success("Evento creado exitosamente");
+        setDescripcion("");
+        setArchivos([]);
+        setInputKey((prev) => prev + 1);
+        setEventoSeleccionado("");
+        setUser("");
+
+        const newPqr = await PqrServices.getById(id!);
+        if (newPqr.success) {
+          setPqr(newPqr.data);
+          setRefreshChat((prev) => !prev);
+        }
+      } else {
+        toast.error(response.error || "Error al guardar el evento");
+      }
+    } catch (error: any) {
+      const rawError = error?.response?.data?.errors?.PQRDetalle?.[0];
+      let cleanMessage = "Ocurrió un error inesperado";
+      if (rawError) {
+        const match = rawError.match(/Error al insertar[^\n]+/);
+        if (match) cleanMessage = match[0];
+      }
+      toast.error(cleanMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

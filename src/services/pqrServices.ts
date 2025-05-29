@@ -5,6 +5,7 @@ import type {
   Cliente,
   CreatePqr,
   departamento,
+  DetallePqrCreate,
   Evento,
   Municipio,
   Pqr,
@@ -113,6 +114,20 @@ export const TipoPqrServices = {
 };
 /* Servicios Globales para la gestion de PQRs*/
 export const PqrServices = {
+  getDetallePqrCreate: async (
+    detalle: DetallePqrCreate
+  ): Promise<ApiResponse<DetallePqrCreate>> => {
+    try {
+      const response = await apiClient.post("PQRDetalle/Create", detalle);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as DetallePqrCreate,
+        error: error.response?.data?.message || "Error al crear detalle PQR",
+      };
+    }
+  },
   getByEstado: async ({
     usuid,
     page,
