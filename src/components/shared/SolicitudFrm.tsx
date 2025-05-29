@@ -77,7 +77,7 @@ export default function SolicitudFrm() {
         setSolicitud(result.data);
       } else {
         toast.error(result.error || "Error al cargar solicitud");
-        navigate("/dashboard/PQR");
+        
       }
     };
 
