@@ -14,7 +14,15 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
         <div className="flex-shrink-0">
           <div
             className="w-[4.5rem] h-[4.5rem] rounded-full flex items-center justify-center text-white font-semibold text-3xl"
-            style={{ backgroundColor: pqr.colorHex }}
+            // style={{ backgroundColor: pqr.colorHex }}
+            style={{
+              backgroundColor:
+                pqr.estadoVencimiento === "VENCIDO"
+                  ? " #dc2626"
+                  : pqr.estadoVencimiento === "POR VENCER"
+                  ? "#ffe900 "
+                  : "#22c55e",
+            }}
           >
             {pqr.diasRestantes}
           </div>
@@ -24,7 +32,8 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-y-1 text-gray-700 text-sm items-center gap-2.5">
           <div>
             <p className="font-semibold">
-              # Consecutivo: <span className="font-normal">{pqr.consecutivo}</span>
+              # Consecutivo:{" "}
+              <span className="font-normal">{pqr.consecutivo}</span>
             </p>
             <p className="truncate" title={pqr.asunto}>
               Asunto: {pqr.asunto}

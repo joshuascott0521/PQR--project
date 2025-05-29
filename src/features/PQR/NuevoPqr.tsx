@@ -5,10 +5,27 @@ import { FloatingSelect } from "../../components/shared/FloatingSelect";
 import { useEffect, useState } from "react";
 import { List, File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { CreatePqr, Municipio, departamento, tipoCliente, TipoPqr, ArchivoSubido } from "../../interfaces/pqrInterfaces";
-import { ClientesServices, Origen, PqrServices, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
+import type {
+  CreatePqr,
+  Municipio,
+  departamento,
+  tipoCliente,
+  TipoPqr,
+  ArchivoSubido,
+} from "../../interfaces/pqrInterfaces";
+import {
+  ClientesServices,
+  Origen,
+  PqrServices,
+  RegionServices,
+  TipoClienteServices,
+  TipoPqrServices,
+} from "../../services/pqrServices";
 import toast from "react-hot-toast";
-import { mostrarAlertaConfirmacion, mostrarAlertaExito } from "../../libs/alerts";
+import {
+  mostrarAlertaConfirmacion,
+  mostrarAlertaExito,
+} from "../../libs/alerts";
 import ClienteSkeleton from "../../components/shared/Spinner";
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
@@ -18,12 +35,13 @@ const NuevoPqr = () => {
 
   const [cargandoCliente, setCargandoCliente] = useState(false);
 
-
-  const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([])
-  const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>([]);
-  const [listaMunicipios, setListaMunicipios] = useState<Municipio[]>([])
-  const [tipoPQRListado, setTipoPQRListado] = useState<TipoPqr[]>([])
-  const [origen, setOrigen] = useState<string[]>([])
+  const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([]);
+  const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>(
+    []
+  );
+  const [listaMunicipios, setListaMunicipios] = useState<Municipio[]>([]);
+  const [tipoPQRListado, setTipoPQRListado] = useState<TipoPqr[]>([]);
+  const [origen, setOrigen] = useState<string[]>([]);
   const [errores, setErrores] = useState<{ [key: string]: boolean }>({});
 
   const [formData, setFormData] = useState<CreatePqr>({
@@ -43,10 +61,8 @@ const NuevoPqr = () => {
     descripcion: "",
     adjuntos: [],
     usuarioId: "",
+    DependenciaId: 0,
   });
-
-
-
 
   useEffect(() => {
     const loadData = async () => {
@@ -69,11 +85,7 @@ const NuevoPqr = () => {
         setTipoCliente(tipoClienteRes.data);
         setListaDepartamentos(departamentosRes.data);
         setTipoPQRListado(tipoPqrRes.data);
-        setOrigen(origenRes.data)
-
-
-
-
+        setOrigen(origenRes.data);
 
         setFormData({
           documentoCliente: "",
@@ -92,8 +104,8 @@ const NuevoPqr = () => {
           descripcion: "",
           adjuntos: [],
           usuarioId: user?.id || "",
+          DependenciaId: 0,
         });
-
       } catch (error) {
         console.error("Error al cargar datos iniciales:", error);
       }
@@ -101,9 +113,6 @@ const NuevoPqr = () => {
 
     loadData();
   }, []);
-
-
-
 
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
@@ -140,8 +149,6 @@ const NuevoPqr = () => {
   };
 
   const validateForm = () => {
-
-
     if (!formData.documentoCliente.trim()) {
       toast.error("Por favor ingresa el documento del cliente.");
       setErrores({ documentoCliente: true });
@@ -150,12 +157,12 @@ const NuevoPqr = () => {
     if (!formData.nombreCliente.trim()) {
       toast.error("Por favor ingresa el nombre completo del cliente.");
       setErrores({ nombreCliente: true });
-      return false
+      return false;
     }
     if (!formData.tipoClienteId) {
       toast.error("Por favor selecciona el tipo de cliente.");
       setErrores({ tipoClienteId: true });
-      return false
+      return false;
     }
 
     if (!formData.email.trim()) {
@@ -174,30 +181,30 @@ const NuevoPqr = () => {
     if (!formData.celular.trim()) {
       toast.error("Por favor ingresa el número de celular.");
       setErrores({ celular: true });
-      return false
+      return false;
     }
 
     if (!formData.direccion.trim()) {
       toast.error("Por favor ingresa la dirección.");
       setErrores({ direccion: true });
-      return false
+      return false;
     }
 
     if (formData.departamentoCod === 0) {
       toast.error("Selecciona un departamento.");
       setErrores({ departamentoCod: true });
-      return false
+      return false;
     }
     if (formData.municipioCod === 0) {
       toast.error("Selecciona un municipio.");
       setErrores({ municipioCod: true });
-      return false
+      return false;
     }
 
     if (!formData.radicado?.trim()) {
       toast.error("Por favor ingresa el radicado de la petición.");
       setErrores({ radicado: true });
-      return false
+      return false;
     }
 
     if (!formData.fecha || formData.fecha.trim() === "") {
@@ -209,24 +216,24 @@ const NuevoPqr = () => {
     if (!formData.tipoPQRId) {
       toast.error("Por favor selecciona el tipo de petición.");
       setErrores({ tipoPQRId: true });
-      return false
+      return false;
     }
 
     if (!formData.origen) {
       toast.error("Por favor selecciona el origen de la petición.");
       setErrores({ origen: true });
-      return false
+      return false;
     }
 
     if (!formData.asunto.trim()) {
       toast.error("Por favor escribe un asunto para la solicitud.");
       setErrores({ asunto: true });
-      return false
+      return false;
     }
     if (!formData.descripcion.trim()) {
       toast.error("Por favor describe brevemente la solicitud.");
       setErrores({ descripcion: true });
-      return false
+      return false;
     }
 
     if (archivos.length === 0) {
@@ -237,7 +244,6 @@ const NuevoPqr = () => {
     setErrores({});
     return true;
   };
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -250,13 +256,14 @@ const NuevoPqr = () => {
     if (!confirmado) return;
 
     try {
-
       const rawUser = localStorage.getItem("userData");
       const user = rawUser ? JSON.parse(rawUser) : null;
 
       if (!user || !user.id) {
         console.error("No se encontró ID de usuario");
-        alert("No se pudo identificar al usuario. Por favor vuelve a iniciar sesión.");
+        alert(
+          "No se pudo identificar al usuario. Por favor vuelve a iniciar sesión."
+        );
         return;
       }
       let archivosSubidos: ArchivoSubido[] = [];
@@ -273,11 +280,12 @@ const NuevoPqr = () => {
         ...formData,
         usuarioId: user.id,
         adjuntos: archivosSubidos,
+        DependenciaId: 1,
       });
 
       if (res.success) {
         mostrarAlertaExito("¡PQR registrado exitosamente!");
-        console.log("Respuesta PQR ✅✅✅✅", res.data)
+        console.log("Respuesta PQR ✅✅✅✅", res.data);
         navigate("/dashboard");
       } else {
         console.error("Error al registrar el PQR:", res.error);
@@ -312,10 +320,13 @@ const NuevoPqr = () => {
         direccion: cliente.direccion,
         departamentoCod: cliente.departamentoCod,
         municipioCod: cliente.municipioCod,
+        DependenciaId: 1,
       }));
 
       if (cliente.departamentoCod) {
-        const municipioRes = await RegionServices.getMun(cliente.departamentoCod);
+        const municipioRes = await RegionServices.getMun(
+          cliente.departamentoCod
+        );
         if (municipioRes.success) {
           setListaMunicipios(municipioRes.data);
         }
@@ -329,7 +340,6 @@ const NuevoPqr = () => {
       setCargandoCliente(false); // <-- desactivar skeleton
     }
   };
-
 
   return (
     <div className="h-full flex flex-col">
@@ -356,9 +366,16 @@ const NuevoPqr = () => {
                     <FloatingLabel
                       id="documentoCliente"
                       label="Documento Cliente"
-                      className={`pr-12 ${errores.documentoCliente ? "border-red-500" : ""}`}
+                      className={`pr-12 ${
+                        errores.documentoCliente ? "border-red-500" : ""
+                      }`}
                       value={formData.documentoCliente}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, documentoCliente: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          documentoCliente: e.target.value,
+                        }))
+                      }
                     />
                     {/* Boton en el campo documento */}
                     <button
@@ -374,18 +391,32 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="nombresYApellidos"
                     label="Nombres y Apellidos"
-                    className={`w-lg ${errores.nombreCliente ? "border-red-500" : ""}`}
+                    className={`w-lg ${
+                      errores.nombreCliente ? "border-red-500" : ""
+                    }`}
                     value={formData.nombreCliente}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, nombreCliente: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nombreCliente: e.target.value,
+                      }))
+                    }
                   />
 
                   <FloatingSelect
                     label="Tipo Cliente"
                     value={formData.tipoClienteId}
-                    onChange={(value) => setFormData((prev) => ({ ...prev, tipoClienteId: value }))}
-                    options={tipoCliente.map((tc) => ({ value: tc.id, label: tc.nombre }))}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, tipoClienteId: value }))
+                    }
+                    options={tipoCliente.map((tc) => ({
+                      value: tc.id,
+                      label: tc.nombre,
+                    }))}
                     placeholder="Elige una opción"
-                    className={`w-lg ${errores.tipoClienteId ? "border-red-500" : ""}`}
+                    className={`w-lg ${
+                      errores.tipoClienteId ? "border-red-500" : ""
+                    }`}
                   />
 
                   <FloatingLabel
@@ -393,28 +424,51 @@ const NuevoPqr = () => {
                     label="Email"
                     className={`w-lg ${errores.email ? "border-red-500" : ""}`}
                     value={formData.email}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
                   />
 
                   <FloatingLabel
                     id="celular"
                     label="Celular"
-                    className={`w-lg ${errores.celular ? "border-red-500" : ""}`}
+                    className={`w-lg ${
+                      errores.celular ? "border-red-500" : ""
+                    }`}
                     value={formData.celular}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, celular: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        celular: e.target.value,
+                      }))
+                    }
                   />
 
                   <FloatingLabel
                     id="direccion"
                     label="Dirección"
-                    className={`w-lg ${errores.direccion ? "border-red-500" : ""}`}
+                    className={`w-lg ${
+                      errores.direccion ? "border-red-500" : ""
+                    }`}
                     value={formData.direccion}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, direccion: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        direccion: e.target.value,
+                      }))
+                    }
                   />
 
                   <FloatingSelect
                     label="Departamento"
-                    value={formData.departamentoCod === 0 ? "" : formData.departamentoCod.toString()}
+                    value={
+                      formData.departamentoCod === 0
+                        ? ""
+                        : formData.departamentoCod.toString()
+                    }
                     placeholder="Seleccionar Departamento"
                     onChange={async (value) => {
                       const cod = Number(value);
@@ -426,8 +480,12 @@ const NuevoPqr = () => {
                           municipioCod: 0,
                         }));
                         try {
-                          const municipioRes = await RegionServices.getMun(dep.cod);
-                          setListaMunicipios(municipioRes.success ? municipioRes.data : []);
+                          const municipioRes = await RegionServices.getMun(
+                            dep.cod
+                          );
+                          setListaMunicipios(
+                            municipioRes.success ? municipioRes.data : []
+                          );
                         } catch {
                           setListaMunicipios([]);
                         }
@@ -437,13 +495,19 @@ const NuevoPqr = () => {
                       value: dep.cod?.toString() || "",
                       label: dep.nombre || "",
                     }))}
-                    className={`w-lg ${errores.departamentoCod ? "border-red-500" : ""}`}
+                    className={`w-lg ${
+                      errores.departamentoCod ? "border-red-500" : ""
+                    }`}
                   />
 
                   <FloatingSelect
                     label="Municipio"
                     placeholder="Seleccionar Municipio"
-                    value={formData.municipioCod === 0 ? "" : formData.municipioCod.toString()}
+                    value={
+                      formData.municipioCod === 0
+                        ? ""
+                        : formData.municipioCod.toString()
+                    }
                     options={listaMunicipios.map((mun) => ({
                       value: mun.cod.toString(),
                       label: mun.nombre,
@@ -458,7 +522,9 @@ const NuevoPqr = () => {
                         }));
                       }
                     }}
-                    className={`w-full ${errores.municipioCod ? "border-red-500" : ""}`}
+                    className={`w-full ${
+                      errores.municipioCod ? "border-red-500" : ""
+                    }`}
                   />
                 </>
               )}
@@ -472,7 +538,9 @@ const NuevoPqr = () => {
                 label="No. Radicado"
                 className={`w-lg ${errores.radicado ? "border-red-500" : ""}`}
                 value={formData.radicado}
-                onChange={(e) => setFormData((prev) => ({ ...prev, radicado: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, radicado: e.target.value }))
+                }
               />
               <FloatingLabel
                 id="fecha"
@@ -481,14 +549,21 @@ const NuevoPqr = () => {
                 max={hoy}
                 className={`w-lg ${errores.fecha ? "border-red-500" : ""}`}
                 value={formData.fecha}
-                onChange={(e) => setFormData((prev) => ({ ...prev, fecha: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, fecha: e.target.value }))
+                }
               />
 
               <FloatingSelect
                 label="Tipo Petición"
                 value={formData.tipoPQRId}
-                onChange={(value) => setFormData(prev => ({ ...prev, tipoPQRId: value }))}
-                options={tipoPQRListado.map(tc => ({ value: tc.id, label: tc.nombre }))}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, tipoPQRId: value }))
+                }
+                options={tipoPQRListado.map((tc) => ({
+                  value: tc.id,
+                  label: tc.nombre,
+                }))}
                 placeholder="Elige una opción"
                 className={`w-lg ${errores.tipoPQRId ? "border-red-500" : ""}`}
               />
@@ -496,10 +571,12 @@ const NuevoPqr = () => {
               <FloatingSelect
                 label="Origen"
                 value={formData.origen}
-                onChange={(value) => setFormData((prev) => ({ ...prev, origen: value }))}
-                options={origen.map(origen => ({
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, origen: value }))
+                }
+                options={origen.map((origen) => ({
                   value: origen,
-                  label: origen
+                  label: origen,
                 }))}
                 placeholder="Seleccionar Origen"
                 className={`w-lg ${errores.origen ? "border-red-500" : ""}`}
@@ -517,7 +594,9 @@ const NuevoPqr = () => {
                   id="asunto"
                   label="Asunto"
                   value={formData.asunto}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, asunto: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, asunto: e.target.value }))
+                  }
                   className={`${errores.asunto ? "border-red-500" : ""}`}
                 />
               </div>
@@ -532,11 +611,19 @@ const NuevoPqr = () => {
                 id="descripcion"
                 name="descripcion"
                 value={formData.descripcion}
-                onChange={(e) => setFormData((prev) => ({ ...prev, descripcion: e.target.value }))}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    descripcion: e.target.value,
+                  }))
+                }
                 rows={4}
                 placeholder="Descripción"
-                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
-                  }`}
+                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
+                  errores.descripcion
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-blue-500"
+                }`}
               />
             </div>
             <div className="space-y-3 mt-4">
@@ -566,9 +653,11 @@ const NuevoPqr = () => {
               {/* Botón de subir archivos */}
               <label
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${archivos.length >= 5
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-emerald-400 text-white hover:bg-emerald-500"}
+                     ${
+                       archivos.length >= 5
+                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                         : "bg-emerald-400 text-white hover:bg-emerald-500"
+                     }
                     `}
               >
                 <Paperclip className="w-4 h-4" />
