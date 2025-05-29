@@ -213,3 +213,16 @@ export interface DetallePqrCreate {
   diasAmpliacion: number;
   adjuntos: Adjunto[];
 }
+export interface SolicitudRequisitoDTO {
+  id: number;
+  idTxt: string;
+  diasVencidos: string;
+  asunto: string;
+  solicitanteNombre: string;
+  solicitanteCargo: string;
+  mensaje: string;
+  fechaSolicitud: string; // ISO 8601 date string
+  respuesta: string;
+  fechaRespuesta: string | null;
+  estado: string;
+}

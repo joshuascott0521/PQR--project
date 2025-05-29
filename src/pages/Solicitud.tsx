@@ -31,7 +31,7 @@ export default function Solicitud() {
 
         {/* Columna derecha: Branding */}
         <div className="w-1/2 h-full fixed right-0 top-0 backdrop-blur-sm bg-image px-6 pr-10 py-10 flex items-center justify-center z-10">
-          <div className="w-full max-w-md flex flex-col justify-between h-full">
+          <div className="w-full max-w-md flex flex-col h-full">
             <div>
               <img
                 src="/public/PqrLogo.png"
