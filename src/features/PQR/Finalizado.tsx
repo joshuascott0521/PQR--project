@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { Pqr } from "../../interfaces/pqrInterfaces";
+import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
 import { CiCircleCheck } from "react-icons/ci";
 import { PqrServices } from "../../services/pqrServices";
@@ -10,6 +10,7 @@ const Finalizado = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [conteo, setConteo] = useState<PqrCount>({ estado: "", cantidad: 0 });
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(loading);
@@ -82,14 +83,33 @@ const Finalizado = () => {
 
     fetchPqrs();
   }, [currentPage]);
-  console.log("💗💗💗💗", pqrs);
+  useEffect(() => {
+    setLoading(true);
+
+    const cargar = async () => {
+      const userData = localStorage.getItem("userData");
+      if (!userData) {
+        setError("Usuario no encontrado");
+        setLoading(false);
+        return;
+      }
+
+      const user = JSON.parse(userData);
+      const usuid = user?.id;
+      const res = await PqrServices.getPqrCountEstadoFlujo("FINALIZADO", usuid);
+      if (res.success) setConteo(res.data);
+      console.log(res);
+    };
+
+    cargar();
+  }, []);
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
         <CiCircleCheck className="text-[32px]" />
         <div className="flex font-bold text-[33px]">
-          <p>PQRS finalizados</p>
+          <p>PQRS finalizados {"(" + (conteo.cantidad ?? 0) + ")"}.</p>
         </div>
       </div>
 

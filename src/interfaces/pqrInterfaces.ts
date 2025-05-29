@@ -15,7 +15,6 @@ export interface CreatePqr {
   descripcion: string;
   adjuntos: Adjunto[];
   usuarioId: string | null;
-  
 }
 
 export interface Pqr {
@@ -227,4 +226,9 @@ export interface SolicitudRequisitoDTO {
   respuesta: string;
   fechaRespuesta: string | null;
   estado: string;
+}
+
+export interface PqrCount {
+  estado: string;
+  cantidad: number;
 }

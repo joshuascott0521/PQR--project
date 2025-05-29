@@ -7,7 +7,7 @@ import { CiCircleCheck } from "react-icons/ci";
 import { FaBan } from "react-icons/fa6";
 import { BsFillPeopleFill } from "react-icons/bs";
 import { FaUserCircle } from "react-icons/fa";
-import { TbSettingsPlus } from "react-icons/tb";
+// import { TbSettingsPlus } from "react-icons/tb";
 import { IoHomeOutline } from "react-icons/io5";
 import { AiOutlineFolderView } from "react-icons/ai";
 

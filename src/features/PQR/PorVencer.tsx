@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { PqrServices } from "../../services/pqrServices";
-import type { Pqr } from "../../interfaces/pqrInterfaces";
+import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
 
 const Vencidos = () => {
@@ -9,6 +9,7 @@ const Vencidos = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [conteo, setConteo] = useState<PqrCount>({ estado: "", cantidad: 0 });
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(loading);
@@ -81,13 +82,32 @@ const Vencidos = () => {
 
     fetchPqrs();
   }, [currentPage]);
+  useEffect(() => {
+    setLoading(true);
+
+    const cargar = async () => {
+      const userData = localStorage.getItem("userData");
+      if (!userData) {
+        setError("Usuario no encontrado");
+        setLoading(false);
+        return;
+      }
+
+      const user = JSON.parse(userData);
+      const usuid = user?.id;
+      const res = await PqrServices.getPqrCount("POR VENCER", usuid);
+      if (res.success) setConteo(res.data);
+    };
+
+    cargar();
+  }, []);
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-amarillo-gg text-xl font-bold text-white"></div>
         <div className="flex font-bold text-[33px]">
-          <p>PQRS por vencer</p>
+          <p>PQRS por vencer {"(" + (conteo.cantidad ?? 0) + ")"}</p>
         </div>
       </div>
 
