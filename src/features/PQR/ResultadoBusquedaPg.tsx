@@ -1,41 +1,44 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import React from "react";
 import type { Pqr } from "../../interfaces/pqrInterfaces";
-import { PqrServices } from "../../services/pqrServices";
-import ResultadoBusqueda from "../../components/shared/ResultadoBusqueda";
+import CompactUserCard from "../../components/shared/CompactUserCard";
 
+interface ResultadoBusquedaProps {
+  resultados: Pqr[];
+  loading: boolean;
+  onCardClick: () => void;
+}
 
-const ResultadosBusquedaPage = () => {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get("q") || "";
-  const [resultados, setResultados] = useState<Pqr[]>([]);
-  const [loading, setLoading] = useState(false);
+const ResultadoBusqueda: React.FC<ResultadoBusquedaProps> = ({
+  resultados,
+  loading,
+  onCardClick,
+}) => {
+  if (loading) {
+    return (
+      <p className="text-center text-gray-500 py-2">Buscando resultados...</p>
+    );
+  }
 
-  useEffect(() => {
-    const fetchResultados = async () => {
-      if (!query.trim()) return;
-      setLoading(true);
-      try {
-        const res = await PqrServices.getByFilter({ value: query, page: 1, size: 20 });
-        if (res.success) {
-          setResultados(res.data);
-        }
-      } catch (err) {
-        console.error("Error en búsqueda:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResultados();
-  }, [query]);
+  if (resultados.length === 0) {
+    return (
+      <p className="text-center text-gray-400 py-2">
+        No se encontraron coincidencias.
+      </p>
+    );
+  }
 
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Resultados de búsqueda: "{query}"</h2>
-      <ResultadoBusqueda resultados={resultados} loading={loading} />
+    <div className="w-full p-4">
+      <h3 className="text-base font-semibold text-center border-b pb-2 mb-3">
+        Resultado de Búsqueda
+      </h3>
+      <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scroll">
+        {resultados.map((pqr) => (
+          <CompactUserCard key={pqr.id} pqr={pqr} onClick={onCardClick} />
+        ))}
+      </div>
     </div>
   );
 };
 
-export default ResultadosBusquedaPage;
+export default ResultadoBusqueda;
