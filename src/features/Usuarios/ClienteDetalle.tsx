@@ -84,7 +84,7 @@ const ClienteDetalle = () => {
                 if (!response.success) throw new Error(response.error);
 
                 const data = response.data;
-                console.log("Pruebitas", data)
+                
 
                 if (Array.isArray(data) && data.length < 10) {
                     setHasMore(false);

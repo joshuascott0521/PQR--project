@@ -226,6 +226,45 @@ export const PqrServices = {
   },
 };
 
+export const UsersServices = {
+  getAll: async (): Promise<ApiResponse<Usuario[]>> => {
+    try {
+      const response = await apiClient.get("/usuario/Get");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Funcionario",
+      };
+    }
+  },
+  getById: async (id: string): Promise<ApiResponse<Usuario>> => {
+    try {
+      const response = await apiClient.get(`/usuario/Get/${id}`);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Usuario,
+        error: error.response?.data?.message || "Error al cargar Funcionario",
+      };
+    }
+  },
+  getResume: async (id: string): Promise<ApiResponse<Usuario>> => {
+    try {
+      const response = await apiClient.get(`/usuario/GetReview/${id}`);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Usuario,
+        error: error.response?.data?.message || "Error al cargar Resumen",
+      };
+    }
+  },
+};
+
 export const Origen = {
   getAll: async (): Promise<ApiResponse<string[]>> => {
     const constrainName = "chk_PQR_Origen";

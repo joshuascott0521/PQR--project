@@ -194,6 +194,10 @@ export interface Usuario {
   tipoUsuarioNombre: string;
   role: string;
   email?: string;
-  celular?: number;
+  celular: string;
   estado: string;
+  pqrResumen?: {
+    [estado: string]: number; // Ejemplo: "VENCIDO": 44
+  };
 }
+

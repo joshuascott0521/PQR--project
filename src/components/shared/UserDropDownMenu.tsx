@@ -33,12 +33,7 @@ const UserDropdownMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 outline-none hover:opacity-80">
         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-black font-semibold uppercase">
-          {user.nombre
-            ?.split(" ")
-            .filter(Boolean)
-            .slice(0, 2)
-            .map((n) => n.charAt(0))
-            .join("")}
+          <img src="/Icon_Funcionario.svg" alt="Icono de funcionario" />
         </div>
         <div className="hidden sm:flex flex-col items-start">
           <span className="text-sm font-semibold">{user.nombre}</span>
