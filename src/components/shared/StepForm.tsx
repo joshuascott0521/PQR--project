@@ -254,6 +254,7 @@ export default function StepForm() {
         mostrarAlertaExito("¡PQR registrado exitosamente!");
 
         console.log("Respuesta PQR ✅✅✅✅", res.data);
+        console.log("Carga PQR 🔴🔴🔴🔴🔴", formData);
 
         // Reiniciar formulario
         setFormData({

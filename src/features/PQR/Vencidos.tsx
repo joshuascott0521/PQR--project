@@ -85,7 +85,7 @@ const Vencidos = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-500 text-xl font-bold text-white"></div>
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-red-600 text-xl font-bold text-white"></div>
         <div className="flex font-bold text-[33px]">
           <p>PQRS vencidos</p>
         </div>

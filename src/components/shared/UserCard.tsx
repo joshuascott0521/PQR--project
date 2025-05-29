@@ -46,10 +46,12 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
               Cliente: {pqr.documentoCliente} - {pqr.nombreCliente}
             </p>
             <p>Ingreso: {pqr.fecha}</p>
+            <p>Origen: {pqr.origen}</p>
           </div>
 
           <div>
             <p>Responsable: {pqr.nombreFuncionario}</p>
+            <p>Tipo: {pqr.nombreTipoPQR}</p>
             <p>
               Estado:{" "}
               <span

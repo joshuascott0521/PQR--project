@@ -15,7 +15,7 @@ export interface CreatePqr {
   descripcion: string;
   adjuntos: Adjunto[];
   usuarioId: string | null;
-  DependenciaId: number;
+  
 }
 
 export interface Pqr {
