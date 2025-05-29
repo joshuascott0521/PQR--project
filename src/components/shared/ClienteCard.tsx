@@ -1,66 +1,98 @@
-import type { FC } from "react";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
+import { PiUserCircleFill } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import type { Cliente } from "../../interfaces/pqrInterfaces";
 
-interface clienteCardProps {
-  documento: string;
-  nombre: string;
-  direccion: string;
-  tipoClienteId: string;
-  correo: string;
-  celular: string;
+interface ClienteCardProps {
+  mostrarEditar?: boolean;
+  cliente: Cliente;
 }
 
-const ClienteCard: FC<clienteCardProps> = ({
-  documento,
-  nombre,
-  direccion,
-  tipoClienteId,
-  correo,
-  celular,
-}) => {
+
+const ClienteCard = ({ mostrarEditar = false, cliente }: ClienteCardProps) => {
+  const navigate = useNavigate();
+  
   return (
-    <div className="w-11/12 h-20 border-2 border-gray-200 rounded-lg bg-white mb-1">
-      <div className="w-full h-full flex">
-        <div className=" w-28 h-full flex justify-center items-center">
-          <FaRegUserCircle size={50} color="green" />
+    <div
+      className={`w-full bg-white rounded-lg border border-gray-200 flex items-center gap-6 ${mostrarEditar
+          ? "p-3 cursor-default"
+          : "p-4 sm:p-6 shadow-md cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
+        }`}
+      onClick={() => !mostrarEditar && navigate(`/dashboard/cliente/detalle/${cliente.id}`)}
+    >
+
+      <div className="flex-shrink-0">
+        <PiUserCircleFill size={50} color="#7bc9a3" />
+      </div>
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-y-1 text-gray-700 text-sm items-center gap-3">
+        <div className="flex flex-col items-start justify-center">
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Documento: </span>
+            <span
+              className="font-normal text-base "
+              title={cliente.documento}
+            >
+              {cliente.documento}
+            </span>
+          </p>
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Nombre: </span>
+            <span
+              className="font-normal text-base "
+              title={cliente.nombre}
+            >
+              {cliente.nombre}
+            </span>
+          </p>
         </div>
-        <div className="w-full flex justify-between">
-          <div className="w-96 flex flex-col justify-center">
-            <div className="flex ">
-              <span className="font-bold">Documento:</span> <p>{documento}</p>
-            </div>
-            <div className="flex">
-              <span className="font-bold">Nombre:</span>
-              <p>{nombre}</p>
-            </div>
-          </div>
-          <div className=" w-96 flex flex-col justify-center">
-            <div className="flex">
-              <span className="font-bold">Direccion:</span> <p>{direccion}</p>
-            </div>
-            <div className="flex itemc">
-              <div>
-                <p className="font-bold">Tipo:{tipoClienteId}</p>
-              </div>
-              <div>
-                <select name="" id="" className="rounded-lg">
-                  <option value="">Contribuyente</option>
-                  <option value="">Abogado</option>
-                  <option value="">Contador</option>
-                  <option value="">Ingeniero</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div className="w-96 flex flex-col justify-center">
-            <div className="flex">
-              <span className="font-bold">Correo:</span> <p>{celular}</p>
-            </div>
-            <div className="flex">
-              <span className="font-bold">Celular:</span> <p>{correo}</p>
-            </div>
-          </div>
+        <div className="space-y-1 text-gray-600 text-xs">
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Direccion: </span>
+            <span
+              className="font-normal text-base "
+              title={cliente.direccion}
+            >
+              {cliente.direccion}
+            </span>
+          </p>
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Tipo: </span>
+            <span
+              className="font-normal text-base "
+              title={cliente.tiponame}
+            >
+              {cliente.tiponame}
+            </span>
+          </p>
         </div>
+        <div className="space-y-1 text-gray-600 text-xs">
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Correo: </span>
+            <span
+              className="font-normal text-base "
+              title={cliente.email}
+            >
+              {cliente.email}
+            </span>
+          </p>
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Celular: </span>
+            <span
+              className="font-normal text-base "
+              title={cliente.celular}
+            >
+              {cliente.celular}
+            </span>
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-3 items-center">
+        {mostrarEditar && 
+          <FaEdit
+            className="text-yellow-400 text-[30px] hover:text-yellow-500 cursor-pointer active:scale-90"
+            onClick={() => navigate(`/dashboard/cliente/editar/${cliente.id}`)}
+          />
+        }
       </div>
     </div>
   );

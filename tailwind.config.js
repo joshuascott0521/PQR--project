@@ -5,6 +5,7 @@ export default {
     extend: {
       colors: {
         emeraldBright: "#00bf63",
+        "amarillo-gg": "#ffe900",
       },
     },
   },

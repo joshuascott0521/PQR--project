@@ -1,114 +1,99 @@
-import { FC } from "react";
-import { FcBusinesswoman } from "react-icons/fc";
-import { FaSearch } from "react-icons/fa";
 import { FaEdit } from "react-icons/fa";
-import { UsuarioEdit } from "../../interfaces/pqrInterfaces";
-import useUsuario from "../../hooks/useUsuario";
-import NewFuncionarioFrm from "../../features/Usuarios/NewFuncionarioFrm";
 import { useNavigate } from "react-router-dom";
-import usePqr from "../../hooks/usePqr";
-import { useParams } from "react-router-dom";
+import type { Usuario } from "../../interfaces/pqrInterfaces";
 
-
-interface FuncionarCardProps {
-  id: string,
-  role: string,
-  documento: string,
-  nombre: string,
-  tipo: string, 
-  email: string,
-  celular: string,
-  estado: string,
-  tipoUsuarioNombre:string
+interface ClienteCardProps {
+  mostrarEditar?: boolean;
+  funcionario: Usuario;
 }
 
 
-const FuncionarioCard: FC<FuncionarCardProps> = ({ documento, nombre, tipo, email, celular, role, estado, id, tipoUsuarioNombre }) => {
+const FuncionarioCard = ({ mostrarEditar = false, funcionario }: ClienteCardProps) => {
   const navigate = useNavigate();
-
-  const { setEditUser, setOpen, setEditandUsuario, editandoUsuario, open } = useUsuario();
-  const { isInPqrAsociados } = usePqr();
-  const editUser = (documento: string, nombre: string, tipo: string, celular: string, email: string, cargo: string) => {
-    const userEdit: UsuarioEdit = {
-      documento: documento,
-      nombre: nombre,
-      tipoUsuarioId: tipo,
-      celular: celular,
-      email: email,
-      role: cargo,
-      estado: estado,
-      tipoUsuarioNombre: tipoUsuarioNombre,
-      id: id,
-    }
-    setEditUser([userEdit]);
-    setEditandUsuario(!editandoUsuario);
-  }
-
-  const handleEdit = (e: React.FormEvent) => {
-    e.preventDefault();
-    editUser(documento, nombre, tipo, celular, email, role);
-    setOpen(!open)
-    setEditandUsuario(!editandoUsuario)
-  }
-  const viewPqrAsociados = () => {
-    navigate(`/dashboard/user-pqr/${id}`);
-  }
-
-
   return (
-    <div className="w-full   h-20 border-2 border-gray-200 rounded-lg bg-white mb-1">
-      {open ? <NewFuncionarioFrm /> :
-        <div className="w-full h-full flex">
-          <div className=" w-28 h-full flex justify-center items-center">
-            <FcBusinesswoman size={50} color="green" />
-          </div>
-          <div className="w-full flex justify-between">
-            <div className="w-96 flex flex-col justify-center">
-              <div>
-                <span className="font-bold">Documento: {documento}</span>
-              </div>
-              <div>
-                <span className="font-bold" >Nombre: {nombre}</span>
-              </div>
-            </div>
-            <div className=" w-96 flex flex-col justify-center">
-              <div className="flex flex-col">
-                <div className="flex ">
-                  <span className="font-bold">Tipo:</span>
-                  <p>{role}</p>
-                </div>
-                <div className="flex ">
-                  <span className="font-bold">Cargo:</span>
-                  <p>{tipoUsuarioNombre}</p>
-                </div>
-              </div>
-            </div>
-            <div className="w-96 flex flex-col justify-center">
-              <div className="flex">
-                <span className="font-bold">Correo:</span> <p>{email} </p>
-              </div>
-              <div className="flex">
-                <span className="font-bold">Celular:</span> <p>{celular}</p>
-              </div>
-            </div>
+    <div
+      className={`w-full bg-white rounded-lg border border-gray-200 flex items-center gap-6 ${mostrarEditar
+        ? "p-3 cursor-default"
+        : "p-4 sm:p-6 shadow-md cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
+        }`}
+      onClick={() => !mostrarEditar && navigate(`/dashboard/funcionarios/resumen/${funcionario.id}`)}
+    >
 
-            {isInPqrAsociados ? '' :
-              <div className="w-36 flex justify-between items-center">
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="bg-[rgba(1,103,155,1)]  size-3/4 flex justify-center items-center rounded-full hover:cursor-pointer" onClick={viewPqrAsociados} >
-                    <FaSearch width={100} color="white" />
-                  </div>
-                </div>
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="bg-[rgba(254,182,0,255)]  size-3/4 flex justify-center items-center rounded-full hover:cursor-pointer" onClick={handleEdit}>
-                    <FaEdit width={100} height={100} color="white" />
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
+      <div className="flex-shrink-0">
+        <img src="/Icon_Funcionario.svg" alt="Icono de funcionario" style={{ width: "50px" }} />
+      </div>
+      <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-y-1 text-gray-700 text-sm items-center gap-3">
+        <div className="flex flex-col items-start justify-center">
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Documento: </span>
+            <span
+              className="font-normal text-base "
+              title={funcionario.documento}
+            >
+              {funcionario.documento}
+            </span>
+          </p>
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Nombre: </span>
+            <span
+              className="font-normal text-base "
+              title={funcionario.nombre}
+            >
+              {funcionario.nombre}
+            </span>
+          </p>
         </div>
-      }
+        <div className="space-y-1 text-gray-600 text-xs">
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Cargo: </span>
+            <span
+              className="font-normal text-base "
+              title={funcionario.tipoUsuarioNombre}
+            >
+              {funcionario.tipoUsuarioNombre}
+            </span>
+          </p>
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Tipo: </span>
+            <span
+              className="font-normal text-base "
+              title={funcionario.role}
+            >
+              {funcionario.role}
+            </span>
+          </p>
+        </div>
+        <div className="space-y-1 text-gray-600 text-xs">
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Correo: </span>
+            <span
+              className="font-normal text-base "
+              title={funcionario.email}
+            >
+              {funcionario.email}
+            </span>
+          </p>
+          <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+            <span className="font-semibold text-base">Celular: </span>
+            <span
+              className="font-normal text-base "
+              title={funcionario.celular}
+            >
+              {funcionario.celular}
+            </span>
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-3 items-center">
+
+        {mostrarEditar &&
+          <FaEdit
+            className="text-yellow-400 text-[30px] hover:text-yellow-500 cursor-pointer active:scale-90"
+            onClick={() => navigate(`/dashboard/cliente/editar/${funcionario.id}`)}
+          />
+        }
+
+      </div>
     </div>
   );
 };
