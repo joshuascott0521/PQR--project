@@ -21,12 +21,12 @@ const menuItems = [
   {
     label: "Por vencer",
     path: "/dashboard/por-vencer",
-    icon: <FaCircle className="text-orange-400" />,
+    icon: <FaCircle className="text-amarillo-gg" />,
   },
   {
     label: "A tiempo",
     path: "/dashboard/a-tiempo",
-    icon: <FaCircle className="text-amarillo-gg" />,
+    icon: <FaCircle className="text-green-500" />,
   },
   { label: "Registrados", path: "registrados", icon: <FiUserCheck /> },
   { label: "Asignados", path: "asignados", icon: <AiOutlineFolderView /> },
@@ -45,7 +45,7 @@ const menuItems = [
     icon: <BsFillPeopleFill />,
   },
   { label: "Clientes", path: "admin/cliente", icon: <FaUserCircle /> },
-  { label: "Parámetros", path: "admin/parametros", icon: <TbSettingsPlus /> },
+  // { label: "Parámetros", path: "admin/parametros", icon: <TbSettingsPlus /> },
 ];
 
 const Aside = () => {
