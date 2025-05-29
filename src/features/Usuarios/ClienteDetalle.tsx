@@ -126,7 +126,9 @@ const ClienteDetalle = () => {
 
 
             <div className="mt-1 font-bold text-lg">
-                <p>PQR Asociados (3)</p>
+                <p>PQR Asociados: {pqrs[0]?.totalPQRCliente ?? 0}</p>
+
+
             </div>
 
             <div

@@ -23,6 +23,7 @@ export interface Pqr {
   clienteId: string;
   nombreCliente: string;
   documentoCliente: string;
+  totalPQRCliente: number;
   asunto: string;
   tipoPQRId: string;
   nombreTipoPQR: string;
@@ -84,6 +85,7 @@ export interface GetPqr {
   diasRestantes: number;
   estadoVencimiento: string;
   colorHex: string;
+  fecha?: string;
 }
 
 export interface Adjunto {
