@@ -30,9 +30,11 @@ const Login = () => {
             <div className="mb-5 flex ml-10">
               <input
                 type="button"
-                value="Conocenos"
+                value="Conócenos"
+                onClick={() => window.open("https://www.creapptech.com/", "_blank")}
                 className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold"
               />
+
             </div>
           </div>
         </div>

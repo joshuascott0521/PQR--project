@@ -53,8 +53,10 @@ export default function Solicitud() {
               <input
                 type="button"
                 value="Conócenos"
-                className="bg-emerald-500 hover:bg-emerald-600 transition rounded-3xl w-36 h-10 text-white text-lg font-bold"
+                onClick={() => window.open("https://www.creapptech.com/", "_blank")}
+                className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold"
               />
+
             </div>
           </div>
         </div>

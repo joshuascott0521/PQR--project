@@ -81,7 +81,7 @@ function App() {
           </Route>
         </Route>
         <Route path="portal-pqr" element={<Portal />} />
-        <Route path="solicitud-pqr/:id" element={<Solicitud />} />
+        <Route path="solicitud/:id" element={<Solicitud />} />
       </Routes>
     </AuthProvider>
   );
