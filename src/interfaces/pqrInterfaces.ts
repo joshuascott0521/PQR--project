@@ -208,7 +208,7 @@ export interface DetallePqrCreate {
   eventoId: string;
   descripcion: string;
   usuarioId: string;
-  funcionarioAsignadoId: string;
+  funcionarioAsignadoId: string | null;
   fechaCreacion: string;
   tipoNotificacion: null;
   fechaNotificacion: null;

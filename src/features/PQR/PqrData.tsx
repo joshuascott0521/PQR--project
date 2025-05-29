@@ -12,6 +12,7 @@ const PqrData = () => {
   const [loading, setLoading] = useState(false);
   const [refreshChat, setRefreshChat] = useState(false);
 
+
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const { id } = useParams();
@@ -26,6 +27,8 @@ const PqrData = () => {
   const [usuarios, setUsuarios] = useState<{ label: string; value: string }[]>(
     []
   );
+
+
 
   const opcionesEventos = eventos.map((evento) => ({
     label: evento.nombre ?? "Sin nombre",
@@ -49,6 +52,8 @@ const PqrData = () => {
     const fetchEventos = async () => {
       const response = await typeSelectComents.getEvento(id!);
       if (response.success && response.data) {
+
+
         setEventos(response.data);
         console.log("💗💗✅✅✅", response);
       }
@@ -159,13 +164,14 @@ const PqrData = () => {
         eventoId: eventoSeleccionado,
         descripcion,
         usuarioId: usuid,
-        funcionarioAsignadoId: user,
+        funcionarioAsignadoId: nombreEventoSeleccionado === "Comentario" ? null : user,
         fechaCreacion: new Date().toISOString(),
         tipoNotificacion: null,
         fechaNotificacion: null,
         diasAmpliacion: 0,
         adjuntos,
       };
+
 
       const response = await PqrServices.getDetallePqrCreate(datos);
 
@@ -200,6 +206,25 @@ const PqrData = () => {
 
     setLoading(false);
   };
+
+  const eventosQueRequierenAsignacion = [
+    "Asignar",
+    "Solicitar a Funcionario",
+  ];
+
+
+  const nombreEventoSeleccionado = eventos.find(
+    (ev) => ev.id === eventoSeleccionado
+  )?.nombre;
+
+  const requiereAsignar = eventosQueRequierenAsignacion.includes(nombreEventoSeleccionado || "");
+
+  useEffect(() => {
+    if (!requiereAsignar) {
+      setUser("");
+    }
+  }, [requiereAsignar]);
+
 
   return (
     <>
@@ -279,18 +304,23 @@ const PqrData = () => {
                 options={opcionesEventos}
                 showLabelPlaceholder={false}
               />
-              <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                Asignar a:
-              </label>
-              <FloatingSelectLP
-                value={user}
-                onChange={(value) => {
-                  setUser(value);
-                  console.log("Usuario asignado:", value);
-                }}
-                options={usuarios}
-                showLabelPlaceholder={false}
-              />
+              {requiereAsignar && (
+                <>
+                  <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                    Asignar a:
+                  </label>
+                  <FloatingSelectLP
+                    value={user}
+                    onChange={(value) => {
+                      setUser(value);
+                      console.log("Usuario asignado:", value);
+                    }}
+                    options={usuarios}
+                    showLabelPlaceholder={false}
+                  />
+                </>
+              )}
+
             </div>
 
             <div>
@@ -341,11 +371,10 @@ const PqrData = () => {
 
             <div className="flex flex-wrap items-center justify-between">
               <label
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${
-                  archivos.length >= 5
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-emerald-400 text-white hover:bg-emerald-500"
-                }`}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-emerald-400 text-white hover:bg-emerald-500"
+                  }`}
               >
                 <Paperclip className="w-4 h-4" />
                 {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}
