@@ -91,6 +91,7 @@ const FuncionarioResumen = () => {
         setLoadingPqrs(true);
         try {
             if (!funcionario) return;
+            console.log("🟢 Enviando usuid:", funcionario?.id, "estado:", estado, "página:", paginaActual);
 
             const nuevos = await PqrServices.getByEstado({
                 usuid: funcionario.id,
