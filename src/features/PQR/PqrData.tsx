@@ -158,19 +158,21 @@ const PqrData = () => {
         setLoading(false);
         return;
       }
-
       const datos = {
         pqrId: id || "",
         eventoId: eventoSeleccionado,
         descripcion,
         usuarioId: usuid,
-        funcionarioAsignadoId: nombreEventoSeleccionado === "Comentario" ? null : user,
+        funcionarioAsignadoId:
+          requiereAsignar && user.trim() !== "" ? user : null,
         fechaCreacion: new Date().toISOString(),
-        tipoNotificacion: null,
-        fechaNotificacion: null,
+        tipoNotificacion: "Mensaje de texto",
+        fechaNotificacion: new Date().toISOString(),
         diasAmpliacion: 0,
         adjuntos,
       };
+
+
 
 
       const response = await PqrServices.getDetallePqrCreate(datos);

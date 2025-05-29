@@ -210,8 +210,8 @@ export interface DetallePqrCreate {
   usuarioId: string;
   funcionarioAsignadoId: string | null;
   fechaCreacion: string;
-  tipoNotificacion: null;
-  fechaNotificacion: null;
+  tipoNotificacion: string | null;
+  fechaNotificacion: string | null;
   diasAmpliacion: number;
   adjuntos: Adjunto[];
 }
