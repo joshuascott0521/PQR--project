@@ -29,7 +29,7 @@ export const FloatingSelectLP: React.FC<FloatingSelectProps> = ({
   showLabelPlaceholder = true, // ahora viene por props
 }) => {
   return (
-    <div className="relative w-full max-w-52">
+    <div className="relative w-full max-w-60">
       <SelectPrimitive.Root
         value={value}
         onValueChange={onChange}
@@ -37,7 +37,7 @@ export const FloatingSelectLP: React.FC<FloatingSelectProps> = ({
       >
         <SelectPrimitive.Trigger
           className={cn(
-            "peer pt-3 border border-gray-300 rounded-lg w-full h-8 px-3 bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-green-500",
+            "peer border border-gray-300 rounded-lg w-full h-8 px-3 bg-white text-left flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-green-500",
             !showLabelPlaceholder && "pt-0", // elimina padding si no hay label/placeholder
             className
           )}

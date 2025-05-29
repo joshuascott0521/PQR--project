@@ -5,10 +5,12 @@ import type {
   Cliente,
   CreatePqr,
   departamento,
+  Evento,
   Municipio,
   Pqr,
   tipoCliente,
   TipoPqr,
+  Usuario,
 } from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
@@ -18,9 +20,24 @@ export interface GetPqrParams {
   estadoVencimiento?: string;
 }
 export const typeSelectComents = {
-  getEvento: async (): Promise<ApiResponse<tipoCliente[]>> => {
+  getEvento: async (id: string): Promise<ApiResponse<Evento[]>> => {
     try {
-      const response = await apiClient.get("PQREvento/Get");
+      const response = await apiClient.get(
+        `/PQREvento/GetEventoPermitido/${id}`
+      );
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message || "Error al obtener tipos de clientes",
+      };
+    }
+  },
+  getUsuarios: async (): Promise<ApiResponse<Usuario[]>> => {
+    try {
+      const response = await apiClient.get("usuario/Get");
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
@@ -243,14 +260,16 @@ export const ClientesServices = {
 
   getByDoc: async (doc: string): Promise<ApiResponse<Cliente>> => {
     try {
-      const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`)
-      return { success: true, data: response.data }
+      const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`);
+      return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: {} as Cliente,
-        error: error.response?.data?.message || "Error al cargar cliente por documento"
-      }
+        error:
+          error.response?.data?.message ||
+          "Error al cargar cliente por documento",
+      };
     }
   },
   getById: async (id: string): Promise<ApiResponse<Cliente>> => {
@@ -267,17 +286,20 @@ export const ClientesServices = {
   },
   update: async (cliente: Cliente): Promise<ApiResponse<Cliente>> => {
     try {
-      const response = await apiClient.put("Cliente/ActualizarItemCliente", cliente)
-      return { success: true, data: response.data }
+      const response = await apiClient.put(
+        "Cliente/ActualizarItemCliente",
+        cliente
+      );
+      return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: {} as Cliente,
-        error: error.response?.data?.message || "Error al actualizar Cliente"
-      }
-    };
+        error: error.response?.data?.message || "Error al actualizar Cliente",
+      };
+    }
   },
-}
+};
 
 export const ArchivoServices = {
   descargar: async (
@@ -312,5 +334,5 @@ export const ArchivoServices = {
         error: error.message || "Error al descargar el archivo",
       };
     }
-  }
-}
+  },
+};

@@ -186,3 +186,14 @@ export interface Evento {
   accion?: string;
   obligadoAnexo?: boolean;
 }
+export interface Usuario {
+  id: string;
+  documento: string;
+  nombre: string;
+  tipoUsuId: string;
+  tipoUsuarioNombre: string;
+  role: string;
+  email?: string;
+  celular?: number;
+  estado: string;
+}

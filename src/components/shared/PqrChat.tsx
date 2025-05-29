@@ -2,7 +2,7 @@ import type { DetallePqr } from "../../interfaces/pqrInterfaces";
 import { ArchivoServices } from "../../services/pqrServices";
 
 const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
-  console.log(detalles);
+  console.log("CHATTT", detalles);
   return (
     <>
       {detalles?.map((detalle) => (
