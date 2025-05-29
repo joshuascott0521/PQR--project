@@ -61,7 +61,6 @@ const NuevoPqr = () => {
     descripcion: "",
     adjuntos: [],
     usuarioId: "",
-    DependenciaId: 0,
   });
 
   useEffect(() => {
@@ -104,7 +103,6 @@ const NuevoPqr = () => {
           descripcion: "",
           adjuntos: [],
           usuarioId: user?.id || "",
-          DependenciaId: 0,
         });
       } catch (error) {
         console.error("Error al cargar datos iniciales:", error);
@@ -280,7 +278,6 @@ const NuevoPqr = () => {
         ...formData,
         usuarioId: user.id,
         adjuntos: archivosSubidos,
-        DependenciaId: 1,
       });
 
       if (res.success) {
@@ -320,7 +317,6 @@ const NuevoPqr = () => {
         direccion: cliente.direccion,
         departamentoCod: cliente.departamentoCod,
         municipioCod: cliente.municipioCod,
-        DependenciaId: 1,
       }));
 
       if (cliente.departamentoCod) {
