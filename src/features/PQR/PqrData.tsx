@@ -5,8 +5,9 @@ import PqrChat from "../../components/shared/PqrChat";
 import { PqrServices, typeSelectComents } from "../../services/pqrServices";
 import type { DetallePqr, Evento } from "../../interfaces/pqrInterfaces";
 import { Paperclip, X, File } from "lucide-react";
-import toast from "react-hot-toast";
+
 import LoadingScreenBool from "../../components/shared/LoadingScreenBool";
+import { showToast } from "../../utils/toastUtils";
 
 const PqrData = () => {
   const [loading, setLoading] = useState(false);
@@ -75,7 +76,7 @@ const PqrData = () => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
 
     if (archivos.length + nuevos.length > 5) {
-      toast.error("Solo puedes subir hasta 5 archivos.");
+      showToast("Solo puedes subir hasta 5 archivos.");
       return;
     }
 
@@ -83,9 +84,7 @@ const PqrData = () => {
     const maxSizeBytes = size * 1024 * 1024;
     const archivosValidos = nuevos.filter((file) => {
       if (file.size > maxSizeBytes) {
-        toast.error(
-          `El archivo "${file.name}" excede el límite de ${size} MB.`
-        );
+        showToast(`El archivo "${file.name}" excede el límite de ${size} MB.`);
         return false;
       }
       return true;
@@ -111,15 +110,13 @@ const PqrData = () => {
         eventos.find((ev) => ev.id === eventoSeleccionado)?.nombre ===
         "Asignar";
       if (eventoAsignar && archivos.length === 0) {
-        toast.error(
-          "Debe adjuntar al menos un archivo para el evento 'Asignar'"
-        );
+        showToast("Debe adjuntar al menos un archivo para el evento 'Asignar'");
         setLoading(false);
         return;
       }
 
       if (descripcion.trim().length < 6) {
-        toast.error("La descripción debe tener al menos 6 caracteres");
+        showToast("La descripción debe tener al menos 6 caracteres");
         setLoading(false);
         return;
       }
@@ -127,7 +124,7 @@ const PqrData = () => {
       const uploadResponse = await PqrServices.uploadFiles(archivos);
 
       if (!uploadResponse.success) {
-        toast.error(uploadResponse.error || "Error al subir archivos");
+        showToast(uploadResponse.error || "Error al subir archivos");
         setLoading(false);
         return;
       }
@@ -170,7 +167,7 @@ const PqrData = () => {
       const response = await PqrServices.getDetallePqrCreate(datos);
 
       if (response.success) {
-        toast.success("Evento creado exitosamente");
+        showToast("Evento creado exitosamente", "success");
         setDescripcion("");
         setArchivos([]);
         setInputKey((prev) => prev + 1);
@@ -184,7 +181,7 @@ const PqrData = () => {
           setRefreshChat((prev) => !prev);
         }
       } else {
-        toast.error(response.error || "Error al guardar el evento");
+        showToast(response.error || "Error al guardar el evento");
       }
     } catch (error: any) {
       const rawError = error?.response?.data?.errors?.PQRDetalle?.[0];
@@ -193,7 +190,7 @@ const PqrData = () => {
         const match = rawError.match(/Error al insertar[^\n]+/);
         if (match) cleanMessage = match[0];
       }
-      toast.error(cleanMessage);
+      showToast(cleanMessage);
     } finally {
       setLoading(false);
     }

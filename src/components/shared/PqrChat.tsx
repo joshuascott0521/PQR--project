@@ -1,5 +1,6 @@
 import type { DetallePqr } from "../../interfaces/pqrInterfaces";
 import { ArchivoServices } from "../../services/pqrServices";
+import { showToast } from "../../utils/toastUtils";
 
 const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
   console.log("CHATTT", detalles);
@@ -80,7 +81,7 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
                         archivo.nombre
                       );
                       if (!result.success) {
-                        alert("Error al descargar el archivo"); // o usa un toast si tienes uno
+                        showToast("Error al descargar el archivo");
                       }
                     }}
                   >

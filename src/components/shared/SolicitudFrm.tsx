@@ -1,15 +1,18 @@
 import { File, X, Paperclip } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+
 import { SolicitudServices, PqrServices } from "../../services/pqrServices";
 import type { SolicitudRequisitoDTO } from "../../interfaces/pqrInterfaces";
+import { showToast } from "../../utils/toastUtils";
 
 export default function SolicitudFrm() {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const [mensaje, setMensaje] = useState("");
-  const [solicitud, setSolicitud] = useState<SolicitudRequisitoDTO | null>(null);
+  const [solicitud, setSolicitud] = useState<SolicitudRequisitoDTO | null>(
+    null
+  );
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -19,7 +22,7 @@ export default function SolicitudFrm() {
     const maxSizeBytes = size * 1024 * 1024;
 
     if (archivos.length + nuevos.length > 5) {
-      toast.error("Solo puedes subir hasta 5 archivos.");
+      showToast("Solo puedes subir hasta 5 archivos.");
       return;
     }
 
@@ -43,28 +46,28 @@ export default function SolicitudFrm() {
 
   const handleEnviar = async () => {
     if (!id || !mensaje.trim()) {
-      toast.error("Debe ingresar un mensaje válido.");
+      showToast("Debe ingresar un mensaje válido.");
       return;
     }
 
     const subida = await PqrServices.uploadFiles(archivos);
 
     if (!subida.success) {
-      toast.error("Error al subir los archivos adjuntos");
+      showToast("Error al subir los archivos adjuntos");
       return;
     }
 
     const result = await SolicitudServices.responderPut({
       id: parseInt(id),
       mensaje,
-      adjuntos: subida.data
+      adjuntos: subida.data,
     });
 
     if (result.success) {
-      toast.success("Respuesta enviada exitosamente");
+      showToast("Respuesta enviada exitosamente", "success");
       navigate("/dashboard/PQR");
     } else {
-      toast.error(result.error || "Error al enviar respuesta");
+      showToast(result.error || "Error al enviar respuesta");
     }
   };
 
@@ -76,8 +79,7 @@ export default function SolicitudFrm() {
       if (result.success) {
         setSolicitud(result.data);
       } else {
-        toast.error(result.error || "Error al cargar solicitud");
-        
+        showToast(result.error || "Error al cargar solicitud");
       }
     };
 
@@ -99,7 +101,11 @@ export default function SolicitudFrm() {
           </div>
 
           <div className="flex justify-center md:justify-end">
-            <img className="w-[220px] md:w-[300px] h-auto" src="/public/Logo-static.png" alt="Logo" />
+            <img
+              className="w-[220px] md:w-[300px] h-auto"
+              src="/public/Logo-static.png"
+              alt="Logo"
+            />
           </div>
         </div>
       </div>
@@ -109,18 +115,30 @@ export default function SolicitudFrm() {
         {solicitud && (
           <div className="border border-gray-300 rounded-md p-4 w-full max-w-4xl text-sm font-sans">
             <div className="flex flex-wrap gap-4">
-              <p><span className="font-bold">No. de Solicitud:</span> {solicitud.idTxt}</p>
               <p>
-                <span className="font-bold">Fecha Solicitud:</span> {new Date(solicitud.fechaSolicitud).toLocaleDateString()} {" "}
-                <span className="text-red-600 font-semibold">({solicitud.diasVencidos})</span>
+                <span className="font-bold">No. de Solicitud:</span>{" "}
+                {solicitud.idTxt}
+              </p>
+              <p>
+                <span className="font-bold">Fecha Solicitud:</span>{" "}
+                {new Date(solicitud.fechaSolicitud).toLocaleDateString()}{" "}
+                <span className="text-red-600 font-semibold">
+                  ({solicitud.diasVencidos})
+                </span>
               </p>
             </div>
             <p className="mt-2">
               <span className="font-bold">Asunto:</span> {solicitud.asunto}
             </p>
             <div className="flex flex-wrap gap-4 mt-2">
-              <p><span className="font-bold">Solicitante:</span> {solicitud.solicitanteNombre}</p>
-              <p><span className="font-bold">Cargo Solicitante:</span> {solicitud.solicitanteCargo}</p>
+              <p>
+                <span className="font-bold">Solicitante:</span>{" "}
+                {solicitud.solicitanteNombre}
+              </p>
+              <p>
+                <span className="font-bold">Cargo Solicitante:</span>{" "}
+                {solicitud.solicitanteCargo}
+              </p>
             </div>
             <div className="mt-4">
               <div className="w-full max-h-[120px] border border-gray-300 rounded-lg p-3 overflow-y-auto whitespace-pre-wrap text-black bg-white">
@@ -167,7 +185,11 @@ export default function SolicitudFrm() {
 
             <label
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                ${archivos.length >= 5 ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-emerald-400 text-white hover:bg-emerald-500"}`}
+                ${
+                  archivos.length >= 5
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-emerald-400 text-white hover:bg-emerald-500"
+                }`}
             >
               <Paperclip className="w-4 h-4" />
               {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}

@@ -21,14 +21,11 @@ import Portal from "./pages/portal";
 import PrivateRoute from "./components/PrivateRoutes";
 import Clientes from "./features/Usuarios/Clientes";
 import ClienteDetalle from "./features/Usuarios/ClienteDetalle";
-// import ResultadosBusquedaPage from "./features/PQR/ResultadoBusquedaPg";
+
 import Solicitud from "./pages/Solicitud";
 import Funcionarios from "./features/Usuarios/Funcionarios";
 import FuncionarioResumen from "./features/Usuarios/FuncionarioResumen";
 import EditarCliente from "./features/Usuarios/EditarCliente";
-// import PqrChat from "./components/shared/PqrChat";
-// import LoginFrm from "./features/Usuarios/LoginFrm"; // ejemplo
-// Agrega más rutas internas según tus componentes
 
 function App() {
   return (

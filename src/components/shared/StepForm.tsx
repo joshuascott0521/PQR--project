@@ -1,19 +1,38 @@
 import { useEffect, useState } from "react";
 import { FloatingLabel } from "./FloatingLabel";
-import type { ArchivoSubido, CreatePqr, departamento, Municipio, tipoCliente, TipoPqr } from "../../interfaces/pqrInterfaces";
-import { PqrServices, RegionServices, TipoClienteServices, TipoPqrServices } from "../../services/pqrServices";
+import type {
+  ArchivoSubido,
+  CreatePqr,
+  departamento,
+  Municipio,
+  tipoCliente,
+  TipoPqr,
+} from "../../interfaces/pqrInterfaces";
+import {
+  PqrServices,
+  RegionServices,
+  TipoClienteServices,
+  TipoPqrServices,
+} from "../../services/pqrServices";
 import { FloatingSelect } from "./FloatingSelect";
 import { File, X, Paperclip } from "lucide-react";
 import RequisitosAdjuntos from "./RequisitosAdjuntos";
-import { mostrarAlertaConfirmacion, mostrarAlertaError, mostrarAlertaExito } from "../../libs/alerts";
-import toast from "react-hot-toast";
+import {
+  mostrarAlertaConfirmacion,
+  mostrarAlertaError,
+  mostrarAlertaExito,
+} from "../../libs/alerts";
+
+import { showToast } from "../../utils/toastUtils";
 
 export default function StepForm() {
   const [step, setStep] = useState(0);
-  const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([])
-  const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>([]);
-  const [listaMunicipios, setListaMunicipios] = useState<Municipio[]>([])
-  const [tipoPQRListado, setTipoPQRListado] = useState<TipoPqr[]>([])
+  const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([]);
+  const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>(
+    []
+  );
+  const [listaMunicipios, setListaMunicipios] = useState<Municipio[]>([]);
+  const [tipoPQRListado, setTipoPQRListado] = useState<TipoPqr[]>([]);
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const [autorizado, setAutorizado] = useState(false);
@@ -52,11 +71,9 @@ export default function StepForm() {
         const tipoPqrRes = await TipoPqrServices.getAll();
         if (!tipoPqrRes.success) throw new Error(tipoPqrRes.error);
 
-
         setTipoCliente(tipoClienteRes.data);
         setListaDepartamentos(departamentosRes.data);
         setTipoPQRListado(tipoPqrRes.data);
-
 
         setFormData({
           documentoCliente: "",
@@ -75,7 +92,6 @@ export default function StepForm() {
           adjuntos: [],
           usuarioId: user?.id || "",
         });
-
       } catch (error) {
         console.error("Error al cargar datos iniciales:", error);
       }
@@ -84,14 +100,10 @@ export default function StepForm() {
     loadData();
   }, []);
 
-
-
-
   const getLocalDate = () => {
     const tzoffset = new Date().getTimezoneOffset() * 60000; // offset en ms
     return new Date(Date.now() - tzoffset).toISOString().split("T")[0];
   };
-
 
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
@@ -117,8 +129,6 @@ export default function StepForm() {
     setInputKey((prev) => prev + 1); // fuerza rerender del input
   };
 
-
-
   const eliminarArchivo = (index: number) => {
     const copia = [...archivos];
     copia.splice(index, 1);
@@ -130,71 +140,70 @@ export default function StepForm() {
 
     if (step === 0) {
       if (!formData.documentoCliente.trim()) {
-        toast.error("Por favor ingresa el documento del cliente.");
+        showToast("Por favor ingresa el documento del cliente.");
         nuevosErrores.documentoCliente = true;
       }
       if (!formData.nombreCliente.trim()) {
-        toast.error("Por favor ingresa el nombre completo del cliente.");
+        showToast("Por favor ingresa el nombre completo del cliente.");
         nuevosErrores.nombreCliente = true;
       }
       if (!formData.tipoClienteId) {
-        toast.error("Por favor selecciona el tipo de cliente.");
+        showToast("Por favor selecciona el tipo de cliente.");
         nuevosErrores.tipoClienteId = true;
       }
       if (!formData.email.trim()) {
-        toast.error("Por favor ingresa el correo electrónico.");
+        showToast("Por favor ingresa el correo electrónico.");
         nuevosErrores.email = true;
       } else {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
-          toast.error("El correo electrónico no es válido.");
+          showToast("El correo electrónico no es válido.");
           nuevosErrores.email = true;
         }
       }
       if (!formData.celular.trim()) {
-        toast.error("Por favor ingresa el número de celular.");
+        showToast("Por favor ingresa el número de celular.");
         nuevosErrores.celular = true;
       }
       if (!formData.direccion.trim()) {
-        toast.error("Por favor ingresa la dirección.");
+        showToast("Por favor ingresa la dirección.");
         nuevosErrores.direccion = true;
       }
       if (formData.departamentoCod === 0) {
-        toast.error("Selecciona un departamento.");
+        showToast("Selecciona un departamento.");
         nuevosErrores.departamentoCod = true;
       }
       if (formData.municipioCod === 0) {
-        toast.error("Selecciona un municipio.");
+        showToast("Selecciona un municipio.");
         nuevosErrores.municipioCod = true;
       }
     }
 
     if (step === 1) {
       if (!formData.tipoPQRId) {
-        toast.error("Por favor selecciona el tipo de petición.");
+        showToast("Por favor selecciona el tipo de petición.");
         nuevosErrores.tipoPQRId = true;
       }
       if (!formData.asunto.trim()) {
-        toast.error("Por favor escribe un asunto para la solicitud.");
+        showToast("Por favor escribe un asunto para la solicitud.");
         nuevosErrores.asunto = true;
       }
       if (!formData.descripcion.trim()) {
-        toast.error("Por favor describe brevemente la solicitud.");
+        showToast("Por favor describe brevemente la solicitud.");
         nuevosErrores.descripcion = true;
       }
     }
 
     if (step === 2) {
       if (!autorizado) {
-        toast.error("Debes autorizar el tratamiento de datos.");
+        showToast("Debes autorizar el tratamiento de datos.");
       }
 
       if (archivos.length === 0) {
-        toast.error("Debes subir al menos un archivo de soporte.");
+        showToast("Debes subir al menos un archivo de soporte.");
         return false;
       }
     }
-
 
     setErrores(nuevosErrores);
 
@@ -202,24 +211,22 @@ export default function StepForm() {
     return Object.keys(nuevosErrores).length === 0;
   };
 
-
   const handleNext = () => {
     if (validateStep()) {
       setStep((prev) => prev + 1);
     }
   };
 
-
   const handleBack = () => setStep((prev) => prev - 1);
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // ✅ Validar antes de continuar
     if (!validateStep()) {
-      toast.error("Por favor, completa todos los campos obligatorios antes de continuar.");
+      showToast(
+        "Por favor, completa todos los campos obligatorios antes de continuar."
+      );
       return;
     }
 
@@ -247,7 +254,7 @@ export default function StepForm() {
         usuarioId: null,
         adjuntos: archivosSubidos,
         radicado: "",
-        origen: "Portal web"
+        origen: "Portal web",
       });
 
       if (res.success) {
@@ -279,16 +286,15 @@ export default function StepForm() {
         setAutorizado(false);
         setStep(0);
       } else {
-        mostrarAlertaError(res.error || "Ocurrió un error al registrar el PQR.");
+        mostrarAlertaError(
+          res.error || "Ocurrió un error al registrar el PQR."
+        );
       }
     } catch (error) {
       console.error("Error inesperado al guardar:", error);
       mostrarAlertaError("Error inesperado al guardar el PQR.");
     }
   };
-
-
-
 
   return (
     <div className="w-full h-screen flex justify-center items-center">
@@ -298,48 +304,74 @@ export default function StepForm() {
           <div className="relative flex justify-between mb-6">
             <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-300 z-0" />
             {["Paso 1", "Paso 2", "Paso 3"].map((label, index) => (
-              <div key={index} className="flex-1 flex flex-col items-center relative z-10">
+              <div
+                key={index}
+                className="flex-1 flex flex-col items-center relative z-10"
+              >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${index < step
-                    ? "bg-green-500 text-white border-green-500"
-                    : index === step
+                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
+                    index < step
+                      ? "bg-green-500 text-white border-green-500"
+                      : index === step
                       ? "bg-white text-green-500 border-green-500"
                       : "bg-gray-200 text-gray-500 border-gray-300"
-                    }`}
+                  }`}
                 >
                   {index + 1}
                 </div>
-                <span className="mt-2 text-sm font-medium text-black">{label}</span>
+                <span className="mt-2 text-sm font-medium text-black">
+                  {label}
+                </span>
               </div>
             ))}
           </div>
 
           {/* Form Steps */}
-          <form onSubmit={handleSubmit} className="space-y-4 text-black text-sm">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 text-black text-sm"
+          >
             {step === 0 && (
               <div>
-                <h2 className="text-lg font-semibold mb-2 text-center">Datos del Solicitante</h2>
+                <h2 className="text-lg font-semibold mb-2 text-center">
+                  Datos del Solicitante
+                </h2>
                 <div className="border-b border-gray-500 mb-2" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FloatingLabel
                     id="documento"
                     label="Documento"
                     value={formData.documentoCliente}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, documentoCliente: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        documentoCliente: e.target.value,
+                      }))
+                    }
                     className={errores.documentoCliente ? "border-red-500" : ""}
                   />
                   <FloatingLabel
                     id="nombresYApellidos"
                     label="Nombres y Apellidos"
                     value={formData.nombreCliente}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, nombreCliente: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        nombreCliente: e.target.value,
+                      }))
+                    }
                     className={errores.nombreCliente ? "border-red-500" : ""}
                   />
                   <FloatingSelect
                     label="Tipo Cliente"
                     value={formData.tipoClienteId}
-                    onChange={(value) => setFormData(prev => ({ ...prev, tipoClienteId: value }))}
-                    options={tipoCliente.map(tc => ({ value: tc.id, label: tc.nombre }))}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, tipoClienteId: value }))
+                    }
+                    options={tipoCliente.map((tc) => ({
+                      value: tc.id,
+                      label: tc.nombre,
+                    }))}
                     placeholder="Elige una opción"
                     className={errores.tipoClienteId ? "border-red-500" : ""}
                   />
@@ -347,27 +379,44 @@ export default function StepForm() {
                     id="email"
                     label="Email"
                     value={formData.email}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
                     className={errores.email ? "border-red-500" : ""}
                   />
                   <FloatingLabel
                     id="celular"
                     label="Celular"
                     value={formData.celular}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, celular: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        celular: e.target.value,
+                      }))
+                    }
                     className={errores.celular ? "border-red-500" : ""}
                   />
                   <FloatingLabel
                     id="direccion"
                     label="Dirección"
                     value={formData.direccion}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, direccion: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        direccion: e.target.value,
+                      }))
+                    }
                     className={errores.direccion ? "border-red-500" : ""}
                   />
                   <FloatingSelect
                     label="Departamento"
                     value={
-                      formData.departamentoCod === 0 ? "" : formData.departamentoCod.toString()
+                      formData.departamentoCod === 0
+                        ? ""
+                        : formData.departamentoCod.toString()
                     }
                     placeholder="Seleccionar Departamento"
                     onChange={async (value) => {
@@ -380,7 +429,9 @@ export default function StepForm() {
                           municipioCod: 0,
                         }));
                         try {
-                          const municipioRes = await RegionServices.getMun(dep.cod);
+                          const municipioRes = await RegionServices.getMun(
+                            dep.cod
+                          );
                           if (municipioRes.success) {
                             setListaMunicipios(municipioRes.data);
                           } else {
@@ -391,9 +442,9 @@ export default function StepForm() {
                         }
                       }
                     }}
-                    options={listaDepartamentos.map(dep => ({
+                    options={listaDepartamentos.map((dep) => ({
                       value: dep.cod?.toString() || "",
-                      label: dep.nombre || ""
+                      label: dep.nombre || "",
                     }))}
                     className={errores.departamentoCod ? "border-red-500" : ""}
                   />
@@ -401,9 +452,10 @@ export default function StepForm() {
                     label="Municipio"
                     placeholder="Seleccionar Municipio"
                     value={
-                      formData.municipioCod === 0 ? "" : formData.municipioCod.toString()
+                      formData.municipioCod === 0
+                        ? ""
+                        : formData.municipioCod.toString()
                     }
-
                     options={listaMunicipios.map((mun) => ({
                       value: mun.cod.toString(),
                       label: mun.nombre,
@@ -435,7 +487,9 @@ export default function StepForm() {
 
             {step === 1 && (
               <div>
-                <h2 className="text-lg font-semibold mb-2 text-center">Datos del PQR</h2>
+                <h2 className="text-lg font-semibold mb-2 text-center">
+                  Datos del PQR
+                </h2>
                 <div className="border-b border-gray-500 mb-2" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <FloatingLabel
@@ -448,8 +502,13 @@ export default function StepForm() {
                   <FloatingSelect
                     label="Tipo Petición"
                     value={formData.tipoPQRId}
-                    onChange={(value) => setFormData(prev => ({ ...prev, tipoPQRId: value }))}
-                    options={tipoPQRListado.map(tc => ({ value: tc.id, label: tc.nombre }))}
+                    onChange={(value) =>
+                      setFormData((prev) => ({ ...prev, tipoPQRId: value }))
+                    }
+                    options={tipoPQRListado.map((tc) => ({
+                      value: tc.id,
+                      label: tc.nombre,
+                    }))}
                     placeholder="Elige una opción"
                     className={errores.tipoPQRId ? "border-red-500" : ""}
                   />
@@ -458,7 +517,12 @@ export default function StepForm() {
                       id="asunto"
                       label="Asunto"
                       value={formData.asunto}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, asunto: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          asunto: e.target.value,
+                        }))
+                      }
                       className={errores.asunto ? "border-red-500" : ""}
                     />
                   </div>
@@ -468,11 +532,19 @@ export default function StepForm() {
                         id="descripcion"
                         name="descripcion"
                         value={formData.descripcion}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, descripcion: e.target.value }))}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            descripcion: e.target.value,
+                          }))
+                        }
                         rows={4}
                         placeholder="Descripción"
-                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-green-500"
-                          }`}
+                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
+                          errores.descripcion
+                            ? "border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:ring-green-500"
+                        }`}
                       />
                     </div>
                   </div>
@@ -499,20 +571,26 @@ export default function StepForm() {
 
             {step === 2 && (
               <div>
-                <h2 className="text-lg font-semibold mb-1 text-center">Soportes de la Solicitud</h2>
+                <h2 className="text-lg font-semibold mb-1 text-center">
+                  Soportes de la Solicitud
+                </h2>
                 <div className="border-b border-gray-500 mb-2" />
                 <RequisitosAdjuntos />
                 <div className="flex flex-col gap-2">
                   {/* Botón de subir archivos */}
                   <label
                     className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${archivos.length >= 5
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-emerald-400 text-white hover:bg-emerald-500"}
+                     ${
+                       archivos.length >= 5
+                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                         : "bg-emerald-400 text-white hover:bg-emerald-500"
+                     }
                     `}
                   >
                     <Paperclip className="w-4 h-4" />
-                    {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}
+                    {archivos.length >= 5
+                      ? "Límite alcanzado"
+                      : "Subir archivos"}
                     <input
                       key={inputKey}
                       type="file"
@@ -523,7 +601,6 @@ export default function StepForm() {
                     />
                   </label>
 
-
                   {/* Contenedor con adjuntos envueltos sin scroll */}
                   <div className="flex flex-wrap gap-2">
                     {archivos.map((archivo, index) => (
@@ -532,7 +609,9 @@ export default function StepForm() {
                         className="flex items-center gap-1 bg-gray-100 border border-gray-300 rounded-full px-3 py-1 w-[180px] flex-shrink-0"
                       >
                         <File className="w-4 h-4 text-gray-700" />
-                        <p className="text-xs text-gray-800 truncate flex-1">{archivo.name}</p>
+                        <p className="text-xs text-gray-800 truncate flex-1">
+                          {archivo.name}
+                        </p>
                         <button
                           type="button"
                           onClick={() => eliminarArchivo(index)}
@@ -554,7 +633,10 @@ export default function StepForm() {
                     checked={autorizado}
                     onChange={(e) => setAutorizado(e.target.checked)}
                   />
-                  <label htmlFor="autorizacion" className="text-gray-800 text-sm">
+                  <label
+                    htmlFor="autorizacion"
+                    className="text-gray-800 text-sm"
+                  >
                     Autorizo tratamiento de datos y notificaciones electrónicas.
                   </label>
                 </div>
@@ -582,5 +664,3 @@ export default function StepForm() {
     </div>
   );
 }
-
-

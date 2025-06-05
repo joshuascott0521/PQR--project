@@ -40,3 +40,7 @@
 .read-the-docs {
   color: #888;
 }
+/* En tu CSS global (por ejemplo: index.css o App.css) */
+div[class*="toaster"] > div > div:nth-last-child(n + 4) {
+  display: none;
+}

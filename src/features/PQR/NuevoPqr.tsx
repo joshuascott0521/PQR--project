@@ -21,12 +21,13 @@ import {
   TipoClienteServices,
   TipoPqrServices,
 } from "../../services/pqrServices";
-import toast from "react-hot-toast";
+
 import {
   mostrarAlertaConfirmacion,
   mostrarAlertaExito,
 } from "../../libs/alerts";
 import ClienteSkeleton from "../../components/shared/Spinner";
+import { showToast } from "../../utils/toastUtils";
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
@@ -117,7 +118,7 @@ const NuevoPqr = () => {
 
     // Límite de cantidad de archivos
     if (archivos.length + nuevos.length > 5) {
-      toast.error("Solo puedes subir hasta 5 archivos.");
+      showToast("Solo puedes subir hasta 5 archivos.");
       return;
     }
 
@@ -148,94 +149,94 @@ const NuevoPqr = () => {
 
   const validateForm = () => {
     if (!formData.documentoCliente.trim()) {
-      toast.error("Por favor ingresa el documento del cliente.");
+      showToast("Por favor ingresa el documento del cliente.");
       setErrores({ documentoCliente: true });
       return false;
     }
     if (!formData.nombreCliente.trim()) {
-      toast.error("Por favor ingresa el nombre completo del cliente.");
+      showToast("Por favor ingresa el nombre completo del cliente.");
       setErrores({ nombreCliente: true });
       return false;
     }
     if (!formData.tipoClienteId) {
-      toast.error("Por favor selecciona el tipo de cliente.");
+      showToast("Por favor selecciona el tipo de cliente.");
       setErrores({ tipoClienteId: true });
       return false;
     }
 
     if (!formData.email.trim()) {
-      toast.error("Por favor ingresa el correo electrónico.");
+      showToast("Por favor ingresa el correo electrónico.");
       setErrores({ email: true });
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      toast.error("El correo electrónico no es válido.");
+      showToast("El correo electrónico no es válido.");
       setErrores({ email: true });
       return false;
     }
 
     if (!formData.celular.trim()) {
-      toast.error("Por favor ingresa el número de celular.");
+      showToast("Por favor ingresa el número de celular.");
       setErrores({ celular: true });
       return false;
     }
 
     if (!formData.direccion.trim()) {
-      toast.error("Por favor ingresa la dirección.");
+      showToast("Por favor ingresa la dirección.");
       setErrores({ direccion: true });
       return false;
     }
 
     if (formData.departamentoCod === 0) {
-      toast.error("Selecciona un departamento.");
+      showToast("Selecciona un departamento.");
       setErrores({ departamentoCod: true });
       return false;
     }
     if (formData.municipioCod === 0) {
-      toast.error("Selecciona un municipio.");
+      showToast("Selecciona un municipio.");
       setErrores({ municipioCod: true });
       return false;
     }
 
     if (!formData.radicado?.trim()) {
-      toast.error("Por favor ingresa el radicado de la petición.");
+      showToast("Por favor ingresa el radicado de la petición.");
       setErrores({ radicado: true });
       return false;
     }
 
     if (!formData.fecha || formData.fecha.trim() === "") {
-      toast.error("Por favor ingresa la fecha de la petición.");
+      showToast("Por favor ingresa la fecha de la petición.");
       setErrores({ fecha: true });
       return false;
     }
 
     if (!formData.tipoPQRId) {
-      toast.error("Por favor selecciona el tipo de petición.");
+      showToast("Por favor selecciona el tipo de petición.");
       setErrores({ tipoPQRId: true });
       return false;
     }
 
     if (!formData.origen) {
-      toast.error("Por favor selecciona el origen de la petición.");
+      showToast("Por favor selecciona el origen de la petición.");
       setErrores({ origen: true });
       return false;
     }
 
     if (!formData.asunto.trim()) {
-      toast.error("Por favor escribe un asunto para la solicitud.");
+      showToast("Por favor escribe un asunto para la solicitud.");
       setErrores({ asunto: true });
       return false;
     }
     if (!formData.descripcion.trim()) {
-      toast.error("Por favor describe brevemente la solicitud.");
+      showToast("Por favor describe brevemente la solicitud.");
       setErrores({ descripcion: true });
       return false;
     }
 
     if (archivos.length === 0) {
-      toast.error("Debes subir al menos un archivo de soporte.");
+      showToast("Debes subir al menos un archivo de soporte.");
       return false;
     }
 
@@ -294,7 +295,7 @@ const NuevoPqr = () => {
 
   const handleBuscarCliente = async () => {
     if (!formData.documentoCliente.trim()) {
-      toast.error("Debes ingresar un documento para buscar.");
+      showToast("Debes ingresar un documento para buscar.");
       return;
     }
 
@@ -303,7 +304,7 @@ const NuevoPqr = () => {
     try {
       const res = await ClientesServices.getByDoc(formData.documentoCliente);
       if (!res.success || !res.data) {
-        toast.error("No se encontró ningún cliente con ese documento.");
+        showToast("No se encontró ningún cliente con ese documento.");
         return;
       }
 
@@ -328,10 +329,10 @@ const NuevoPqr = () => {
         }
       }
 
-      toast.success("Cliente encontrado y datos cargados.");
+      showToast("Cliente encontrado y datos cargados.", "success");
     } catch (error) {
       console.error("Error al buscar cliente:", error);
-      toast.error("Hubo un error al buscar el cliente.");
+      showToast("Hubo un error al buscar el cliente.");
     } finally {
       setCargandoCliente(false); // <-- desactivar skeleton
     }
