@@ -1,17 +1,19 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-
 import { showToast } from "../../utils/toastUtils";
+
 const LoginForm = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false); // Controla el delay de 2s
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setDisabled(true);
 
     if (!email || !password) {
       showToast("Todos los campos son obligatorios.");
@@ -19,9 +21,7 @@ const LoginForm = () => {
     }
 
     if (password.length < 8) {
-      const msg = "La contraseña debe tener al menos 8 caracteres.";
-      showToast(msg);
-      // console.log("❌ Validación fallida:", msg);
+      showToast("La contraseña debe tener al menos 8 caracteres.");
       return;
     }
 
@@ -45,6 +45,10 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
+  setTimeout(() => {
+    setDisabled(false);
+  }, 500);
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -65,6 +69,7 @@ const LoginForm = () => {
             />
           </div>
         </div>
+
         <div className="w-full flex flex-col items-center space-y-4">
           <div className="w-full flex flex-col items-start pl-10">
             <label htmlFor="email" className="text-white mb-2 pl-4">
@@ -96,21 +101,25 @@ const LoginForm = () => {
             />
           </div>
         </div>
+
         <div className="w-[100%] h-20 flex justify-center items-center text-[18px]">
-          <div>
-            <p className="text-white cursor-pointer hover:underline ">
-              ¿Olvidaste tu contraseña?
-            </p>
-          </div>
+          <p className="text-white cursor-pointer hover:underline">
+            ¿Olvidaste tu contraseña?
+          </p>
         </div>
-        {/* {error && <p className="text-red-500">{error}</p>} */}
+
         <div>
           <button
             type="submit"
-            disabled={isLoading}
-            className="bg-orange-500 w-48 h-10 rounded-xl text-white hover:cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+            disabled={isLoading || disabled} // 👉 deshabilitado si está cargando o en cooldown
+            className={`bg-orange-500 w-48 h-10 rounded-xl text-white flex items-center justify-center gap-2 transition-opacity
+            ${
+              isLoading || disabled
+                ? "cursor-not-allowed opacity-50"
+                : "cursor-pointer"
+            }`}
           >
-            {isLoading ? (
+            {isLoading || disabled ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Cargando...

@@ -122,8 +122,11 @@ const PqrData = () => {
       }
 
       const uploadResponse = await PqrServices.uploadFiles(archivos);
+      console.log(uploadResponse);
 
       if (!uploadResponse.success) {
+        console.log(uploadResponse);
+
         showToast(uploadResponse.error || "Error al subir archivos");
         setLoading(false);
         return;
@@ -221,8 +224,23 @@ const PqrData = () => {
         <div className="flex gap-1 rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)] px-6 py-4 max-w-full flex-row items-center">
           <div className="mr-[10px]">
             <div
-              className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-black font-semibold text-lg flex-shrink-0"
+              title={
+                pqr?.estadoVencimiento === "VENCIDO"
+                  ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
+                  : pqr?.estadoVencimiento === "POR VENCER"
+                  ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
+                  : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
+              }
+              className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
               aria-label="Number 13"
+              style={{
+                backgroundColor:
+                  pqr?.estadoVencimiento === "VENCIDO"
+                    ? " #dc2626"
+                    : pqr?.estadoVencimiento === "POR VENCER"
+                    ? "#ffe900 x"
+                    : "#22c55e",
+              }}
             >
               {pqr?.diasRestantes}
             </div>
@@ -248,7 +266,7 @@ const PqrData = () => {
                 </label>
               </div>
               <div
-                className="px-4 w-full flex justify-center max-w-32 py-1 rounded-full bg-gray-400 text-gray-900 text-sm font-normal whitespace-nowrap overflow-hidden text-ellipsis"
+                className="px-4 w-full flex justify-center max-w-32 py-1 rounded-full bg-gray-400  text-white font-semibold text-sm  whitespace-nowrap overflow-hidden text-ellipsis"
                 style={{ backgroundColor: pqr?.codigoColorEstado }}
               >
                 {pqr?.estado}
@@ -284,7 +302,7 @@ const PqrData = () => {
           <form className="" onSubmit={handleSubmit}>
             <div className="flex flex-wrap gap-6 items-center">
               <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                Evento:
+                Nuevo evento:
               </label>
               <FloatingSelectLP
                 value={eventoSeleccionado}
@@ -311,19 +329,14 @@ const PqrData = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="descripcion"
-                className="block text-xs text-gray-600 mb-1"
-              >
-                Descripción
-              </label>
               <textarea
                 id="descripcion"
                 name="descripcion"
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
                 rows={3}
-                className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-green-400"
+                placeholder="Descripción"
+                className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-green-400 mt-5"
               />
             </div>
 

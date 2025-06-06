@@ -30,7 +30,7 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
             </div>
             <div>
               <span
-                className="inline-block bg-gray-300 text-gray-800 text-xs font-normal rounded-full px-4 py-1"
+                className="inline-block text-white rounded-full px-3 py-[2px] font-semibold text-xs"
                 style={{ backgroundColor: detalle.codigoColorEstado }}
               >
                 {detalle.estado}

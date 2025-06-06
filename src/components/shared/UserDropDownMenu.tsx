@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   DropdownMenu,
@@ -7,33 +7,37 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "../shared/DropDownMenu"
+} from "../shared/DropDownMenu";
 
-import { LogOut, Settings, User } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react"
+import { LogOut, Settings, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const UserDropdownMenu = () => {
-  const navigate = useNavigate()
-  const [user, setUser] = useState<{ nombre: string }>({ nombre: "" })
+  const navigate = useNavigate();
+  const [user, setUser] = useState<{ nombre: string }>({ nombre: "" });
 
   useEffect(() => {
-    const rawUser = localStorage.getItem("userData")
+    const rawUser = localStorage.getItem("userData");
     if (rawUser) {
-      setUser(JSON.parse(rawUser))
+      setUser(JSON.parse(rawUser));
     }
-  }, [])
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("userData")
-    navigate("/")
-  }
+    localStorage.removeItem("userData");
+    navigate("/");
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center gap-2 outline-none hover:opacity-80">
         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-black font-semibold uppercase">
-          <img src="/Icon_Funcionario.svg" alt="Icono de funcionario" />
+          <img
+            src="/Icon_Funcionario.svg"
+            alt="Icono de funcionario"
+            loading="lazy"
+          />
         </div>
         <div className="hidden sm:flex flex-col items-start">
           <span className="text-sm font-semibold">{user.nombre}</span>
@@ -47,7 +51,7 @@ const UserDropdownMenu = () => {
           <User className="mr-2 h-4 w-4" />
           <span>Portal</span>
         </DropdownMenuItem>
-        <DropdownMenuItem >
+        <DropdownMenuItem>
           <Settings className="mr-2 h-4 w-4" />
           <span>Configuración</span>
         </DropdownMenuItem>
@@ -58,7 +62,7 @@ const UserDropdownMenu = () => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
-}
+  );
+};
 
-export default UserDropdownMenu
+export default UserDropdownMenu;

@@ -619,7 +619,7 @@ const NuevoPqr = () => {
                 className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
                   errores.descripcion
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-blue-500"
+                    : "border-gray-300 focus:ring-green-400 "
                 }`}
               />
             </div>

@@ -58,6 +58,7 @@ const Aside = () => {
             src="/public/Logo-static.png"
             alt="Logo"
             className="bg-a-baranoa px-[8px]"
+            loading="lazy"
           />
         </div>
       </div>
