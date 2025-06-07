@@ -1,27 +1,33 @@
 import { Outlet } from "react-router-dom";
-
 import { ToastContainer } from "react-toastify";
 import Aside from "../../components/shared/Aside";
 import AsidePublico from "../../components/shared/AsidePublico";
 import Header from "../../components/shared/Header";
+import { useState } from "react";
 
 const Dashboard = () => {
   const tipoUsuId = "Administrador";
 
-  // const openRegister = false;
+  // Aquí declaras el estado global de isCollapse
+  const [isCollapse, setIsCollapse] = useState(false);
+
   const openNotification = false;
   const moreOption = false;
 
   return (
-    <div className="flex">
+    <div className="flex h-screen w-full">
       <ToastContainer />
 
-      <div className="max-w-xs w-full">
-        {tipoUsuId === "Administrador" ? <Aside /> : <AsidePublico />}
-      </div>
+      {/* Aside */}
+      {tipoUsuId === "Administrador" ? (
+        <Aside isCollapse={isCollapse} setIsCollapse={setIsCollapse} />
+      ) : (
+        <AsidePublico />
+      )}
 
-      {/* Contenido principal */}
-      <div className="flex flex-col h-screen w-full overflow-hidden bg-gray-50">
+      {/* Main content */}
+     <div className="flex flex-col flex-1 overflow-hidden bg-gray-50 transition-all duration-300">
+
         {/* Header */}
         <div className="mb-2">
           <Header />
@@ -45,7 +51,7 @@ const Dashboard = () => {
         )}
 
         {/* Contenido dinámico */}
-        <div className="flex-grow overflow-y-auto  p-4 mb-0 h-full">
+        <div className="flex-grow overflow-y-auto p-4 mb-0 h-full">
           <Outlet />
         </div>
       </div>

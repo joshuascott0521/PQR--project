@@ -6,6 +6,7 @@ import Serch from "../../components/shared/Serch";
 import UserDropdownMenu from "./UserDropDownMenu";
 import NotificationList from "./NotificationList";
 
+
 const Header = () => {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
@@ -36,10 +37,11 @@ const Header = () => {
   }, [showNotifications]);
 
   return (
-    <div className="h-[85px] flex items-center justify-between px-4 sm:px-8 border-b-2 bg-white w-full">
-      <div className="w-full mr-4">
-        <Serch />
-      </div>
+    <div className="h-[85px] flex items-center justify-between px-4 sm:px-8 border-b-2 bg-white w-full transition-all duration-300">
+      <div className="flex-1 mr-4">
+  <Serch />
+</div>
+
 
       <div className="flex items-center gap-2 sm:gap-4">
         <button
