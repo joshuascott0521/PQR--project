@@ -23,7 +23,7 @@ export default function LoadingScreenBool({ active }: { active: boolean }) {
             <h2 className="text-lg font-semibold text-gray-800 mb-1">
               Cargando
             </h2>
-            <p className="text-sm text-gray-500">insertando datos del PQR...</p>
+            <p className="text-sm text-gray-500">Insertando datos del PQR...</p>
           </motion.div>
         </motion.div>
       )}

@@ -40,7 +40,7 @@ const UserDropdownMenu = () => {
           />
         </div>
         <div className="hidden sm:flex flex-col items-start">
-          <span className="text-sm font-semibold">{user.nombre}</span>
+          <span className="text-sm font-semibold">{user.nombre.split(' ')[0]}</span>
           <span className="text-xs text-gray-500">Administrador</span>
         </div>
       </DropdownMenuTrigger>
