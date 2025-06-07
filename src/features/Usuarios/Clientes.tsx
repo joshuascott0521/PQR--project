@@ -1,8 +1,8 @@
-import { PiUserCircleFill } from "react-icons/pi";
 import ClienteCard from "../../components/shared/ClienteCard";
 import { useEffect, useState } from "react";
 import type { Cliente } from "../../interfaces/pqrInterfaces";
 import { ClientesServices, TipoClienteServices } from "../../services/pqrServices";
+import { Users } from "lucide-react";
 
 const Clientes = () => {
     const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -40,7 +40,7 @@ const Clientes = () => {
     return (
         <div className="h-full flex flex-col">
             <div className="flex mb-[15px] items-center gap-[15px]">
-                <PiUserCircleFill size={40} />
+                <Users size={30} />
                 <div className="flex font-bold text-[33px]">
                     <p>Clientes</p>
                 </div>

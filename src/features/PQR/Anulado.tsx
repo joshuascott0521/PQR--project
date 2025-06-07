@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
-import { FaBan } from "react-icons/fa";
 import { PqrServices } from "../../services/pqrServices";
+import { FileX } from "lucide-react";
 
 const Anulado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -108,7 +108,7 @@ const Anulado = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <FaBan className="text-[32px]" />
+        <FileX size={30} />
         <div className="flex font-bold text-[33px]">
           <p>PQRS anulados{"(" + (conteo.cantidad ?? 0) + ")"}.</p>
         </div>

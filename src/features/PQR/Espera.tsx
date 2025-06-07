@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
-import { CgSandClock } from "react-icons/cg";
 import { PqrServices } from "../../services/pqrServices";
+import { Clock } from "lucide-react";
 
 const EnEspera = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -105,35 +105,10 @@ const EnEspera = () => {
 
     cargar();
   }, []);
-  //   <div className="h-full flex flex-col">
-  //     <div className="flex mb-[15px] items-center gap-[15px]">
-  //       <CgSandClock className="text-[32px]" />
-
-  //       <div className="flex font-bold text-[33px]">
-  //         <p>PQRS en espera</p>
-  //       </div>
-  //     </div>
-
-  //     <div className="flex-1 overflow-auto bg-gray-100 px-6 py-4 rounded-lg">
-  //       {loading && <p>Cargando...</p>}
-  //       {error && <p className="text-red-600">{error}</p>}
-  //       {!loading && !error && pqrs.length === 0 && (
-  //         <p>No hay PQRs vencidos.</p>
-  //       )}
-
-  //       <div className="space-y-4">
-  //         {/* Aquí mapeamos los datos reales */}
-  //         {pqrs.map((pqr) => (
-  //           <UserCard key={pqr.id} pqr={pqr} />
-  //         ))}
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <CgSandClock className="text-[32px]" />
+        <Clock size={30} />
 
         <div className="flex font-bold text-[33px]">
           <p>PQRS en espera {"(" + (conteo.cantidad ?? 0) + ")"}.</p>

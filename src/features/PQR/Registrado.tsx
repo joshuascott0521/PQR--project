@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { PqrServices } from "../../services/pqrServices"; // Ajusta la ruta según corresponda
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
+import { Clipboard } from "lucide-react"
 // import { AiOutlineFolderView } from "react-icons/ai";
-import { FiUserCheck } from "react-icons/fi";
+
 
 const Registrado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -108,7 +109,7 @@ const Registrado = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <FiUserCheck className="text-[32px]" />
+        <Clipboard size={30} />
         <div className="flex font-bold text-[33px]">
           <p>PQRS registrados{"(" + (conteo.cantidad ?? 0) + ")"}.</p>
         </div>

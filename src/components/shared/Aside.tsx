@@ -1,18 +1,11 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
 import { FaCircle } from "react-icons/fa";
-import { FiUserCheck } from "react-icons/fi";
-import { MdOutlineDriveFolderUpload } from "react-icons/md";
-import { CgSandClock } from "react-icons/cg";
-import { CiCircleCheck } from "react-icons/ci";
-import { FaBan } from "react-icons/fa6";
-import { BsFillPeopleFill } from "react-icons/bs";
-import { FaUserCircle } from "react-icons/fa";
-// import { TbSettingsPlus } from "react-icons/tb";
-import { IoHomeOutline } from "react-icons/io5";
-import { AiOutlineFolderView } from "react-icons/ai";
+import { House, Eye, Clock, ClipboardCheck, FileCheck, FileX, Clipboard, ShieldUser, Users, SlidersHorizontal } from "lucide-react"
+
 
 const menuItems = [
-  { label: "inicio", path: "/dashboard", icon: <IoHomeOutline /> },
+  { label: "inicio", path: "/dashboard", icon: <House /> },
   {
     label: "Vencidos",
     path: "/dashboard/vencidos",
@@ -28,24 +21,24 @@ const menuItems = [
     path: "/dashboard/a-tiempo",
     icon: <FaCircle className="text-green-500" />,
   },
-  { label: "Registrados", path: "registrados", icon: <FiUserCheck /> },
-  { label: "Asignados", path: "asignados", icon: <AiOutlineFolderView /> },
+  { label: "Registrados", path: "registrados", icon: <Clipboard /> },
+  { label: "Asignados", path: "asignados", icon: <ClipboardCheck /> },
   {
     label: "En proceso",
     path: "en-proceso",
-    icon: <MdOutlineDriveFolderUpload />,
+    icon: <Eye />,
   },
-  { label: "En espera", path: "en-espera", icon: <CgSandClock /> },
-  { label: "Finalizado", path: "finalizado", icon: <CiCircleCheck /> },
-  { label: "Anulados", path: "anulado", icon: <FaBan /> },
+  { label: "En espera", path: "en-espera", icon: <Clock /> },
+  { label: "Finalizado", path: "finalizado", icon: <FileCheck /> },
+  { label: "Anulados", path: "anulado", icon: <FileX /> },
   //Rutas de administracion
   {
     label: "Funcionarios",
     path: "admin/funcionarios",
-    icon: <BsFillPeopleFill />,
+    icon: <ShieldUser />,
   },
-  { label: "Clientes", path: "admin/cliente", icon: <FaUserCircle /> },
-  // { label: "Parámetros", path: "admin/parametros", icon: <TbSettingsPlus /> },
+  { label: "Clientes", path: "admin/cliente", icon: <Users /> },
+  { label: "Parámetros", path: "admin/parametros", icon: <SlidersHorizontal /> },
 ];
 
 const Aside = () => {
@@ -69,24 +62,28 @@ const Aside = () => {
           <li
             key={index}
             className={`flex-1 flex items-center gap-3 w-full text-xl
-              ${index === 4 || index === 9 || index === 11 ? "border-t-2" : ""}
-              ${index === 0 ? "border-t-2 border-b-2 py-[5px] -m-1" : ""}
-        
-            `}
+        ${index === 4 || index === 9 || index === 11 ? "border-t-2" : ""}
+        ${index === 0 ? "border-t-2 border-b-2 py-[5px] -m-1" : ""}
+      `}
           >
-            <div
-              className={`flex justify-center items-center w-8
-                ${item.label === "inicio" ? "pl-[10px] mr-[4px]" : ""}
-              `}
-            >
-              {item.icon}
-            </div>
-            <Link
+            <NavLink
               to={item.path}
-              className="text-gray-500 font-semibold flex items-center gap-2"
+              end={item.path === "/dashboard"}
+              className={({ isActive }) =>
+                `flex items-center gap-3 w-full px-2 py-1 rounded-md transition-all
+           ${isActive ? "bg-green-100 text-green-700 font-bold" : "text-gray-500"}`
+              }
             >
-              {item.label}
-            </Link>
+              <div
+                className={`flex justify-center items-center w-8
+            ${item.label === "inicio" ? "pl-[10px] mr-[4px]" : ""}
+            ${item.label === "Vencidos" || item.label === "Por vencer" || item.label === "A tiempo" ? "" : ""}
+          `}
+              >
+                {item.icon}
+              </div>
+              <span className="capitalize">{item.label}</span>
+            </NavLink>
           </li>
         ))}
       </ul>

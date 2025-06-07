@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { PqrServices } from "../../services/pqrServices"; // Ajusta la ruta según corresponda
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
-// import { AiOutlineFolderView } from "react-icons/ai";
-import { MdOutlineDriveFolderUpload } from "react-icons/md";
+import { Eye } from "lucide-react";
 
 const EnProceso = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -109,7 +108,7 @@ const EnProceso = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <MdOutlineDriveFolderUpload className="text-[32px]" />
+        <Eye size={30} />
         <div className="flex font-bold text-[33px]">
           <p>PQRS en proceso {"(" + (conteo.cantidad ?? 0) + ")"}.</p>
         </div>

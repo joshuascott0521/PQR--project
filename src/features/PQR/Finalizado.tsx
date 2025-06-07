@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
-import { CiCircleCheck } from "react-icons/ci";
 import { PqrServices } from "../../services/pqrServices";
+import { FileCheck } from "lucide-react";
 
 const Finalizado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -107,7 +107,7 @@ const Finalizado = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <CiCircleCheck className="text-[32px]" />
+        <FileCheck size={30}/>
         <div className="flex font-bold text-[33px]">
           <p>PQRS finalizados {"(" + (conteo.cantidad ?? 0) + ")"}.</p>
         </div>

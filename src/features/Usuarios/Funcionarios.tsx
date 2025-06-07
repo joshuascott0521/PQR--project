@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import FuncionarioCard from "../../components/shared/FuncionarioCard";
 import type { Usuario } from "../../interfaces/pqrInterfaces";
 import { UsersServices } from "../../services/pqrServices";
+import { ShieldUser } from "lucide-react";
 
 const Funcionarios = () => {
 
@@ -26,6 +27,7 @@ const Funcionarios = () => {
     return (
         <div className="h-full flex flex-col">
             <div className="flex mb-[15px] items-center gap-[15px]">
+                <ShieldUser size={35} />
                 <div className="flex font-bold text-[33px]">
                     <p>Funcionarios</p>
                 </div>

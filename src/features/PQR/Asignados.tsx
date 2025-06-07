@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
-import { AiOutlineFolderView } from "react-icons/ai";
 import { PqrServices } from "../../services/pqrServices";
+import { ClipboardCheck } from "lucide-react";
 
 const Asignado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -109,7 +109,7 @@ const Asignado = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <AiOutlineFolderView className="text-[32px]" />
+        <ClipboardCheck size={30} />
 
         <div className="flex font-bold text-[33px]">
           <p>PQRS asignados{"(" + (conteo.cantidad ?? 0) + ")"}.</p>

@@ -1,26 +1,19 @@
 import { Link } from "react-router-dom";
 import { FaCircle } from "react-icons/fa";
-import { FiUserCheck } from "react-icons/fi";
-import { MdOutlineDriveFolderUpload } from "react-icons/md";
-import { CgSandClock } from "react-icons/cg";
-import { CiCircleCheck } from "react-icons/ci";
-import { FaBan } from "react-icons/fa6";
-import { IoHomeOutline } from "react-icons/io5";
-import { AiOutlineFolderView } from "react-icons/ai";
-
+import { House, Eye , Clock, ClipboardCheck , FileCheck, FileX, Clipboard } from "lucide-react"
 
 
 const menuItems = [
-  { label: "inicio", path: "inicio", icon: <IoHomeOutline /> },
+  { label: "inicio", path: "inicio", icon: <House /> },
   { label: "Vencidos", path: "vencidos", icon: <FaCircle className="text-red-600" /> },
   { label: "Por vencer", path: "por-vencer", icon: <FaCircle className="text-orange-400" /> },
   { label: "A tiempo", path: "a-tiempo", icon: <FaCircle className="text-green-500" /> },
-  { label: "Registrados", path: "registrados", icon: <FiUserCheck /> },
-  { label: "Asignados", path: "asignados", icon: <AiOutlineFolderView  /> },
-  { label: "En proceso", path: "en-proceso", icon: <MdOutlineDriveFolderUpload /> },
-  { label: "En espera", path: "en-espera", icon: <CgSandClock /> },
-  { label: "Finalizado", path: "finalizado", icon: <CiCircleCheck /> },
-  { label: "Anulados", path: "anulado", icon: <FaBan /> },
+  { label: "Registrados", path: "registrados", icon: <Clipboard /> },
+  { label: "Asignados", path: "asignados", icon: <ClipboardCheck  /> },
+  { label: "En proceso", path: "en-proceso", icon: <Eye /> },
+  { label: "En espera", path: "en-espera", icon: <Clock /> },
+  { label: "Finalizado", path: "finalizado", icon: <FileCheck /> },
+  { label: "Anulados", path: "anulado", icon: <FileX /> },
 ];
 
 
