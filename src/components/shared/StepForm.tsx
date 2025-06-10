@@ -138,6 +138,15 @@ export default function StepForm() {
   const validateStep = () => {
     const nuevosErrores: { [key: string]: boolean } = {};
 
+    //   const algunVacio = Object.values(formData).some(
+    //   (valor) => valor.trim() === ""
+    // );
+
+    // if (algunVacio) {
+    //   showToast("Todos los campos son obligatorios");
+    //   return;
+    // }
+
     if (step === 0) {
       if (!formData.documentoCliente.trim()) {
         showToast("Por favor ingresa el documento del cliente.");
@@ -186,11 +195,19 @@ export default function StepForm() {
       }
       if (!formData.asunto.trim()) {
         showToast("Por favor escribe un asunto para la solicitud.");
+
         nuevosErrores.asunto = true;
       }
       if (!formData.descripcion.trim()) {
         showToast("Por favor describe brevemente la solicitud.");
         nuevosErrores.descripcion = true;
+        if (formData.asunto.trim().length < 6) {
+          showToast("La descripción debe tener al menos 6 caracteres");
+          // setLoading(false);
+          nuevosErrores.asunto = true;
+
+          return;
+        }
       }
     }
 
@@ -339,17 +356,27 @@ export default function StepForm() {
                 <div className="border-b border-gray-500 mb-2" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FloatingLabel
+                    maxLength={10}
                     id="documento"
                     label="Documento"
                     value={formData.documentoCliente}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      // Elimina caracteres que no sean números
+                      let valor = e.target.value.replace(/\D/g, "");
+
+                      // Limita a 10 caracteres
+                      if (valor.length > 10) {
+                        valor = valor.slice(0, 10);
+                      }
+
                       setFormData((prev) => ({
                         ...prev,
-                        documentoCliente: e.target.value,
-                      }))
-                    }
+                        documentoCliente: valor,
+                      }));
+                    }}
                     className={errores.documentoCliente ? "border-red-500" : ""}
                   />
+
                   <FloatingLabel
                     id="nombresYApellidos"
                     label="Nombres y Apellidos"
@@ -390,15 +417,25 @@ export default function StepForm() {
                   <FloatingLabel
                     id="celular"
                     label="Celular"
+                    maxLength={10} // Puedes mantenerlo para el control del teclado (móviles)
                     value={formData.celular}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      // Limpiar: solo dígitos
+                      let valor = e.target.value.replace(/\D/g, "");
+
+                      // Limitar a 10 caracteres
+                      if (valor.length > 10) {
+                        valor = valor.slice(0, 10);
+                      }
+
                       setFormData((prev) => ({
                         ...prev,
-                        celular: e.target.value,
-                      }))
-                    }
+                        celular: valor,
+                      }));
+                    }}
                     className={errores.celular ? "border-red-500" : ""}
                   />
+
                   <FloatingLabel
                     id="direccion"
                     label="Dirección"
@@ -426,7 +463,7 @@ export default function StepForm() {
                         setFormData((prev) => ({
                           ...prev,
                           departamentoCod: dep.cod,
-                          municipioCod: 0,
+                          municipioCod: 0, // Reinicia el municipio al cambiar de departamento
                         }));
                         try {
                           const municipioRes = await RegionServices.getMun(
@@ -448,30 +485,33 @@ export default function StepForm() {
                     }))}
                     className={errores.departamentoCod ? "border-red-500" : ""}
                   />
-                  <FloatingSelect
-                    label="Municipio"
-                    placeholder="Seleccionar Municipio"
-                    value={
-                      formData.municipioCod === 0
-                        ? ""
-                        : formData.municipioCod.toString()
-                    }
-                    options={listaMunicipios.map((mun) => ({
-                      value: mun.cod.toString(),
-                      label: mun.nombre,
-                    }))}
-                    onChange={(value) => {
-                      const cod = parseInt(value, 10);
-                      const mun = listaMunicipios.find((m) => m.cod === cod);
-                      if (mun) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          municipioCod: mun.cod,
-                        }));
+
+                  {formData.departamentoCod !== 0 && (
+                    <FloatingSelect
+                      label="Municipio"
+                      placeholder="Seleccionar Municipio"
+                      value={
+                        formData.municipioCod === 0
+                          ? ""
+                          : formData.municipioCod.toString()
                       }
-                    }}
-                    className={errores.municipioCod ? "border-red-500" : ""}
-                  />
+                      options={listaMunicipios.map((mun) => ({
+                        value: mun.cod.toString(),
+                        label: mun.nombre,
+                      }))}
+                      onChange={(value) => {
+                        const cod = parseInt(value, 10);
+                        const mun = listaMunicipios.find((m) => m.cod === cod);
+                        if (mun) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            municipioCod: mun.cod,
+                          }));
+                        }
+                      }}
+                      className={errores.municipioCod ? "border-red-500" : ""}
+                    />
+                  )}
                 </div>
                 <div className="mt-6 flex justify-end">
                   <button
@@ -538,6 +578,17 @@ export default function StepForm() {
                             descripcion: e.target.value,
                           }))
                         }
+                        onBlur={(e) => {
+                          const descripcion = e.target.value.trim();
+                          if (
+                            descripcion.length > 0 &&
+                            descripcion.length < 6
+                          ) {
+                            showToast(
+                              "La descripción debe tener al menos 6 caracteres"
+                            );
+                          }
+                        }}
                         rows={4}
                         placeholder="Descripción"
                         className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
