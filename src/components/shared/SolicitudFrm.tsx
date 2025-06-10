@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { SolicitudServices, PqrServices } from "../../services/pqrServices";
 import type { SolicitudRequisitoDTO } from "../../interfaces/pqrInterfaces";
 import { showToast } from "../../utils/toastUtils";
+import toast from "react-hot-toast";
 
 export default function SolicitudFrm() {
   const [archivos, setArchivos] = useState<File[]>([]);
@@ -28,7 +29,7 @@ export default function SolicitudFrm() {
 
     const archivosValidos = nuevos.filter((file) => {
       if (file.size > maxSizeBytes) {
-        alert(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        toast.error(`El archivo "${file.name}" excede el límite de ${size} MB.`);
         return false;
       }
       return true;

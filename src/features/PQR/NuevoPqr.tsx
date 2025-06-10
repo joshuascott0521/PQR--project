@@ -28,6 +28,7 @@ import {
 } from "../../libs/alerts";
 import ClienteSkeleton from "../../components/shared/Spinner";
 import { showToast } from "../../utils/toastUtils";
+import toast from "react-hot-toast";
 
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
@@ -128,7 +129,7 @@ const NuevoPqr = () => {
     const maxSizeBytes = size * 1024 * 1024;
     const archivosValidos = nuevos.filter((file) => {
       if (file.size > maxSizeBytes) {
-        alert(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        toast.error(`El archivo "${file.name}" excede el límite de ${size} MB.`);
         return false;
       }
       return true;
@@ -261,7 +262,7 @@ const NuevoPqr = () => {
 
       if (!user || !user.id) {
         console.error("No se encontró ID de usuario");
-        alert(
+        toast.error(
           "No se pudo identificar al usuario. Por favor vuelve a iniciar sesión."
         );
         return;
