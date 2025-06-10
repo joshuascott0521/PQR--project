@@ -24,7 +24,6 @@ import {
 } from "../../libs/alerts";
 
 import { showToast } from "../../utils/toastUtils";
-import toast from "react-hot-toast";
 
 export default function StepForm() {
   const [step, setStep] = useState(0);
@@ -149,7 +148,7 @@ export default function StepForm() {
     const maxSizeBytes = size * 1024 * 1024;
     const archivosValidos = nuevos.filter((file) => {
       if (file.size > maxSizeBytes) {
-        toast.error(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        showToast(`El archivo "${file.name}" excede el límite de ${size} MB.`);
         return false;
       }
       return true;
