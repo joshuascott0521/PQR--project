@@ -59,7 +59,7 @@ const Search = () => {
   };
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto" ref={containerRef}>
+    <div className="relative w-full mx-auto" ref={containerRef}>
       <div className="flex items-center h-[3rem] border-2 border-gray-300 rounded-lg focus-within:border-green-400 px-2">
         <CiSearch className="text-green-400 text-2xl" />
         <input
