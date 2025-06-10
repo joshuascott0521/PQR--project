@@ -104,13 +104,42 @@ export default function StepForm() {
     const tzoffset = new Date().getTimezoneOffset() * 60000; // offset en ms
     return new Date(Date.now() - tzoffset).toISOString().split("T")[0];
   };
+  const formatearCelular = (numero: string) => {
+    if (!numero) return "";
+
+    const limpio = numero.replace(/\D/g, "");
+    let resultado = "";
+
+    if (limpio.length <= 3) {
+      resultado = limpio;
+    } else if (limpio.length <= 6) {
+      resultado = `${limpio.slice(0, 3)} ${limpio.slice(3)}`;
+    } else {
+      resultado = `${limpio.slice(0, 3)} ${limpio.slice(3, 6)} ${limpio.slice(
+        6,
+        10
+      )}`;
+    }
+
+    return resultado.trim();
+  };
+
+  const formatearDocumento = (numero: string) => {
+    if (!numero) return "";
+
+    // Elimina todo lo que no sea dígito
+    const limpio = numero.replace(/\D/g, "");
+
+    // Formateo con puntos de miles
+    return limpio.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  };
 
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
 
     // Límite de cantidad de archivos
     if (archivos.length + nuevos.length > 5) {
-      alert("Solo puedes subir hasta 5 archivos.");
+      showToast("Solo puedes subir hasta 5 archivos.");
       return;
     }
 
@@ -136,89 +165,162 @@ export default function StepForm() {
   };
 
   const validateStep = () => {
-    const nuevosErrores: { [key: string]: boolean } = {};
+    const nuevosErrores: { [key: string]: true } = {};
 
-    //   const algunVacio = Object.values(formData).some(
+    // const algunVacio = Object.values(formData).some(
     //   (valor) => valor.trim() === ""
     // );
 
     // if (algunVacio) {
     //   showToast("Todos los campos son obligatorios");
+    //   nuevosErrores.documentoCliente = true;
+
     //   return;
     // }
 
     if (step === 0) {
-      if (!formData.documentoCliente.trim()) {
-        showToast("Por favor ingresa el documento del cliente.");
-        nuevosErrores.documentoCliente = true;
-      }
-      if (!formData.nombreCliente.trim()) {
-        showToast("Por favor ingresa el nombre completo del cliente.");
-        nuevosErrores.nombreCliente = true;
-      }
-      if (!formData.tipoClienteId) {
-        showToast("Por favor selecciona el tipo de cliente.");
-        nuevosErrores.tipoClienteId = true;
-      }
-      if (!formData.email.trim()) {
-        showToast("Por favor ingresa el correo electrónico.");
-        nuevosErrores.email = true;
-      } else {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-          showToast("El correo electrónico no es válido.");
-          nuevosErrores.email = true;
-        }
-      }
-      if (!formData.celular.trim()) {
-        showToast("Por favor ingresa el número de celular.");
-        nuevosErrores.celular = true;
-      }
-      if (!formData.direccion.trim()) {
-        showToast("Por favor ingresa la dirección.");
-        nuevosErrores.direccion = true;
-      }
-      if (formData.departamentoCod === 0) {
-        showToast("Selecciona un departamento.");
-        nuevosErrores.departamentoCod = true;
-      }
-      if (formData.municipioCod === 0) {
-        showToast("Selecciona un municipio.");
-        nuevosErrores.municipioCod = true;
+      const validaciones = [
+        {
+          campo: "documentoCliente",
+          condicion: () =>
+            !formData.documentoCliente.trim() ||
+            formData.documentoCliente.length < 8,
+          mensaje: "Por favor ingresa un documento válido (mínimo 8 dígitos).",
+        },
+        {
+          campo: "nombreCliente",
+          condicion: () => !formData.nombreCliente.trim(),
+          mensaje: "Por favor ingresa el nombre completo del cliente.",
+        },
+        {
+          campo: "tipoClienteId",
+          condicion: () => !formData.tipoClienteId,
+          mensaje: "Por favor selecciona el tipo de cliente.",
+        },
+        {
+          campo: "email",
+          condicion: () =>
+            !formData.email.trim() ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email),
+          mensaje: "Por favor ingresa un correo electrónico válido.",
+        },
+        {
+          campo: "celular",
+          condicion: () =>
+            !formData.celular.trim() || formData.celular.length < 10,
+          mensaje: "Por favor ingresa un número de celular válido.",
+        },
+        {
+          campo: "direccion",
+          condicion: () => !formData.direccion.trim(),
+          mensaje: "Por favor ingresa la dirección.",
+        },
+        {
+          campo: "departamentoCod",
+          condicion: () => formData.departamentoCod === 0,
+          mensaje: "Selecciona un departamento.",
+        },
+        {
+          campo: "municipioCod",
+          condicion: () => formData.municipioCod === 0,
+          mensaje: "Selecciona un municipio.",
+        },
+      ];
+
+      // Determinar los campos que fallan
+      const erroresEncontrados = validaciones.filter(({ condicion }) =>
+        condicion()
+      );
+
+      // Marcar errores en el objeto
+      erroresEncontrados.forEach(({ campo }) => {
+        nuevosErrores[campo] = true;
+      });
+
+      // Si hay 3 o más errores, mostrar solo el mensaje general
+      if (erroresEncontrados.length >= 3) {
+        showToast(
+          "Por favor, completa todos los campos obligatorios antes de continuar."
+        );
+      } else if (erroresEncontrados.length > 0) {
+        // Si hay 1 o 2 errores, mostrar sus mensajes individuales
+        erroresEncontrados.forEach(({ mensaje }) => showToast(mensaje));
       }
     }
 
     if (step === 1) {
-      if (!formData.tipoPQRId) {
-        showToast("Por favor selecciona el tipo de petición.");
-        nuevosErrores.tipoPQRId = true;
-      }
-      if (!formData.asunto.trim()) {
-        showToast("Por favor escribe un asunto para la solicitud.");
+      const validaciones = [
+        {
+          campo: "tipoPQRId",
+          condicion: () => !formData.tipoPQRId,
+          mensaje: "Por favor selecciona el tipo de petición.",
+        },
+        {
+          campo: "asunto",
+          condicion: () => !formData.asunto.trim(),
+          mensaje: "Por favor escribe un asunto para la solicitud.",
+        },
+        {
+          campo: "asunto",
+          condicion: () => formData.asunto.trim() && formData.asunto.length < 6,
+          mensaje: "El asunto debe tener al menos 6 caracteres.",
+        },
+        {
+          campo: "descripcion",
+          condicion: () => !formData.descripcion.trim(),
+          mensaje: "Por favor describe brevemente la solicitud.",
+        },
+        {
+          campo: "descripcion",
+          condicion: () =>
+            formData.descripcion.trim() && formData.descripcion.length < 6,
+          mensaje: "La descripción debe tener al menos 6 caracteres.",
+        },
+      ];
 
-        nuevosErrores.asunto = true;
-      }
-      if (!formData.descripcion.trim()) {
-        showToast("Por favor describe brevemente la solicitud.");
-        nuevosErrores.descripcion = true;
-        if (formData.asunto.trim().length < 6) {
-          showToast("La descripción debe tener al menos 6 caracteres");
-          // setLoading(false);
-          nuevosErrores.asunto = true;
+      // Obtener todos los errores
+      const erroresEncontrados = validaciones.filter(({ condicion }) =>
+        condicion()
+      );
 
-          return;
-        }
+      // Marcar los errores en el objeto de errores
+      erroresEncontrados.forEach(({ campo }) => {
+        nuevosErrores[campo] = true;
+      });
+
+      // Siempre mostrar mensajes específicos para asunto o descripción si tienen menos de 6 caracteres
+      const erroresCriticos = erroresEncontrados.filter(
+        (e) =>
+          (e.campo === "asunto" &&
+            formData.asunto.trim() &&
+            formData.asunto.length < 6) ||
+          (e.campo === "descripcion" &&
+            formData.descripcion.trim() &&
+            formData.descripcion.length < 6)
+      );
+
+      if (erroresCriticos.length > 0) {
+        erroresCriticos.forEach(({ mensaje }) => showToast(mensaje));
+      } else if (erroresEncontrados.length === 1) {
+        // Solo falta un campo: muestra su mensaje específico
+        showToast(erroresEncontrados[0].mensaje);
+      } else if (erroresEncontrados.length >= 2) {
+        // Faltan todos o dos campos: mensaje general
+        showToast(
+          "Por favor, completa todos los campos obligatorios antes de continuar."
+        );
       }
     }
 
     if (step === 2) {
       if (!autorizado) {
         showToast("Debes autorizar el tratamiento de datos.");
+        nuevosErrores.autorizado = true;
       }
 
       if (archivos.length === 0) {
         showToast("Debes subir al menos un archivo de soporte.");
-        return false;
+        nuevosErrores.archivos = true;
       }
     }
 
@@ -241,9 +343,9 @@ export default function StepForm() {
 
     // ✅ Validar antes de continuar
     if (!validateStep()) {
-      showToast(
-        "Por favor, completa todos los campos obligatorios antes de continuar."
-      );
+      // showToast(
+      //   "Por favor, completa todos los campos obligatorios antes de continuar."
+      // );
       return;
     }
 
@@ -356,22 +458,24 @@ export default function StepForm() {
                 <div className="border-b border-gray-500 mb-2" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FloatingLabel
-                    maxLength={10}
+                    minLength={8}
+                    maxLength={15}
                     id="documento"
                     label="Documento"
-                    value={formData.documentoCliente}
+                    value={formatearDocumento(formData.documentoCliente)}
                     onChange={(e) => {
-                      // Elimina caracteres que no sean números
-                      let valor = e.target.value.replace(/\D/g, "");
+                      // Elimina los puntos para guardar limpio
+                      let valorSinPuntos = e.target.value.replace(/\D/g, "");
 
-                      // Limita a 10 caracteres
-                      if (valor.length > 10) {
-                        valor = valor.slice(0, 10);
+                      // Limita a 10 dígitos
+                      if (valorSinPuntos.length > 10) {
+                        valorSinPuntos = valorSinPuntos.slice(0, 10);
                       }
 
+                      // Guarda limpio en formData
                       setFormData((prev) => ({
                         ...prev,
-                        documentoCliente: valor,
+                        documentoCliente: valorSinPuntos,
                       }));
                     }}
                     className={errores.documentoCliente ? "border-red-500" : ""}
@@ -417,20 +521,21 @@ export default function StepForm() {
                   <FloatingLabel
                     id="celular"
                     label="Celular"
-                    maxLength={10} // Puedes mantenerlo para el control del teclado (móviles)
-                    value={formData.celular}
+                    maxLength={13} // 10 dígitos + 2 espacios
+                    value={formatearCelular(formData.celular)}
                     onChange={(e) => {
-                      // Limpiar: solo dígitos
-                      let valor = e.target.value.replace(/\D/g, "");
+                      // Quitar todos los caracteres que no sean dígitos
+                      let valorSinEspacios = e.target.value.replace(/\D/g, "");
 
-                      // Limitar a 10 caracteres
-                      if (valor.length > 10) {
-                        valor = valor.slice(0, 10);
+                      // Limitar a 10 dígitos
+                      if (valorSinEspacios.length > 10) {
+                        valorSinEspacios = valorSinEspacios.slice(0, 10);
                       }
 
+                      // Actualizar el estado sin espacios (para el backend)
                       setFormData((prev) => ({
                         ...prev,
-                        celular: valor,
+                        celular: valorSinEspacios,
                       }));
                     }}
                     className={errores.celular ? "border-red-500" : ""}
