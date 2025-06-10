@@ -43,6 +43,7 @@ const menuItems = [
   },
   { label: "Clientes", path: "admin/cliente", icon: <Users /> },
   { label: "Parámetros", path: "admin/parametros", icon: <SlidersHorizontal /> },
+  
 ];
 
 const Aside = ({ isCollapse, setIsCollapse }: AsideProps) => {
@@ -82,7 +83,7 @@ const Aside = ({ isCollapse, setIsCollapse }: AsideProps) => {
 
 
       {/* Menú */}
-      <ul className="flex flex-col px-2 gap-1.5">
+      <ul className="flex-1 flex flex-col px-2 ">
         {menuItems.map((item, index) => (
           <li
             key={index}
