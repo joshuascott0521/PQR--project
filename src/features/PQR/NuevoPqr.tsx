@@ -28,6 +28,7 @@ import {
 } from "../../libs/alerts";
 import ClienteSkeleton from "../../components/shared/Spinner";
 import { showToast } from "../../utils/toastUtils";
+
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
@@ -338,6 +339,11 @@ const NuevoPqr = () => {
     }
   };
 
+  const getLocalDate = () => {
+    const tzoffset = new Date().getTimezoneOffset() * 60000; // offset en ms
+    return new Date(Date.now() - tzoffset).toISOString().split("T")[0];
+  };
+
   return (
     <div className="h-full flex flex-col">
       {/* Título con icono */}
@@ -363,9 +369,8 @@ const NuevoPqr = () => {
                     <FloatingLabel
                       id="documentoCliente"
                       label="Documento Cliente"
-                      className={`pr-12 ${
-                        errores.documentoCliente ? "border-red-500" : ""
-                      }`}
+                      className={`pr-12 ${errores.documentoCliente ? "border-red-500" : ""
+                        }`}
                       value={formData.documentoCliente}
                       onChange={(e) =>
                         setFormData((prev) => ({
@@ -388,9 +393,8 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="nombresYApellidos"
                     label="Nombres y Apellidos"
-                    className={`w-lg ${
-                      errores.nombreCliente ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.nombreCliente ? "border-red-500" : ""
+                      }`}
                     value={formData.nombreCliente}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -411,9 +415,8 @@ const NuevoPqr = () => {
                       label: tc.nombre,
                     }))}
                     placeholder="Elige una opción"
-                    className={`w-lg ${
-                      errores.tipoClienteId ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.tipoClienteId ? "border-red-500" : ""
+                      }`}
                   />
 
                   <FloatingLabel
@@ -432,9 +435,8 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="celular"
                     label="Celular"
-                    className={`w-lg ${
-                      errores.celular ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.celular ? "border-red-500" : ""
+                      }`}
                     value={formData.celular}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -447,9 +449,8 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="direccion"
                     label="Dirección"
-                    className={`w-lg ${
-                      errores.direccion ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.direccion ? "border-red-500" : ""
+                      }`}
                     value={formData.direccion}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -492,9 +493,8 @@ const NuevoPqr = () => {
                       value: dep.cod?.toString() || "",
                       label: dep.nombre || "",
                     }))}
-                    className={`w-lg ${
-                      errores.departamentoCod ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.departamentoCod ? "border-red-500" : ""
+                      }`}
                   />
 
                   <FloatingSelect
@@ -519,9 +519,8 @@ const NuevoPqr = () => {
                         }));
                       }
                     }}
-                    className={`w-full ${
-                      errores.municipioCod ? "border-red-500" : ""
-                    }`}
+                    className={`w-full ${errores.municipioCod ? "border-red-500" : ""
+                      }`}
                   />
                 </>
               )}
@@ -545,7 +544,7 @@ const NuevoPqr = () => {
                 type="date"
                 max={hoy}
                 className={`w-lg ${errores.fecha ? "border-red-500" : ""}`}
-                value={formData.fecha}
+                value={getLocalDate()}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, fecha: e.target.value }))
                 }
@@ -616,11 +615,10 @@ const NuevoPqr = () => {
                 }
                 rows={4}
                 placeholder="Descripción"
-                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
-                  errores.descripcion
+                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:ring-green-400 "
-                }`}
+                  }`}
               />
             </div>
             <div className="space-y-3 mt-4">
@@ -650,11 +648,10 @@ const NuevoPqr = () => {
               {/* Botón de subir archivos */}
               <label
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${
-                       archivos.length >= 5
-                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                         : "bg-emerald-400 text-white hover:bg-emerald-500"
-                     }
+                     ${archivos.length >= 5
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-emerald-400 text-white hover:bg-emerald-500"
+                  }
                     `}
               >
                 <Paperclip className="w-4 h-4" />

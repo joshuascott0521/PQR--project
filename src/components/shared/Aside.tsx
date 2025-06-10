@@ -82,7 +82,7 @@ const Aside = ({ isCollapse, setIsCollapse }: AsideProps) => {
 
 
       {/* Menú */}
-      <ul className="flex-1 flex flex-col px-2">
+      <ul className="flex flex-col px-2 gap-1.5">
         {menuItems.map((item, index) => (
           <li
             key={index}
@@ -109,19 +109,19 @@ const Aside = ({ isCollapse, setIsCollapse }: AsideProps) => {
               </div>
               {/* Ocultar texto si colapsado */}
               <span
-  className={`capitalize whitespace-nowrap transition-all duration-300 overflow-hidden ml-0
-    ${isCollapse ? "opacity-0 max-w-0" : "opacity-100 max-w-[200px]"}
-  `}
->
-  {item.label}
-</span>
-
-
+                className={`capitalize whitespace-nowrap transition-all duration-300 overflow-hidden ml-0
+                ${isCollapse ? "opacity-0 max-w-0" : "opacity-100 max-w-[200px]"}
+                  `}
+              >
+                {item.label}
+              </span>
 
             </NavLink>
+
           </li>
         ))}
       </ul>
+
     </aside>
   );
 };

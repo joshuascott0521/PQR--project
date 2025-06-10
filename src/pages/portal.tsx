@@ -41,7 +41,8 @@ export default function Portal() {
             <input
               type="button"
               value="Conócenos"
-              className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold"
+              onClick={() => window.open("https://www.creapptech.com/", "_blank")}
+              className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold cursor-pointer"
             />
           </div>
         </div>
