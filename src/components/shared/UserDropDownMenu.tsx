@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 
 const UserDropdownMenu = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<{ nombre: string }>({ nombre: "" });
+  const [user, setUser] = useState<{ nombre: string, tipoUsuId: string }>({ nombre: "", tipoUsuId: ""});
 
   useEffect(() => {
     const rawUser = localStorage.getItem("userData");
@@ -40,8 +40,8 @@ const UserDropdownMenu = () => {
           />
         </div>
         <div className="hidden sm:flex flex-col items-start">
-          <span className="text-sm font-semibold">{user.nombre.split(' ')[0]}</span>
-          <span className="text-xs text-gray-500">Administrador</span>
+          <span className="pr-4 text-sm font-semibold">{user.nombre.split(' ')[0]}</span>
+          <span className="pr-4 text-xs text-gray-500">{user.tipoUsuId}</span>
         </div>
       </DropdownMenuTrigger>
 

@@ -27,6 +27,8 @@ import Funcionarios from "./features/Usuarios/Funcionarios";
 import FuncionarioResumen from "./features/Usuarios/FuncionarioResumen";
 import EditarCliente from "./features/Usuarios/EditarCliente";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
+import AllPqr from "./features/PQR/AllPqr";
+
 
 function App() {
   return (
@@ -56,6 +58,7 @@ function App() {
           {/* Rutas protegidas bajo el layout Dashboard */}
           <Route path="/dashboard" element={<Dashboard />}>
             {/* <Route index element={<div>Inicio (Dashboard)</div>} /> */}
+            <Route path="all-pqr" element={<AllPqr />} />
             <Route path="vencidos" element={<Vencidos />} />
             <Route path="por-vencer" element={<PorVencer />} />
             <Route path="a-tiempo" element={<ATiempo />} />
