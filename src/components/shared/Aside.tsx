@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 import { FaCircle } from "react-icons/fa";
-import { House, Eye, Clock, ClipboardCheck, FileCheck, FileX, Clipboard, ShieldUser, Users, SlidersHorizontal } from "lucide-react"
+import { House, Eye, ClipboardCheck, FileCheck, FileX, Clipboard, ShieldUser, Users, SlidersHorizontal, ClipboardList } from "lucide-react"
 
 interface AsideProps {
   isCollapse: boolean;
@@ -10,6 +10,7 @@ interface AsideProps {
 
 const menuItems = [
   { label: "inicio", path: "/dashboard", icon: <House /> },
+  { label: "PQRs", path: "/dashboard/all-pqr", icon: <ClipboardList /> },
   {
     label: "Vencidos",
     path: "/dashboard/vencidos",
@@ -25,6 +26,11 @@ const menuItems = [
     path: "/dashboard/a-tiempo",
     icon: <FaCircle className="text-green-500" />,
   },
+  { 
+    label: "En espera", 
+    path: "en-espera", 
+    icon: <FaCircle className="text-sky-400" />
+  },
   { label: "Registrados", path: "registrados", icon: <Clipboard /> },
   { label: "Asignados", path: "asignados", icon: <ClipboardCheck /> },
   {
@@ -32,7 +38,7 @@ const menuItems = [
     path: "en-proceso",
     icon: <Eye />,
   },
-  { label: "En espera", path: "en-espera", icon: <Clock /> },
+  
   { label: "Finalizado", path: "finalizado", icon: <FileCheck /> },
   { label: "Anulados", path: "anulado", icon: <FileX /> },
   //Rutas de administracion
@@ -44,52 +50,22 @@ const menuItems = [
   { label: "Clientes", path: "admin/cliente", icon: <Users /> },
   { label: "Parámetros", path: "admin/parametros", icon: <SlidersHorizontal /> },
   
+  
 ];
 
-const Aside = ({ isCollapse, setIsCollapse }: AsideProps) => {
+const Aside = ({ isCollapse, }: AsideProps) => {
 
   return (
     <aside className={`h-screen border-r-2 border-gray-200 flex flex-col transition-all duration-300
         ${isCollapse ? "w-20" : "w-80"}
     `}>
-      {/* Logo */}
-      <div className="flex justify-center py-2">
-        <div
-          className="p-[4px] cursor-pointer transition-transform hover:scale-95"
-          onClick={() => setIsCollapse(!isCollapse)}
-        >
-          {/* Logo expandido */}
-          <img
-            src="/public/Logo-static.png"
-            alt="Logo"
-            className={`h-16 object-contain bg-a-baranoa px-[4px] transition-all duration-300
-                        ${isCollapse ? "hidden" : "block"}
-            `}
-            loading="lazy"
-          />
-
-          {/* Logo colapsado */}
-          <img
-            src="/public/PqrLogo.png"
-            alt="Logo"
-            className={`h-16 object-contain  transition-all duration-300
-                        ${isCollapse ? "block" : "hidden"}
-          `}
-            loading="lazy"
-          />
-        </div>
-
-      </div>
-
-
       {/* Menú */}
-      <ul className="flex-1 flex flex-col px-2 ">
+      <ul className="flex flex-col px-2 pt-1 gap-1.5">
         {menuItems.map((item, index) => (
           <li
             key={index}
             className={`flex-1 flex items-center gap-3 w-full text-xl
-              ${index === 4 || index === 9 || index === 11 ? "border-t-2" : ""}
-              ${index === 0 ? "border-t-2 border-b-2 py-[5px] -m-1" : ""}
+              ${index === 2 || index === 6 || index === 11 || index === 13 ? "border-t-2 py-0.5" : ""}
             `}
           >
             <NavLink
@@ -101,11 +77,7 @@ const Aside = ({ isCollapse, setIsCollapse }: AsideProps) => {
                  hover:text-green-700`
               }
             >
-              <div
-                className={`flex justify-center items-center w-8
-                  ${item.label === "inicio" ? "pl-[10px] mr-[4px]" : ""}
-                `}
-              >
+              <div className="flex justify-center items-center w-8">
                 {item.icon}
               </div>
               {/* Ocultar texto si colapsado */}

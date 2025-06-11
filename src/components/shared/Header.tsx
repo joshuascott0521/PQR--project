@@ -5,9 +5,13 @@ import { IoNotificationsSharp } from "react-icons/io5";
 import Serch from "../../components/shared/Serch";
 import UserDropdownMenu from "./UserDropDownMenu";
 import NotificationList from "./NotificationList";
+import { Menu } from "lucide-react";
 
+interface HeaderProps {
+  setIsCollapse: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-const Header = () => {
+const Header = ({ setIsCollapse }: HeaderProps) => {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const notificationsRef = useRef<HTMLDivElement>(null); // Ref para notificaciones
@@ -37,10 +41,28 @@ const Header = () => {
   }, [showNotifications]);
 
   return (
-    <div className="h-[85px] flex items-center justify-between px-4 sm:px-8 border-b-2 bg-white w-full transition-all duration-300">
+    <div className="h-[85px] flex items-center justify-between px-4 sm:px-6 border-b-2 bg-white w-full transition-all duration-300">
+      <div
+        className="pr-6 cursor-pointer active:scale-90"
+        onClick={() => setIsCollapse(prev => !prev)}
+        title="Contraer/Expandir"
+      >
+        <Menu className="text-gray-500"/>
+      </div>
+      <div
+          className="pr-3 transition-transform hover:scale-95"
+        >
+          {/* Logo expandido */}
+          <img
+            src="/public/Logo-static.png"
+            alt="Logo"
+            className= "w-[320px]"
+            loading="lazy"
+          />
+        </div>
       <div className="flex-1 mr-4">
-  <Serch />
-</div>
+        <Serch />
+      </div>
 
 
       <div className="flex items-center gap-2 sm:gap-4">

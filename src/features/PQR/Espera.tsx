@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
 import { PqrServices } from "../../services/pqrServices";
-import { Clock } from "lucide-react";
 
 const EnEspera = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -108,8 +107,7 @@ const EnEspera = () => {
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <Clock size={30} />
-
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-sky-400 text-xl font-bold text-white"></div>
         <div className="flex font-bold text-[33px]">
           <p>PQRS en espera {"(" + (conteo.cantidad ?? 0) + ")"}.</p>
         </div>
