@@ -232,3 +232,16 @@ export interface PqrCount {
   estado: string;
   cantidad: number;
 }
+export interface AlertaNotificacion {
+  id: number;
+  pqrId: string;
+  asunto: string;
+  consecutivo: number;
+  nombre: string;
+  tipoPQR: string;
+  usuarioId: string;
+  fechaCreacion: string;
+  tipoAlerta: "Nuevo" | "Alerta" | string;
+  mensaje: string;
+  estado: string;
+}

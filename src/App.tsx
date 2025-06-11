@@ -26,6 +26,7 @@ import Solicitud from "./pages/Solicitud";
 import Funcionarios from "./features/Usuarios/Funcionarios";
 import FuncionarioResumen from "./features/Usuarios/FuncionarioResumen";
 import EditarCliente from "./features/Usuarios/EditarCliente";
+import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
       <Routes>
         {/* Ruta pública */}
         <Route path="/login" element={<Login />} />
+        <Route path="/Recuperar-contraseña" element={<ForgetPassword />} />
         <Route path="/" element={<Navigate to="/login" />} />
 
         <Route element={<PrivateRoute />}>

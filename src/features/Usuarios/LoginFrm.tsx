@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { showToast } from "../../utils/toastUtils";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const { login } = useAuth();
@@ -9,6 +10,11 @@ const LoginForm = () => {
   const [, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [disabled, setDisabled] = useState(false); // Controla el delay de 2s
+
+  const navigate = useNavigate();
+  const ForgetPassword = () => {
+    navigate("/Recuperar-contraseña");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,7 +109,10 @@ const LoginForm = () => {
         </div>
 
         <div className="w-[100%] h-20 flex justify-center items-center text-[18px]">
-          <p className="text-white cursor-pointer hover:underline">
+          <p
+            className="text-white cursor-pointer hover:underline"
+            onClick={ForgetPassword}
+          >
             ¿Olvidaste tu contraseña?
           </p>
         </div>
@@ -112,7 +121,7 @@ const LoginForm = () => {
           <button
             type="submit"
             disabled={isLoading || disabled} // 👉 deshabilitado si está cargando o en cooldown
-            className={`bg-orange-500 w-48 h-10 rounded-xl text-white flex items-center justify-center gap-2 transition-opacity
+            className={`bg-orange-500 w-48 h-10 rounded-xl text-white flex items-center justify-center gap-2 transition-opacity  hover:bg-orange-600
             ${
               isLoading || disabled
                 ? "cursor-not-allowed opacity-50"

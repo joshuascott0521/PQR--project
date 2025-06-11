@@ -1,6 +1,7 @@
 import apiClient from "../api/apiClient";
 import type {
   Adjunto,
+  AlertaNotificacion,
   ApiResponse,
   ArchivoSubido,
   Cliente,
@@ -469,6 +470,33 @@ export const SolicitudServices = {
         success: false,
         data: "",
         error: error.response?.data?.message || "Error al responder solicitud",
+      };
+    }
+  },
+};
+
+export const NotificacionesService = {
+  getAlertas: async (
+    usuarioId: string,
+    pageNumber = 1,
+    pageSize = 5
+  ): Promise<ApiResponse<AlertaNotificacion[]>> => {
+    try {
+      const response = await apiClient.get("/Alerta/Get", {
+        params: {
+          usuarioId,
+          pageNumber,
+          pageSize,
+        },
+      });
+
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message || "Error al obtener notificaciones",
       };
     }
   },

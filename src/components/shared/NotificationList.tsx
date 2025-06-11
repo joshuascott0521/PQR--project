@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { BsExclamationCircleFill } from "react-icons/bs";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { IoWarning } from "react-icons/io5";
+import { NotificacionesService } from "../../services/pqrServices";
 
 interface Notification {
   consecutivo: string;
@@ -29,44 +31,50 @@ const getIconByState = (state: Notification["estado"]) => {
 };
 
 const NotificationList = () => {
-  const notifications: Notification[] = [
-    {
-      consecutivo: "20240011",
-      cliente: "Andreina Arteta Car...",
-      asunto: "Solicitud de devoluc...",
-      alerta: "Tiene 4 días vencido",
-      tipo: "Petición",
-      fecha: "20/05/2025",
-      estado: "alert",
-    },
-    {
-      consecutivo: "20240011",
-      cliente: "Andreina Arteta Car...",
-      asunto: "Solicitud de devolució...",
-      alerta: "Tienes un nuevo PQRS",
-      tipo: "Petición",
-      fecha: "18/04/2025",
-      estado: "new",
-    },
-    {
-      consecutivo: "20240011",
-      cliente: "Andreina Arteta Car...",
-      asunto: "Solicitud de devolució...",
-      alerta: "Respuesta lista",
-      tipo: "Petición",
-      fecha: "20/05/2025",
-      estado: "success",
-    },
-    {
-      consecutivo: "20240011",
-      cliente: "Andreina Arteta Car...",
-      asunto: "Solicitud de devoluc...",
-      alerta: "Te quedan 5 días",
-      tipo: "Petición",
-      fecha: "20/05/2025",
-      estado: "warning",
-    },
-  ];
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  const fetchNotificaciones = async () => {
+    const userDataString = localStorage.getItem("userData");
+    const userData = userDataString ? JSON.parse(userDataString) : null;
+    const usuarioId = userData?.id;
+
+    if (!usuarioId) {
+      console.warn("No se encontró el usuarioId");
+      return;
+    }
+
+    const { success, data, error } = await NotificacionesService.getAlertas(
+      usuarioId
+    );
+
+    if (!success) {
+      console.error("Error al cargar notificaciones:", error);
+      return;
+    }
+
+    const mapeadas: Notification[] = data.map((n) => ({
+      consecutivo: String(n.consecutivo),
+      cliente: n.nombre,
+      asunto: n.asunto,
+      alerta: n.mensaje,
+      tipo: n.tipoPQR,
+      fecha: new Date(n.fechaCreacion).toLocaleDateString("es-CO"),
+      estado:
+        n.tipoAlerta === "Nuevo"
+          ? "new"
+          : n.tipoAlerta === "Alerta"
+          ? "alert"
+          : "success",
+    }));
+
+    setNotifications(mapeadas);
+  };
+
+  useEffect(() => {
+    fetchNotificaciones(); // inicial
+    const interval = setInterval(fetchNotificaciones, 30000); // cada 30s
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-lg max-w-2xl mx-auto">
