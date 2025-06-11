@@ -8,10 +8,10 @@ const RecuperarContrasenaFrm = () => {
   return (
     <div className="w-[850px] h-[1060px] flex justify-end items-center pr-[112px]">
       <form
-        className="h-[40%] w-[62%] rounded-lg border-2 flex flex-col justify-start items-center space-y-4 p-4 login-container opacity-80"
+        className="h-[45%] w-[62%] rounded-lg border-2 flex flex-col justify-start items-center space-y-4 p-4 login-container opacity-80"
         onSubmit={(e) => e.preventDefault()}
       >
-        <div className="flex justify-start w-full h-1/6 p-2 mb-4">
+        <div className="flex justify-start w-full h-1/6 p-[11px] mb-4">
           <div className="w-full max-w-[500px] overflow-hidden">
             <img
               src="/public/Logo-static.png"
@@ -21,6 +21,7 @@ const RecuperarContrasenaFrm = () => {
           </div>
         </div>
 
+        <h2 className="text-2xl font-bold text-white">Recuperar Contraseña</h2>
         <div className="w-full flex flex-col items-center space-y-4">
           <div className="w-full flex flex-col items-start pl-10">
             <label htmlFor="email" className="text-white mb-2 pl-4">
