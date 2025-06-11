@@ -10,6 +10,7 @@ import type {
   DetallePqrCreate,
   Evento,
   Municipio,
+  Parameters,
   Pqr,
   PqrCount,
   SolicitudRequisitoDTO,
@@ -473,6 +474,21 @@ export const SolicitudServices = {
       };
     }
   },
+};
+
+export const ParametersServices = {
+  getParameters: async (): Promise<ApiResponse<Parameters[]>> => {
+    try{
+      const response = await apiClient.get("/Parametro/Get")
+      return {success: true, data: response.data}
+    } catch(error: any){
+      return{
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener parámetros",
+      }
+    }
+  }
 };
 
 export const NotificacionesService = {

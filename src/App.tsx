@@ -28,6 +28,7 @@ import FuncionarioResumen from "./features/Usuarios/FuncionarioResumen";
 import EditarCliente from "./features/Usuarios/EditarCliente";
 import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 import AllPqr from "./features/PQR/AllPqr";
+import Parametros from "./features/Usuarios/Parametros";
 
 
 function App() {
@@ -71,20 +72,12 @@ function App() {
             <Route path="anulado" element={<Anulado />} />
             <Route path="nuevo-pqr" element={<NuevoPqr />} />
             <Route path="admin/cliente" element={<Clientes />} />
+            <Route path="admin/parametros" element={<Parametros />} />
             <Route path="admin/funcionarios" element={<Funcionarios />} />
             <Route path="/dashboard/PQR/detalle/:id" element={<PqrData />} />
-            <Route
-              path="/dashboard/cliente/detalle/:id"
-              element={<ClienteDetalle />}
-            />
-            <Route
-              path="/dashboard/cliente/editar/:id"
-              element={<EditarCliente />}
-            />
-            <Route
-              path="/dashboard/funcionarios/resumen/:id"
-              element={<FuncionarioResumen />}
-            />
+            <Route path="/dashboard/cliente/detalle/:id" element={<ClienteDetalle />} />
+            <Route path="/dashboard/cliente/editar/:id" element={<EditarCliente />} />
+            <Route path="/dashboard/funcionarios/resumen/:id" element={<FuncionarioResumen />} />
             {/* <Route path="/dashboard/resultados-busqueda" element={<ResultadosBusquedaPage />} /> */}
 
             {/* <Route path="usuarios/login" element={<LoginFrm />} /> */}

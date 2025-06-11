@@ -232,6 +232,20 @@ export interface PqrCount {
   estado: string;
   cantidad: number;
 }
+
+export interface Parameters {
+  codigo: string,
+  descripcion: string,
+  tipoParametro: string,
+  valorString: string,
+  valorInt: number,
+  valorDecimal: number,
+  valorDate: string,
+  valorBool: boolean,
+  valorImgUrl: string,
+  valorHtml: string
+}
+
 export interface AlertaNotificacion {
   id: number;
   pqrId: string;
