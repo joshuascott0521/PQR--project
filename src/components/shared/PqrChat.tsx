@@ -1,8 +1,22 @@
 import type { DetallePqr } from "../../interfaces/pqrInterfaces";
 import { ArchivoServices } from "../../services/pqrServices";
 import { showToast } from "../../utils/toastUtils";
+import { useNavigate } from "react-router-dom";
 
 const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
+  const navigate = useNavigate();
+  const obtenerDetalle = (id: any, tipoTercero: any) => {
+    console.log("ID recibido:", id);
+
+    if (tipoTercero === "Cliente") {
+      navigate(`/dashboard/cliente/detalle/${id}`);
+    } else if (tipoTercero === "Funcionario") {
+      navigate(`/dashboard/funcionarios/resumen/${id}`);
+    } else {
+      showToast("Tipo de tercero no reconocido:", tipoTercero);
+    }
+  };
+
   console.log("CHATTT", detalles);
   return (
     <>
@@ -11,12 +25,28 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
           <div className="flex justify-between items-start mb-3">
             <div className="flex items-center space-x-3">
               <div>
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-200 text-green-700">
+                <div
+                  onClick={() =>
+                    obtenerDetalle(
+                      detalle?.tercero?.id,
+                      detalle.tercero.tipoTercero
+                    )
+                  }
+                  className="flex items-center justify-center w-8 h-8 rounded-full bg-green-200 text-green-700 cursor-pointer"
+                >
                   <i className="fas fa-user"></i>
                 </div>
               </div>
               <div>
-                <p className="font-semibold text-sm leading-tight text-gray-900">
+                <p
+                  className="font-semibold text-sm leading-tight text-blue-400 cursor-pointer underline"
+                  onClick={() =>
+                    obtenerDetalle(
+                      detalle?.tercero?.id,
+                      detalle.tercero.tipoTercero
+                    )
+                  }
+                >
                   {detalle.tercero.nombre +
                     " " +
                     "(" +
