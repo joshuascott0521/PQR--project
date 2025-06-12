@@ -1,23 +1,19 @@
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import type { Parameters } from "../../interfaces/pqrInterfaces";
 import { Settings } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
 
 interface ParametrosCardProps {
-    mostrarEditar?: boolean;
     parametros: Parameters;
 }
 
-const ParametrosCard = ({ mostrarEditar = false, parametros }: ParametrosCardProps) => {
-    const navigate = useNavigate();
+const ParametrosCard = ({ parametros }: ParametrosCardProps) => {
+    //const navigate = useNavigate();
 
     return (
         <div
-            className={`w-full bg-white rounded-lg border border-gray-200 flex items-center gap-6 ${mostrarEditar
-                ? "p-3 cursor-default"
-                : "p-4 sm:p-4 shadow-md cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
-                }`}
-            //onClick={() => !mostrarEditar && navigate(`/dashboard/cliente/detalle/${parametros.codigo}`)}
+            className="w-full bg-white rounded-lg border border-gray-200 flex items-center gap-6 p-4 sm:p-4 shadow-md hover:shadow-lg hover:bg-gray-50"
+        //onClick={() => !mostrarEditar && navigate(`/dashboard/cliente/detalle/${parametros.codigo}`)}
         >
             <div className="flex-shrink-0">
                 <Settings size={40} className="text-blue-600" />
@@ -46,25 +42,25 @@ const ParametrosCard = ({ mostrarEditar = false, parametros }: ParametrosCardPro
                     </p>
                 </div>
 
-                <div className="space-y-1 text-gray-600 text-xs">
-                    <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">
+                <div className="flex items-center justify-between text-gray-600 text-xs w-full">
+                    <p className="mb-1 text-gray-900 text-xs font-normal truncate flex items-center w-full">
                         <span className="font-semibold text-base">Descripción: </span>
                         <span
-                            className="font-normal text-base "
+                            className="font-normal text-base ml-1 truncate"
                             title={parametros.descripcion}
                         >
                             {parametros.descripcion}
                         </span>
                     </p>
-                </div>
-            </div>
-            <div className="flex flex-wrap gap-3 items-center">
-                {mostrarEditar &&
+
                     <FaEdit
-                        className="text-yellow-400 text-[30px] hover:text-yellow-500 cursor-pointer active:scale-90"
-                    //onClick={() => navigate(`/dashboard/cliente/editar/${parametros.codigo}`)}
+                        size={30}
+                        className="ml-3 text-yellow-400  hover:text-yellow-500 cursor-pointer active:scale-90 flex-shrink-0"
+                    // onClick={() => navigate(`/dashboard/cliente/editar/${parametros.codigo}`)}
                     />
-                }
+                </div>
+
+
             </div>
         </div>
     );
