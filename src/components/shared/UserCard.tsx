@@ -38,13 +38,15 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
             <p className="truncate font-semibold" title={pqr.asunto}>
               Asunto: <span className="font-normal">{pqr.asunto} </span>
             </p>
-            <p className="font-semibold">
-              Radicado: <span className="font-normal"> {pqr.radicado}</span>
-            </p>
+            {pqr.radicado?.toString().trim() && (
+              <p className="font-semibold">
+                Radicado: <span className="font-normal">{pqr.radicado}</span>
+              </p>
+            )}
           </div>
 
           <div>
-            <p className="font-semibold">
+            <p className="font-semibold truncate">
               Cliente:{" "}
               <span className="font-normal">
                 {pqr.documentoCliente} - {pqr.nombreCliente}

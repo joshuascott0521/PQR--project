@@ -50,7 +50,7 @@ const RecuperarContrasenaFrm = () => {
             type="submit"
             className="bg-orange-500 w-48 h-10 rounded-xl text-white hover:bg-orange-600 transition-colors"
           >
-            Enviar enlace
+            Recuperar
           </button>
         </div>
 

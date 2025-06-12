@@ -24,8 +24,8 @@ const ForgetPassword = () => {
             <div className="w-16 h-[5px] bg-white mb-10 mt-4"></div>
             <div className="mb-14">
               <p className="text-white line-clamp-2 text-left">
-                ©CreAppTech - Somos una empresa líder en soluciones integrales
-                basadas en tecnología e innovación.
+                ©Creapptech S.A.S - Somos una empresa líder en soluciones
+                integrales basadas en tecnología e innovación.
               </p>
             </div>
             <div className="mb-5 flex ml-10">
@@ -35,7 +35,7 @@ const ForgetPassword = () => {
                 onClick={() =>
                   window.open("https://www.creapptech.com/", "_blank")
                 }
-                className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold"
+                className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold cursor-pointer"
               />
             </div>
           </div>
