@@ -489,6 +489,62 @@ export const ParametersServices = {
       };
     }
   },
+  getTypesParameter: async (): Promise<ApiResponse<string[]>> => {
+    const constrainName = "chk_Parametro_TipoParametro";
+    try {
+      const response = await apiClient.get(
+        `/Parametro/GetDominioByNombre/${constrainName}`
+      );
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Origenes",
+      };
+    }
+  },
+  getParameterByCode: async (code: string): Promise<ApiResponse<Parameters>> => {
+    try {
+      const respose = await apiClient.get(`/Parametro/Get/${code}`);
+      return {
+        success: true,
+        data: respose.data
+      }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Parameters,
+        error: error.response?.data?.message || "Error al cargar Parámetro",
+      }
+    }
+  },
+  updateParameter: async (payload: {
+    codigo: string,
+    descripcion: string,
+    tipoParametro: string,
+    valorString: string | null,
+    valorInt: number | null,
+    valorDecimal: number | null,
+    valorDate: string | null,
+    valorBool: boolean | null,
+    valorImgUrl: string | null,
+    valorHtml: string | null,
+  }): Promise<ApiResponse<Parameters>> => {
+    try{
+      const response = await apiClient.put("/Parametro/Update", payload);
+      return{
+        success: true,
+        data: response.data
+      }
+    }catch(error:any){
+      return {
+        success: false,
+        data: {} as Parameters,
+        error: error.response?.data?.message || "Error al actualizar Parámetro",
+      }
+    }
+  }
 };
 
 export const NotificacionesService = {

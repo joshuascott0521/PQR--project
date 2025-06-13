@@ -4,9 +4,13 @@ import type { Parameters } from "../../interfaces/pqrInterfaces";
 import ParametrosCard from "../../components/shared/ParametrosCard";
 import SearchParameters from "../../components/shared/Search";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 const Parametros = () => {
+
+    const navigate = useNavigate();
     const [parameters, setParameters] = useState<Parameters[]>([])
+    
     useEffect(() => {
         const fecthParametres = async () => {
             try {
@@ -20,6 +24,10 @@ const Parametros = () => {
         fecthParametres();
     }, [])
 
+    const handleNew = () => {
+        navigate(`/dashboard/admin/parametros/crear`);
+    };
+
     return (
         <div className="h-full flex flex-col">
             <div className="flex mb-[15px] items-center gap-x-5">
@@ -31,7 +39,7 @@ const Parametros = () => {
                 <SearchParameters />
                 <button
                     className="bg-green-500 hover:bg-green-600 px-4 sm:px-4 py-1 rounded-lg text-white text-sm sm:text-md font-semibold flex items-center gap-2"
-                    //onClick={handleNew}
+                    onClick={handleNew}
                 >
                     <IoIosAddCircleOutline className="text-xl sm:text-2xl" />
                     <span>Nuevo Parametro</span>

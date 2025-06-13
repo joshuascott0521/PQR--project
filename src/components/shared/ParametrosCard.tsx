@@ -2,13 +2,14 @@
 import type { Parameters } from "../../interfaces/pqrInterfaces";
 import { Settings } from "lucide-react";
 import { FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 interface ParametrosCardProps {
     parametros: Parameters;
 }
 
 const ParametrosCard = ({ parametros }: ParametrosCardProps) => {
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
 
     return (
         <div
@@ -56,7 +57,7 @@ const ParametrosCard = ({ parametros }: ParametrosCardProps) => {
                     <FaEdit
                         size={30}
                         className="ml-3 text-yellow-400  hover:text-yellow-500 cursor-pointer active:scale-90 flex-shrink-0"
-                    // onClick={() => navigate(`/dashboard/cliente/editar/${parametros.codigo}`)}
+                        onClick={() => navigate(`/dashboard/admin/parametros/detalle/${parametros.codigo}`)}
                     />
                 </div>
 

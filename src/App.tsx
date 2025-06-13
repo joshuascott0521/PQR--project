@@ -29,6 +29,8 @@ import EditarCliente from "./features/Usuarios/EditarCliente";
 // import ForgetPassword from "./pages/ForgetPassword/ForgetPassword";
 import AllPqr from "./features/PQR/AllPqr";
 import Parametros from "./features/Usuarios/Parametros";
+import ParametrosDetalleWrapper from "./utils/ParametroWrapper";
+
 import ForgetPasswordFrm from "./features/Usuarios/ForgetPasswordFrm";
 import LoginForm from "./features/Usuarios/LoginFrm";
 
@@ -78,6 +80,8 @@ function App() {
             <Route path="nuevo-pqr" element={<NuevoPqr />} />
             <Route path="admin/cliente" element={<Clientes />} />
             <Route path="admin/parametros" element={<Parametros />} />
+            <Route path="admin/parametros/detalle/:code" element={<ParametrosDetalleWrapper />} />
+            <Route path="admin/parametros/crear" element={<ParametrosDetalleWrapper />} />
             <Route path="admin/funcionarios" element={<Funcionarios />} />
             <Route path="/dashboard/PQR/detalle/:id" element={<PqrData />} />
             <Route
