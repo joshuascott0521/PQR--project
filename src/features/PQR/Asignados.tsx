@@ -56,18 +56,19 @@ const Asignado = () => {
           return;
         }
 
+        const pageSize = 10;
+
         const data = await PqrServices.getByEstado({
           usuid,
           page: currentPage,
-          size: 10,
+          size: pageSize,
           estadoProceso: "Asignado",
         });
 
-        if (data.length < 10) {
+        if (data.length < pageSize) {
           setHasMore(false);
         }
 
-        // Eliminar duplicados usando el id
         setPqrs((prev) => {
           const combined = [...prev, ...data];
           const unique = Array.from(
@@ -75,9 +76,14 @@ const Asignado = () => {
           );
           return unique;
         });
-      } catch (err) {
-        // setError("Error al cargar los PQRs");
+      } catch (err: any) {
         console.error(err);
+
+        if (err?.response?.status === 404) {
+          setHasMore(false);
+        }
+
+        setError("Error al cargar los PQRs");
       } finally {
         setLoading(false);
       }
@@ -85,6 +91,7 @@ const Asignado = () => {
 
     fetchPqrs();
   }, [currentPage]);
+
   useEffect(() => {
     setLoading(true);
 
@@ -121,9 +128,7 @@ const Asignado = () => {
         ref={scrollRef}
       >
         {error && <p className="text-red-600">{error}</p>}
-        {/* {!loading && !error && pqrs.length === 0 && (
-          <p>No hay PQRs vencidos.</p>
-        )} */}
+
         {!loading && !error && pqrs.length === 0 && (
           <p className="text-center text-gray-500 mt-4">
             No hay PQRs asignados.

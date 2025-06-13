@@ -40,7 +40,7 @@ const ForgetPassword = () => {
             </div>
           </div>
         </div>
-        <ForgetPasswordFrm />
+        {/* <ForgetPasswordFrm /> */}
       </div>
     </>
   );

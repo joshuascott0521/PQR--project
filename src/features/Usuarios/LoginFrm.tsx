@@ -12,9 +12,9 @@ const LoginForm = () => {
   const [disabled, setDisabled] = useState(false); // Controla el delay de 2s
 
   const navigate = useNavigate();
-  const ForgetPassword = () => {
-    navigate("/Recuperar-contraseña");
-  };
+  // const ForgetPassword = () => {
+  //   navigate("/Recuperar-contraseña");
+  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,7 +111,7 @@ const LoginForm = () => {
         <div className="w-[100%] h-20 flex justify-center items-center text-[18px]">
           <p
             className="text-white cursor-pointer hover:underline"
-            onClick={ForgetPassword}
+            onClick={() => navigate("/login/Recuperar-contraseña")}
           >
             ¿Olvidaste tu contraseña?
           </p>

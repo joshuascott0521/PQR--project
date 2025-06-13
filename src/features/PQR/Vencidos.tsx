@@ -115,9 +115,6 @@ const Vencidos = () => {
         ref={scrollRef}
       >
         {error && <p className="text-red-600">{error}</p>}
-        {/* {!loading && !error && pqrs.length === 0 && (
-          <p>No hay PQRs vencidos.</p>
-        )} */}
         {!loading && !error && pqrs.length === 0 && (
           <p className="text-center text-gray-500 mt-4">
             No hay PQRs vencidos.

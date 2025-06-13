@@ -75,6 +75,13 @@ const NotificationList = () => {
     const interval = setInterval(fetchNotificaciones, 30000); // cada 30s
     return () => clearInterval(interval);
   }, []);
+  // if (notifications.length === 0) {
+  //   return (
+  //     <p className="text-center text-gray-400 py-2">
+  //       No se encontraron coincidencias.
+  //     </p>
+  //   );
+  // }
 
   return (
     <div className="bg-white rounded-lg shadow-lg max-w-2xl mx-auto">
@@ -82,54 +89,60 @@ const NotificationList = () => {
         <h2 className="text-lg font-semibold">Alertas</h2>
       </div>
       <div className="divide-y">
-        {notifications.map((notification, index) => (
-          <div
-            key={index}
-            className="p-4 hover:bg-gray-50 transition-colors flex items-start gap-4"
-          >
-            <div className="flex-shrink-0">
-              {getIconByState(notification.estado)}
-            </div>
-            <div className="flex-1">
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <p className="text-sm">
-                    <span className="font-semibold">Consecutivo:</span>{" "}
-                    {notification.consecutivo}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-semibold">Cliente:</span>{" "}
-                    {notification.cliente}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-semibold">Asunto:</span>{" "}
-                    {notification.asunto}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm">
-                    <span className="font-semibold">Alerta:</span>{" "}
-                    <span
-                      className={
-                        notification.estado === "alert" ? "text-red-500" : ""
-                      }
-                    >
-                      {notification.alerta}
-                    </span>
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-semibold">Tipo:</span>{" "}
-                    {notification.tipo}
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-semibold">Fecha:</span>{" "}
-                    {notification.fecha}
-                  </p>
+        {notifications.length === 0 ? (
+          <p className="text-center text-gray-400 py-4">
+            No se encontraron alertas.
+          </p>
+        ) : (
+          notifications.map((notification, index) => (
+            <div
+              key={index}
+              className="p-4 hover:bg-gray-50 transition-colors flex items-start gap-4"
+            >
+              <div className="flex-shrink-0">
+                {getIconByState(notification.estado)}
+              </div>
+              <div className="flex-1">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-semibold">Consecutivo:</span>{" "}
+                      {notification.consecutivo}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-semibold">Cliente:</span>{" "}
+                      {notification.cliente}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-semibold">Asunto:</span>{" "}
+                      {notification.asunto}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm">
+                      <span className="font-semibold">Alerta:</span>{" "}
+                      <span
+                        className={
+                          notification.estado === "alert" ? "text-red-500" : ""
+                        }
+                      >
+                        {notification.alerta}
+                      </span>
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-semibold">Tipo:</span>{" "}
+                      {notification.tipo}
+                    </p>
+                    <p className="text-sm">
+                      <span className="font-semibold">Fecha:</span>{" "}
+                      {notification.fecha}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

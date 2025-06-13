@@ -1,14 +1,9 @@
 interface ParametersProps {
-    Editing?: boolean;
+  Editing?: boolean;
 }
 
-const ParametrosFrm = ({ Editing }: ParametersProps) => {
-
-    return (
-        <div>
-            
-        </div>
-    );
-}
+const ParametrosFrm = ({}: ParametersProps) => {
+  return <div></div>;
+};
 
 export default ParametrosFrm;

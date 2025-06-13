@@ -1,6 +1,18 @@
+// import { useState } from "react";
+// import { useEffect } from "react";
+import { useLocation, Outlet } from "react-router-dom";
+
 import "../../Login.css";
-import LoginForm from "../../features/Usuarios/LoginFrm";
+// import ForgetPasswordFrm from "../../features/Usuarios/ForgetPasswordFrm";
+// import LoginForm from "../../features/Usuarios/LoginFrm";
+import { motion, AnimatePresence } from "framer-motion";
 const Login = () => {
+  // const navigate = useNavigate();
+  // const [showForgetPassword, setShowForgetPassword] = useState(false);
+  // const [showForgetPassword, setShowForgetPassword] = useState(false);
+  // const [hasInteracted, setHasInteracted] = useState(false);
+  const location = useLocation();
+  // const isForgetPassword = location.pathname === "/Recuperar-contraseña";
   return (
     <>
       <div className="w-screen h-screen bg-neutral-800 flex justify-center items-center bg-image  overflow-hidden">
@@ -39,7 +51,17 @@ const Login = () => {
             </div>
           </div>
         </div>
-        <LoginForm />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </div>
     </>
   );

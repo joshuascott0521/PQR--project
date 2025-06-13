@@ -478,17 +478,17 @@ export const SolicitudServices = {
 
 export const ParametersServices = {
   getParameters: async (): Promise<ApiResponse<Parameters[]>> => {
-    try{
-      const response = await apiClient.get("/Parametro/Get")
-      return {success: true, data: response.data}
-    } catch(error: any){
-      return{
+    try {
+      const response = await apiClient.get("/Parametro/Get");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
         success: false,
         data: [],
         error: error.response?.data?.message || "Error al obtener parámetros",
-      }
+      };
     }
-  }
+  },
 };
 
 export const NotificacionesService = {
@@ -513,6 +513,24 @@ export const NotificacionesService = {
         data: [],
         error:
           error.response?.data?.message || "Error al obtener notificaciones",
+      };
+    }
+  },
+};
+export const AuthServices = {
+  forgotPassword: async (email: string) => {
+    try {
+      const response = await apiClient.post("/usuario/forgot-password", {
+        email: email,
+      });
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        error:
+          error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          "Error desconocido",
       };
     }
   },

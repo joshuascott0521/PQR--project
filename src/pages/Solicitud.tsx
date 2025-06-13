@@ -48,15 +48,16 @@ export default function Solicitud() {
               </p>
               <div className="w-16 h-[5px] bg-white mx-auto my-4"></div>
               <p className="text-sm mb-6 px-2">
-                ©CreAppTech - Soluciones integrales basadas en tecnología.
+                ©Creapptech S.A.S - Soluciones integrales basadas en tecnología.
               </p>
               <input
                 type="button"
                 value="Conócenos"
-                onClick={() => window.open("https://www.creapptech.com/", "_blank")}
+                onClick={() =>
+                  window.open("https://www.creapptech.com/", "_blank")
+                }
                 className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold"
               />
-
             </div>
           </div>
         </div>

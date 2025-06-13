@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
   const navigate = useNavigate();
-  const obtenerDetalle = (id: any, tipoTercero: any) => {
+  const getDetalle = (id: any, tipoTercero: any) => {
     console.log("ID recibido:", id);
 
     if (tipoTercero === "Cliente") {
@@ -27,7 +27,7 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
               <div>
                 <div
                   onClick={() =>
-                    obtenerDetalle(
+                    getDetalle(
                       detalle?.tercero?.id,
                       detalle.tercero.tipoTercero
                     )
@@ -41,7 +41,7 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
                 <p
                   className="font-semibold text-sm leading-tight text-blue-400 cursor-pointer underline"
                   onClick={() =>
-                    obtenerDetalle(
+                    getDetalle(
                       detalle?.tercero?.id,
                       detalle.tercero.tipoTercero
                     )
