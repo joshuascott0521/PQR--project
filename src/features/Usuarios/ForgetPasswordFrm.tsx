@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { AuthServices } from "../../services/pqrServices";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../utils/toastUtils";
+import { setShouldAnimate } from "../../utils/animationStore";
 
 interface FormValues {
   email: string;
@@ -9,6 +10,10 @@ interface FormValues {
 
 const RecuperarContrasenaFrm = () => {
   const navigate = useNavigate();
+  const ForgetPassword = () => {
+    setShouldAnimate(true);
+    navigate("/login");
+  };
   const {
     register,
     handleSubmit,
@@ -30,6 +35,7 @@ const RecuperarContrasenaFrm = () => {
           "Revisa tu correo para continuar con la restauración",
           "success"
         );
+        navigate("/login");
         reset();
       } else {
         showToast(
@@ -104,7 +110,7 @@ const RecuperarContrasenaFrm = () => {
         <div className="pt-2">
           <button
             type="button"
-            onClick={() => navigate("/login")}
+            onClick={ForgetPassword}
             className="text-white cursor-pointer hover:underline"
           >
             Volver al inicio de sesión

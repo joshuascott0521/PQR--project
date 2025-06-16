@@ -135,9 +135,7 @@ const AllPqr = () => {
         </div>
 
         {loading && (
-          <p className="text-center text-gray-500 mt-4">
-            Cargando más datos...
-          </p>
+          <p className="text-center text-gray-500 mt-4">Cargando más PQRs...</p>
         )}
         {!hasMore && (
           <p className="text-center text-gray-400 mt-4">

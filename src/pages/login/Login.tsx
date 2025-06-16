@@ -1,18 +1,16 @@
-// import { useState } from "react";
-// import { useEffect } from "react";
-import { useLocation, Outlet } from "react-router-dom";
-
-import "../../Login.css";
-// import ForgetPasswordFrm from "../../features/Usuarios/ForgetPasswordFrm";
-// import LoginForm from "../../features/Usuarios/LoginFrm";
-import { motion, AnimatePresence } from "framer-motion";
+import { Outlet, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getShouldAnimate, setShouldAnimate } from "../../utils/animationStore";
 const Login = () => {
-  // const navigate = useNavigate();
-  // const [showForgetPassword, setShowForgetPassword] = useState(false);
-  // const [showForgetPassword, setShowForgetPassword] = useState(false);
-  // const [hasInteracted, setHasInteracted] = useState(false);
   const location = useLocation();
-  // const isForgetPassword = location.pathname === "/Recuperar-contraseña";
+  const [animate, setAnimate] = useState(false);
+  useEffect(() => {
+    const animateFlag = getShouldAnimate();
+    setAnimate(animateFlag);
+    setShouldAnimate(false); // Evita que se repita en refresh
+  }, [location.pathname]);
+
   return (
     <>
       <div className="w-screen h-screen bg-neutral-800 flex justify-center items-center bg-image  overflow-hidden">
@@ -51,16 +49,23 @@ const Login = () => {
             </div>
           </div>
         </div>
+
         <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Outlet />
-          </motion.div>
+          {animate ? (
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              transition={{ duration: 0.4 }}
+            >
+              <Outlet />
+            </motion.div>
+          ) : (
+            <div key={location.pathname}>
+              <Outlet />
+            </div>
+          )}
         </AnimatePresence>
       </div>
     </>

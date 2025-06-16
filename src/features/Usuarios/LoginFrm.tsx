@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { showToast } from "../../utils/toastUtils";
 import { useNavigate } from "react-router-dom";
+import { setShouldAnimate } from "../../utils/animationStore";
 
 const LoginForm = () => {
   const { login } = useAuth();
@@ -12,10 +13,10 @@ const LoginForm = () => {
   const [disabled, setDisabled] = useState(false); // Controla el delay de 2s
 
   const navigate = useNavigate();
-  // const ForgetPassword = () => {
-  //   navigate("/Recuperar-contraseña");
-  // };
-
+  const ForgetPassword = () => {
+    setShouldAnimate(true);
+    navigate("/login/Recuperar-contraseña");
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -111,7 +112,7 @@ const LoginForm = () => {
         <div className="w-[100%] h-20 flex justify-center items-center text-[18px]">
           <p
             className="text-white cursor-pointer hover:underline"
-            onClick={() => navigate("/login/Recuperar-contraseña")}
+            onClick={ForgetPassword}
           >
             ¿Olvidaste tu contraseña?
           </p>
