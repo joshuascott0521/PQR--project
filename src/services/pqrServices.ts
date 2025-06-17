@@ -504,55 +504,62 @@ export const ParametersServices = {
       };
     }
   },
-  getParameterByCode: async (code: string): Promise<ApiResponse<Parameters>> => {
+  getParameterByCode: async (
+    code: string
+  ): Promise<ApiResponse<Parameters>> => {
     try {
       const respose = await apiClient.get(`/Parametro/Get/${code}`);
       return {
         success: true,
-        data: respose.data
-      }
+        data: respose.data,
+      };
     } catch (error: any) {
       return {
         success: false,
         data: {} as Parameters,
         error: error.response?.data?.message || "Error al cargar Parámetro",
-      }
+      };
     }
   },
   updateParameter: async (payload: {
-    codigo: string,
-    descripcion: string,
-    tipoParametro: string,
-    valorString: string | null,
-    valorInt: number | null,
-    valorDecimal: number | null,
-    valorDate: string | null,
-    valorBool: boolean | null,
-    valorImgUrl: string | null,
-    valorHtml: string | null,
+    codigo: string;
+    descripcion: string;
+    tipoParametro: string;
+    valorString: string | null;
+    valorInt: number | null;
+    valorDecimal: number | null;
+    valorDate: string | null;
+    valorBool: boolean | null;
+    valorImgUrl: string | null;
+    valorHtml: string | null;
   }): Promise<ApiResponse<Parameters>> => {
-    try{
+    try {
       const response = await apiClient.put("/Parametro/Update", payload);
-      return{
+      return {
         success: true,
-        data: response.data
-      }
-    }catch(error:any){
+        data: response.data,
+      };
+    } catch (error: any) {
       return {
         success: false,
         data: {} as Parameters,
         error: error.response?.data?.message || "Error al actualizar Parámetro",
-      }
+      };
     }
-  }
+  },
 };
+
+interface AlertasResponse {
+  alertas: AlertaNotificacion[];
+  totalPendientes: number;
+}
 
 export const NotificacionesService = {
   getAlertas: async (
     usuarioId: string,
     pageNumber = 1,
     pageSize = 5
-  ): Promise<ApiResponse<AlertaNotificacion[]>> => {
+  ): Promise<ApiResponse<AlertasResponse>> => {
     try {
       const response = await apiClient.get("/Alerta/Get", {
         params: {
@@ -566,13 +573,14 @@ export const NotificacionesService = {
     } catch (error: any) {
       return {
         success: false,
-        data: [],
+        data: { alertas: [], totalPendientes: 0 },
         error:
           error.response?.data?.message || "Error al obtener notificaciones",
       };
     }
   },
 };
+
 export const AuthServices = {
   forgotPassword: async (email: string) => {
     try {
@@ -587,6 +595,26 @@ export const AuthServices = {
           error?.response?.data?.message ||
           error?.response?.data?.error ||
           "Error desconocido",
+      };
+    }
+  },
+  resetPassword: async (data: {
+    token?: string;
+    nuevaPassword: string;
+    confirmacionPassword: string;
+  }) => {
+    try {
+      const response = await apiClient.post("/usuario/reset-password", data);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.message || "Error al restaurar la contraseña";
+      return {
+        success: false,
+        error: errorMsg,
       };
     }
   },

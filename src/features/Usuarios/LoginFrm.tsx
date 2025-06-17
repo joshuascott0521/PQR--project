@@ -121,7 +121,7 @@ const LoginForm = () => {
         <div>
           <button
             type="submit"
-            disabled={isLoading || disabled} // 👉 deshabilitado si está cargando o en cooldown
+            disabled={isLoading || disabled}
             className={`bg-orange-500 w-48 h-10 rounded-xl text-white flex items-center justify-center gap-2 transition-opacity  hover:bg-orange-600
             ${
               isLoading || disabled
