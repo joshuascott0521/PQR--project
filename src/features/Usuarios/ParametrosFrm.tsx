@@ -3,9 +3,10 @@ import { FloatingLabel } from "../../components/shared/FloatingLabel";
 import { useEffect, useRef, useState } from "react";
 import { ParametersServices } from "../../services/pqrServices";
 import { FloatingSelect } from "../../components/shared/FloatingSelect";
-import { toast } from "react-toastify";
+
 import { useNavigate, useParams } from "react-router-dom";
 import type { Parameters } from "../../interfaces/pqrInterfaces";
+import { showToast } from "../../utils/toastUtils";
 
 interface ParametersProps {
     Editing?: boolean;
@@ -17,7 +18,7 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
     const [paraTypes, setParaTypes] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [htmlContent, setHtmlContent] = useState<string>("");
-    const [selectedHtmlFile, setSelectedHtmlFile] = useState<File | null>(null);
+    //const [selectedHtmlFile, setSelectedHtmlFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState<Parameters>({
         codigo: "",
@@ -77,7 +78,7 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
         const file = event.target.files?.[0];
         if (file) {
             if (!file.name.endsWith('.html')) {
-                toast.error('Por favor selecciona un archivo HTML válido.');
+                showToast("Por favor selecciona un archivo HTML válido.", "error");
                 return;
             }
 
@@ -131,7 +132,7 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
                 const responseUpdateParameter = await ParametersServices.updateParameter(payload);
                 if (!responseUpdateParameter.success) throw new Error(responseUpdateParameter.error);
 
-                toast.success("Parámetro Actualizado Correctamente")
+                showToast("Parámetro Actualizado Correctamente", "success")
                 navigate("/dashboard/admin/parametros")
             } else {
                 alert("Intento de creación")
@@ -326,6 +327,7 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
                                     <FilePlus className="w-4 h-4" />
                                     Subir
                                 </button>
+
                                 <div className="border border-gray-300 rounded-lg p-4 bg-white">
                                     <p className="text-gray-500 font-semibold mb-2">Vista previa:</p>
                                     <iframe
@@ -345,9 +347,8 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
                                             }
                                         `}
                                     />
-
-
                                 </div>
+
                             </div>
                         )}
 

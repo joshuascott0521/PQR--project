@@ -88,7 +88,7 @@ export default function SolicitudFrm() {
   }, [id]);
 
   return (
-    <div className="bg-white p-4 w-full flex flex-col overflow-hidden">
+    <div className="bg-white p-4 w-full flex flex-col overflow-hidden shadow-xl rounded-xl">
       {/* Encabezado */}
       <div className="w-full mb-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-2 px-4 max-w-6xl mx-auto">

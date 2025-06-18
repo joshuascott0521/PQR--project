@@ -9,7 +9,7 @@ interface AsideProps {
 }
 
 const menuItems = [
-  { label: "inicio", path: "/dashboard", icon: <House /> },
+  { label: "inicio", path: "/dashboard/statistic", icon: <House /> },
   { label: "PQRs", path: "/dashboard/all-pqr", icon: <ClipboardList /> },
   {
     label: "Vencidos",

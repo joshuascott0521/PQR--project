@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("userData", JSON.stringify(response.userData));
 
       setUser(response.userData);
-      navigate("/dashboard");
+      navigate("/dashboard/statistic");
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       throw error;

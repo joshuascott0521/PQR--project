@@ -44,3 +44,51 @@
 div[class*="toaster"] > div > div:nth-last-child(n + 4) {
   display: none;
 }
+
+/* Animación de aparición suave tipo dashboard */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Pulso suave personalizado */
+@keyframes pulse-fast {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+}
+
+.animate-pulse-fast {
+  animation: pulse-fast 1.5s ease-in-out infinite;
+}
+
+/* Transición general pro para tarjetas */
+.card-glow-hover {
+  transition: all 0.3s ease-in-out;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-glow-hover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+

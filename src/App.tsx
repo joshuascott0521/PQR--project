@@ -34,6 +34,7 @@ import ParametrosDetalleWrapper from "./utils/ParametroWrapper";
 import ForgetPasswordFrm from "./features/Usuarios/ForgetPasswordFrm";
 import LoginForm from "./features/Usuarios/LoginFrm";
 import ResetPassword from "./pages/ResetPassword";
+import Metricas from "./features/PQR/Metricas";
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           {/* Rutas protegidas bajo el layout Dashboard */}
           <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="/dashboard/statistic" element={<Metricas />} />
             <Route path="all-pqr" element={<AllPqr />} />
             <Route path="vencidos" element={<Vencidos />} />
             <Route path="por-vencer" element={<PorVencer />} />

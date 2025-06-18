@@ -16,7 +16,7 @@ export default function Solicitud() {
 
         {/* Formulario encima */}
         <div className="relative z-10 h-full overflow-y-auto p-4">
-          <div className="bg-white rounded-lg shadow-lg p-4">
+          <div className="bg-gray-50 rounded-lg shadow-lg p-4">
             <SolicitudFrm />
           </div>
         </div>
@@ -25,7 +25,7 @@ export default function Solicitud() {
       {/* VISTA ESCRITORIO: Diseño dos columnas */}
       <div className="hidden md:flex w-full h-screen">
         {/* Columna izquierda: Formulario */}
-        <div className="w-1/2 h-full overflow-y-auto px-10 py-10 bg-white">
+        <div className="w-1/2 h-full overflow-y-auto px-10 py-10 bg-gray-50">
           <SolicitudFrm />
         </div>
 
