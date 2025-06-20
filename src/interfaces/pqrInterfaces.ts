@@ -233,6 +233,18 @@ export interface PqrCount {
   cantidad: number;
 }
 
+export interface DetalleVencimiento {
+  estadoVencimiento: string
+  cantidad: number;
+}
+
+export interface EstadoFlujoData {
+  estadoFlujo: string;
+  total: number;
+  detallesVencimiento: DetalleVencimiento[];
+}
+
+
 export interface Parameters {
   codigo: string,
   descripcion: string,

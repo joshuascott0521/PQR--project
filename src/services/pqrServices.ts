@@ -8,6 +8,7 @@ import type {
   CreatePqr,
   departamento,
   DetallePqrCreate,
+  EstadoFlujoData,
   Evento,
   Municipio,
   Parameters,
@@ -290,6 +291,23 @@ export const PqrServices = {
       };
     }
   },
+  getPqrStatistics: async (usuId: string): Promise<ApiResponse<EstadoFlujoData[]>> => {
+    try {
+      const response = await apiClient.get("/PQR/GetResumenDashBoard/", {
+        params: {usuId: usuId}
+      })
+      return {
+        success: true,
+        data: response.data
+      }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar PQRS para estadisticas",
+      }
+    }
+  }
 };
 
 export const UsersServices = {
