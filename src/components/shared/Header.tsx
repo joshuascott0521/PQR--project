@@ -26,13 +26,10 @@ const Header = ({ setIsCollapse }: HeaderProps) => {
     const userDataString = localStorage.getItem("userData");
     const userData = userDataString ? JSON.parse(userDataString) : null;
     const usuarioId = userData?.id;
-
     if (!usuarioId) return;
 
-    const { success, data } = await NotificacionesService.getAlertas(usuarioId);
-    if (success && data) {
-      setUnreadCount(data.totalPendientes || 0);
-    }
+    const total = await NotificacionesService.getTotalPendientes(usuarioId);
+    setUnreadCount(total);
   };
 
   useEffect(() => {

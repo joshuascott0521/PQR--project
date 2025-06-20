@@ -291,23 +291,27 @@ export const PqrServices = {
       };
     }
   },
-  getPqrStatistics: async (usuId: string): Promise<ApiResponse<EstadoFlujoData[]>> => {
+  getPqrStatistics: async (
+    usuId: string
+  ): Promise<ApiResponse<EstadoFlujoData[]>> => {
     try {
       const response = await apiClient.get("/PQR/GetResumenDashBoard/", {
-        params: {usuId: usuId}
-      })
+        params: { usuId: usuId },
+      });
       return {
         success: true,
-        data: response.data
-      }
+        data: response.data,
+      };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al cargar PQRS para estadisticas",
-      }
+        error:
+          error.response?.data?.message ||
+          "Error al cargar PQRS para estadisticas",
+      };
     }
-  }
+  },
 };
 
 export const UsersServices = {
@@ -576,7 +580,7 @@ export const NotificacionesService = {
   getAlertas: async (
     usuarioId: string,
     pageNumber = 1,
-    pageSize = 5
+    pageSize = 3
   ): Promise<ApiResponse<AlertasResponse>> => {
     try {
       const response = await apiClient.get("/Alerta/Get", {
@@ -589,12 +593,31 @@ export const NotificacionesService = {
 
       return { success: true, data: response.data };
     } catch (error: any) {
+      const isNoAlertasError =
+        error.response?.data?.errors?.Alerta?.[0] ===
+        "No se encontraron Alertas";
+
       return {
         success: false,
         data: { alertas: [], totalPendientes: 0 },
-        error:
-          error.response?.data?.message || "Error al obtener notificaciones",
+        error: isNoAlertasError
+          ? "No se encontraron más alertas"
+          : "Error al obtener notificaciones",
       };
+    }
+  },
+  getTotalPendientes: async (usuarioId: string): Promise<number> => {
+    try {
+      const response = await apiClient.get("/Alerta/Get", {
+        params: {
+          usuarioId,
+          pageNumber: 1,
+          pageSize: 1, // solo para el conteo
+        },
+      });
+      return response.data.totalPendientes || 0;
+    } catch {
+      return 0;
     }
   },
 };
