@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BsExclamationCircleFill, BsCheckCircleFill } from "react-icons/bs";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { IoWarning } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import { NotificacionesService } from "../../services/pqrServices";
 import { CardSkeleton } from "./CardSkeleton";
 
@@ -22,7 +23,7 @@ interface RawNotificacion {
 }
 
 interface Notification {
-  id: number; // <- lo necesitas para evitar duplicados correctamente
+  id: number;
   consecutivo: string;
   cliente: string;
   asunto: string;
@@ -49,18 +50,19 @@ const getIconByState = (state: Notification["estado"]) => {
 };
 
 const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
+  const navigate = useNavigate();
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
   const fetchNotificaciones = async (page = 1) => {
     const userDataString = localStorage.getItem("userData");
     const userData = userDataString ? JSON.parse(userDataString) : null;
     const usuarioId = userData?.id;
     if (!usuarioId) return;
 
-    const { success, data, error } = await NotificacionesService.getAlertas(
+    const { success, data } = await NotificacionesService.getAlertas(
       usuarioId,
       page
     );
@@ -90,21 +92,20 @@ const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
     setNotifications((prev) => {
       const existingIds = new Set(prev.map((n) => n.id));
       const nuevos = mapeadas.filter((n) => !existingIds.has(n.id));
-      console.log("nuevos:", nuevos);
       return [...prev, ...nuevos];
     });
 
-    // Si no trajo alertas nuevas, asumimos que ya no hay más
     if (mapeadas.length === 0) {
       setHasMore(false);
     }
+
     setIsLoading(false);
   };
-  // useEffect(() => {
-  //   fetchNotificaciones(pageNumber); // o simplemente fetchNotificaciones(1)
-  // }, []);
 
-  // Actualiza contador cada 30s
+  useEffect(() => {
+    fetchNotificaciones(pageNumber);
+  }, [pageNumber]);
+
   useEffect(() => {
     const interval = setInterval(async () => {
       const userDataString = localStorage.getItem("userData");
@@ -118,11 +119,42 @@ const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Cargar la primera página al montar
-  useEffect(() => {
-    fetchNotificaciones(pageNumber);
-  }, [pageNumber]);
-  console.log("prev:", notifications);
+  const handleClickNotificacion = async (id: number) => {
+    try {
+      const detalle = await NotificacionesService.getAlertaDetalle(id);
+
+      // ✅ Actualiza la notificación con datos del backend
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.consecutivo === String(detalle.consecutivo)
+            ? {
+                ...n,
+                leido: detalle.estado === "Leido",
+              }
+            : n
+        )
+      );
+
+      // ✅ Redirige
+      navigate(`/dashboard/PQR/detalle/${detalle.pqrId}`);
+
+      // ✅ Actualiza contador global
+      const userDataString = localStorage.getItem("userData");
+      const userData = userDataString ? JSON.parse(userDataString) : null;
+      const usuarioId = userData?.id;
+
+      if (usuarioId) {
+        const { data } = await NotificacionesService.getAlertas(
+          usuarioId,
+          1,
+          1
+        );
+        setUnreadCount(data?.totalPendientes || 0);
+      }
+    } catch (error) {
+      console.error("Error al redirigir a detalle:", error);
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-lg max-w-2xl mx-auto">
@@ -141,10 +173,11 @@ const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
             No se encontraron alertas.
           </p>
         ) : (
-          notifications.map((notification, index) => (
+          notifications.map((notification) => (
             <div
-              key={index}
-              className={`p-4 transition-colors flex items-start gap-4 ${
+              key={notification.id}
+              onClick={() => handleClickNotificacion(notification.id)}
+              className={`cursor-pointer p-4 transition-colors flex items-start gap-4 ${
                 notification.leido ? "bg-gray-100" : "bg-white"
               } hover:bg-gray-50`}
             >
@@ -197,14 +230,11 @@ const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
             No hay más alertas.
           </div>
         )}
-
         {!isLoading && hasMore && (
           <div className="p-4 text-center">
             <button
               disabled={isLoading}
-              onClick={() => {
-                setPageNumber((prev) => prev + 1);
-              }}
+              onClick={() => setPageNumber((prev) => prev + 1)}
               className="text-blue-600 underline hover:text-blue-800 transition disabled:opacity-50"
             >
               Ver más alertas
@@ -217,14 +247,3 @@ const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
 };
 
 export default NotificationList;
-
-// const skeletons = Array.from({ length: 4 }).map((_, i) => (
-//   <div key={i} className="p-4 flex gap-4 animate-pulse border-b">
-//     <div className="w-8 h-8 bg-gray-300 rounded-full" />
-//     <div className="flex-1 space-y-2">
-//       <div className="w-1/2 h-3 bg-gray-300 rounded" />
-//       <div className="w-1/3 h-3 bg-gray-300 rounded" />
-//       <div className="w-full h-3 bg-gray-200 rounded" />
-//     </div>
-//   </div>
-// ));

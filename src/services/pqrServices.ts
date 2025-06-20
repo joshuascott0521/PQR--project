@@ -620,6 +620,14 @@ export const NotificacionesService = {
       return 0;
     }
   },
+  getAlertaDetalle: async (id: number): Promise<{ pqrId: string }> => {
+    try {
+      const response = await apiClient.get(`/Alerta/Get/${id}`); // ✅ id en la URL
+      return response.data;
+    } catch {
+      throw new Error("Error al obtener detalle de la alerta");
+    }
+  },
 };
 
 export const AuthServices = {
