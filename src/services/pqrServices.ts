@@ -17,6 +17,7 @@ import type {
   SolicitudRequisitoDTO,
   tipoCliente,
   TipoPqr,
+  UserType,
   Usuario,
 } from "../interfaces/pqrInterfaces";
 
@@ -348,6 +349,52 @@ export const UsersServices = {
         success: false,
         data: {} as Usuario,
         error: error.response?.data?.message || "Error al cargar Resumen",
+      };
+    }
+  },
+  getUserType: async(): Promise<ApiResponse<UserType[]>> => {
+    try{
+      const response = await apiClient.get("/tipousuario/ObtenerAllTipoUsuario")
+      return{
+        success: true,
+        data: response.data
+      }
+    }catch(error: any){
+      return{
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al tipo de usuarios",
+      }
+    }
+  },
+  update: async (funcionario: Usuario): Promise<ApiResponse<Usuario>> => {
+    try {
+      const response = await apiClient.put(
+        "/usuario/Update",
+        funcionario
+      );
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Usuario,
+        error: error.response?.data?.message || "Error al actualizar funcionario",
+      };
+    }
+  },
+  create: async (funcionario: Usuario): Promise<ApiResponse<string[]>> => {
+    try {
+      const response = await apiClient.post("/usuario/Create", funcionario);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message || "Error al crear funcionario",
       };
     }
   },

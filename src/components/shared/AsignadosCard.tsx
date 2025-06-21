@@ -37,7 +37,7 @@ const AsignadosCard: React.FC<AsignadosCardProps> = ({ titulo, total, estados, f
         max-w-xs w-[220px] text-black
         flex flex-col gap-2 justify-around
         ${borderHover}
-        cursor-pointer
+        cursor-default
       `}
     >
       <h2 className="text-lg font-semibold text-center">{titulo}</h2>

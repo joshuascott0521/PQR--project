@@ -127,8 +127,6 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
                     valorHtml: formData.valorHtml,
                 }
 
-                console.log("Payload (Editar):", payload);
-
                 const responseUpdateParameter = await ParametersServices.updateParameter(payload);
                 if (!responseUpdateParameter.success) throw new Error(responseUpdateParameter.error);
 

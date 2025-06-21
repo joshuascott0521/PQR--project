@@ -7,8 +7,8 @@ export interface CreatePqr {
   direccion: string;
   departamentoCod: number;
   municipioCod: number;
-  radicado?: string;
-  fecha?: string;
+  radicado: string | null;
+  fecha: string;
   tipoPQRId: string;
   origen: string;
   asunto: string;
@@ -193,15 +193,25 @@ export interface Usuario {
   documento: string;
   nombre: string;
   tipoUsuId: string;
-  tipoUsuarioNombre: string;
-  role: string;
-  email?: string;
+  tipoUsuarioNombre?: string;
+  role?: string;
+  email: string;
   celular: string;
-  estado: string;
+  estado?: string;
   pqrResumen?: {
     [estado: string]: number; // Ejemplo: "VENCIDO": 44
-  };
+  },
+  password?: string,
+  verifyPassword?: string,
 }
+
+export interface UserType{
+  id: string,
+  nombre: string,
+  role: string,
+  estado?: number
+}
+
 export interface DetallePqrCreate {
   pqrId: string;
   eventoId: string;

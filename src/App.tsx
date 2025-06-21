@@ -35,6 +35,7 @@ import ForgetPasswordFrm from "./features/Usuarios/ForgetPasswordFrm";
 import LoginForm from "./features/Usuarios/LoginFrm";
 import ResetPassword from "./pages/ResetPassword";
 import Metricas from "./features/PQR/Metricas";
+import FuncionarioDetalleWrapper from "./utils/FuncionarioWrapper";
 
 function App() {
   return (
@@ -88,6 +89,14 @@ function App() {
               element={<ParametrosDetalleWrapper />}
             />
             <Route path="admin/funcionarios" element={<Funcionarios />} />
+            <Route
+              path="admin/funcionario/editar/:code"
+              element={<FuncionarioDetalleWrapper />}
+            />
+            <Route
+              path="admin/funcionario/crear"
+              element={<FuncionarioDetalleWrapper />}
+            />
             <Route path="/dashboard/PQR/detalle/:id" element={<PqrData />} />
             <Route
               path="/dashboard/cliente/detalle/:id"

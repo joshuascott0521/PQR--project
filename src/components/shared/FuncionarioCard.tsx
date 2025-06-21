@@ -89,7 +89,7 @@ const FuncionarioCard = ({ mostrarEditar = false, funcionario }: ClienteCardProp
         {mostrarEditar &&
           <FaEdit
             className="text-yellow-400 text-[30px] hover:text-yellow-500 cursor-pointer active:scale-90"
-            onClick={() => navigate(`/dashboard/cliente/editar/${funcionario.id}`)}
+            onClick={() => navigate(`/dashboard/admin/funcionario/editar/${funcionario.id}`)}
           />
         }
 

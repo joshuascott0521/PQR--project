@@ -21,7 +21,6 @@ import {
   TipoClienteServices,
   TipoPqrServices,
 } from "../../services/pqrServices";
-
 import {
   mostrarAlertaConfirmacion,
   mostrarAlertaExito,
@@ -66,6 +65,7 @@ const NuevoPqr = () => {
     usuarioId: "",
   });
 
+  // Consumos de endpoints
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -149,101 +149,76 @@ const NuevoPqr = () => {
     navigate("/dashboard");
   };
 
-  const validateForm = () => {
-    if (!formData.documentoCliente.trim()) {
-      showToast("Por favor ingresa el documento del cliente.");
-      setErrores({ documentoCliente: true });
-      return false;
-    }
-    if (!formData.nombreCliente.trim()) {
-      showToast("Por favor ingresa el nombre completo del cliente.");
-      setErrores({ nombreCliente: true });
-      return false;
-    }
-    if (!formData.tipoClienteId) {
-      showToast("Por favor selecciona el tipo de cliente.");
-      setErrores({ tipoClienteId: true });
-      return false;
-    }
+  const validateForm = (): boolean => {
+    const erroresDetectados: { [key: string]: boolean } = {};
+    let hayError = false;
 
-    if (!formData.email.trim()) {
-      showToast("Por favor ingresa el correo electrónico.");
-      setErrores({ email: true });
-      return false;
-    }
+    const mensajesError: string[] = [];
+
+    const validarCampo = (
+      campo: string,
+      condicion: boolean,
+      mensaje: string
+    ) => {
+      if (condicion) {
+        erroresDetectados[campo] = true;
+        mensajesError.push(mensaje);
+        hayError = true;
+      }
+    };
+
+    const { documentoCliente, email, celular, radicado, asunto, descripcion } = formData;
+
+    validarCampo("documentoCliente", !documentoCliente.trim(), "Por favor ingresa el documento del cliente.");
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      showToast("El correo electrónico no es válido.");
-      setErrores({ email: true });
-      return false;
-    }
+    validarCampo("email", !email.trim(), "Por favor ingresa el correo electrónico.");
+    validarCampo("email", Boolean(email.trim() && !emailRegex.test(email)), "El correo electrónico no es válido.");
 
-    if (!formData.celular.trim()) {
-      showToast("Por favor ingresa el número de celular.");
-      setErrores({ celular: true });
-      return false;
-    }
+    validarCampo("celular", !/^\d{10}$/.test(celular), "El número de celular debe tener exactamente 10 dígitos.");
 
-    if (!formData.direccion.trim()) {
-      showToast("Por favor ingresa la dirección.");
-      setErrores({ direccion: true });
-      return false;
-    }
+    validarCampo("radicado", radicado !== null && radicado.trim() === "", "Por favor ingresa el número de radicado.");
 
-    if (formData.departamentoCod === 0) {
-      showToast("Selecciona un departamento.");
-      setErrores({ departamentoCod: true });
-      return false;
-    }
-    if (formData.municipioCod === 0) {
-      showToast("Selecciona un municipio.");
-      setErrores({ municipioCod: true });
-      return false;
-    }
+    validarCampo("asunto", !asunto.trim(), "Por favor escribe un asunto para la solicitud.");
 
-    if (!formData.radicado?.trim()) {
-      showToast("Por favor ingresa el radicado de la petición.");
-      setErrores({ radicado: true });
-      return false;
-    }
-
-    if (!formData.fecha || formData.fecha.trim() === "") {
-      showToast("Por favor ingresa la fecha de la petición.");
-      setErrores({ fecha: true });
-      return false;
-    }
-
-    if (!formData.tipoPQRId) {
-      showToast("Por favor selecciona el tipo de petición.");
-      setErrores({ tipoPQRId: true });
-      return false;
-    }
-
-    if (!formData.origen) {
-      showToast("Por favor selecciona el origen de la petición.");
-      setErrores({ origen: true });
-      return false;
-    }
-
-    if (!formData.asunto.trim()) {
-      showToast("Por favor escribe un asunto para la solicitud.");
-      setErrores({ asunto: true });
-      return false;
-    }
-    if (!formData.descripcion.trim()) {
-      showToast("Por favor describe brevemente la solicitud.");
-      setErrores({ descripcion: true });
-      return false;
-    }
+    validarCampo("descripcion", !descripcion.trim(), "Por favor describe brevemente la solicitud.");
 
     if (archivos.length === 0) {
-      showToast("Debes subir al menos un archivo de soporte.");
-      return false;
+      mensajesError.push("Debes subir al menos un archivo de soporte.");
+      hayError = true;
     }
 
-    setErrores({});
-    return true;
+    const camposObligatorios: [string, any][] = [
+      ["nombreCliente", formData.nombreCliente],
+      ["tipoClienteId", formData.tipoClienteId],
+      ["direccion", formData.direccion],
+      ["departamentoCod", formData.departamentoCod],
+      ["municipioCod", formData.municipioCod],
+      ["fecha", formData.fecha],
+      ["tipoPQRId", formData.tipoPQRId],
+      ["origen", formData.origen],
+    ];
+
+    const faltantesGenericos = camposObligatorios.some(([campo, valor]) => {
+      const invalido = !valor || valor === "" || valor === 0;
+      if (invalido) erroresDetectados[campo] = true;
+      return invalido;
+    });
+
+    if (faltantesGenericos) {
+      hayError = true;
+      mensajesError.push("Por favor complete todos los campos.");
+    }
+
+    // Mostrar solo un toast
+    if (mensajesError.length === 1) {
+      showToast(mensajesError[0]);
+    } else if (mensajesError.length > 1) {
+      showToast("Por favor complete los campos obligatorios.");
+    }
+
+    setErrores(erroresDetectados);
+    return !hayError;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -534,7 +509,7 @@ const NuevoPqr = () => {
                 id="noRadicado"
                 label="No. Radicado"
                 className={`w-lg ${errores.radicado ? "border-red-500" : ""}`}
-                value={formData.radicado}
+                value={formData.radicado ?? ""}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, radicado: e.target.value }))
                 }
@@ -617,8 +592,8 @@ const NuevoPqr = () => {
                 rows={4}
                 placeholder="Descripción"
                 className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-green-400 "
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400 "
                   }`}
               />
             </div>

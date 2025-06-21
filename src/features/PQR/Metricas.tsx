@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AsignadosCard from "../../components/shared/AsignadosCard";
 import DonutGraphic from "../../components/shared/DonutGraphic";
 import Grafico from "../../components/shared/LinearGraphic";
-import PolarGraphic from "../../components/shared/PolarGraphic";
+//import PolarGraphic from "../../components/shared/PolarGraphic";
 import { PqrServices } from "../../services/pqrServices";
 import type { EstadoFlujoData } from "../../interfaces/pqrInterfaces";
 import { getColorClass } from "../../utils/getColors";
@@ -46,7 +46,7 @@ const Metricas = () => {
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center gap-x-5">
-                <div className="font-bold  text-2xl">
+                <div className="font-bold  text-3xl">
                     <p>Inicio</p>
                 </div>
             </div>
@@ -76,9 +76,9 @@ const Metricas = () => {
                     <DonutGraphic />
                 </div>
 
-                <div className="bg-white rounded-xl shadow-md p-4 flex justify-center items-center min-h-[300px] max-h-[450px]  mb-2">
+                {/*<div className="bg-white rounded-xl shadow-md p-4 flex justify-center items-center min-h-[300px] max-h-[450px]  mb-2">
                     <PolarGraphic />
-                </div>
+                </div>*/}
             </div>
 
         </div>

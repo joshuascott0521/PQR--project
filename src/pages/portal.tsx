@@ -24,9 +24,9 @@ export default function Portal() {
           </div>
           <div className="mb-2">
             <p className="text-lg text-white text-left">
-              Bienvenido al Portal Ciudadano de PQRS, donde puede registrar sus Peticiones, Quejas, Reclamos y Sugerencias de manera sencilla. Su opinión es fundamental para mejorar nuestros servicios y fortalecer la gestión municipal.
+              Bienvenido al Portal Ciudadano de PQRS, donde puede registrar sus Peticiones, Quejas, Reclamos y Sugerencias de manera sencilla.
             </p>
-            <p className="text-md text-white text-left font-bold">
+            <p className="text-lg pt-2 text-white text-left font-bold">
               ¡Su opinión es valiosa para nosotros!
             </p>
           </div>
