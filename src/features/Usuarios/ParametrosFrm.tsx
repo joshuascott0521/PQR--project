@@ -17,8 +17,9 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
     const { code } = useParams();
     const [paraTypes, setParaTypes] = useState<string[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [htmlContent, setHtmlContent] = useState<string>("");
-    //const [selectedHtmlFile, setSelectedHtmlFile] = useState<File | null>(null);
+    //const [htmlContent, setHtmlContent] = useState<string>("");
+    const [selectedHtmlFile, setSelectedHtmlFile] = useState<File | null>(null);
+    const [previewHtml, setPreviewHtml] = useState<string>("");
     const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState<Parameters>({
         codigo: "",
@@ -48,7 +49,13 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
                     if (!responseParameter.success) throw new Error(responseParameter.error);
 
                     setFormData(responseParameter.data);
-                } else {
+
+                    if (responseParameter.data.valorHtml) {
+                        // Solo usar si no se ha cargado un nuevo archivo
+                        setPreviewHtml(responseParameter.data.valorHtml);
+                    }
+                }
+                else {
                     // Si estás creando, asegúrate de limpiar el formData (opcional, por claridad)
                     setFormData({
                         codigo: "",
@@ -76,69 +83,87 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
-            if (!file.name.endsWith('.html')) {
-                showToast("Por favor selecciona un archivo HTML válido.", "error");
-                return;
-            }
+        if (!file) return;
 
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const htmlContent = e.target?.result as string;
-                setHtmlContent(htmlContent);
-            };
-            reader.readAsText(file);
-            const base64Html = btoa(unescape(encodeURIComponent(htmlContent)));
-
-            setFormData((prev) => ({
-                ...prev,
-                valorHtml: base64Html,
-            }));
+        if (!file.name.endsWith(".html")) {
+            showToast("Por favor selecciona un archivo HTML válido.", "error");
+            return;
         }
+
+        setSelectedHtmlFile(file);
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const htmlContent = e.target?.result as string;
+            //setHtmlContent(htmlContent);
+            setPreviewHtml(htmlContent); // 🔥 para mostrar vista previa en vivo
+        };
+        reader.readAsText(file);
     };
+
+
 
     const handleCancel = () => {
         navigate("/dashboard/admin/parametros");
     }
 
 
-    function decodeBase64Utf8(base64String: string) {
-        const binary = atob(base64String);
-        const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-        const decoder = new TextDecoder('utf-8');
-        return decoder.decode(bytes);
-    }
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            if (Editing) {
-                const payload = {
-                    codigo: formData.codigo,
-                    descripcion: formData.descripcion,
-                    tipoParametro: formData.tipoParametro,
-                    valorString: formData.valorString,
-                    valorInt: formData.valorInt,
-                    valorDecimal: formData.valorDecimal,
-                    valorDate: formData.valorDate,
-                    valorBool: formData.valorBool,
-                    valorImgUrl: formData.valorImgUrl,
-                    valorHtml: formData.valorHtml,
-                }
-
-                const responseUpdateParameter = await ParametersServices.updateParameter(payload);
-                if (!responseUpdateParameter.success) throw new Error(responseUpdateParameter.error);
-
-                showToast("Parámetro Actualizado Correctamente", "success")
-                navigate("/dashboard/admin/parametros")
-            } else {
-                alert("Intento de creación")
+            const formDataToSend = new FormData();
+            if (formData.tipoParametro === "Html" && !selectedHtmlFile && !Editing) {
+                showToast("Debes subir un archivo HTML para este tipo de parámetro", "error");
+                return;
             }
+
+            // Siempre agregamos estos campos básicos
+            formDataToSend.append("Codigo", formData.codigo);
+            formDataToSend.append("Descripcion", formData.descripcion);
+            formDataToSend.append("TipoParametro", formData.tipoParametro);
+
+            if (formData.valorString !== null)
+                formDataToSend.append("ValorString", formData.valorString);
+            if (formData.valorInt !== null)
+                formDataToSend.append("ValorInt", formData.valorInt.toString());
+            if (formData.valorDecimal !== null)
+                formDataToSend.append("ValorDecimal", formData.valorDecimal.toString());
+            if (formData.valorDate !== null)
+                formDataToSend.append("ValorDate", formData.valorDate);
+            if (formData.valorBool !== null)
+                formDataToSend.append("ValorBool", formData.valorBool.toString());
+            if (formData.valorImgUrl !== null)
+                formDataToSend.append("ValorImgUrl", formData.valorImgUrl);
+
+            if (selectedHtmlFile) {
+                formDataToSend.append("HtmlFile", selectedHtmlFile);
+            }
+
+            let response;
+
+            if (Editing) {
+                response = await ParametersServices.updateParameter(formDataToSend);
+            } else {
+                response = await ParametersServices.createParameter(formDataToSend);
+            }
+
+            if (!response.success) throw new Error(response.error);
+
+            showToast(
+                Editing ? "Parámetro Actualizado Correctamente" : "Parámetro Creado Correctamente",
+                "success"
+            );
+            navigate("/dashboard/admin/parametros");
         } catch (error) {
-            console.error("Error al actualizar parámetro:", error);
+            console.error("Error en formulario de parámetro:", error);
+            showToast("Error al guardar el parámetro", "error");
         }
-    }
+    };
+
+
 
 
     return (
@@ -332,19 +357,15 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
                                         title="Vista previa HTML"
                                         className="w-full min-h-[300px] border rounded"
                                         srcDoc={`<style>
-                                                    a {
-                                                        pointer-events: none !important;
-                                                        cursor: default !important;
-                                                        text-decoration: none !important;
-                                                        color: inherit !important;
-                                                    }
-                                                </ style>
-                                                ${formData.valorHtml
-                                                ? decodeBase64Utf8(formData.valorHtml.includes(",") ? formData.valorHtml.split(",")[1] : formData.valorHtml)
-                                                : htmlContent
+                                            a {
+                                                pointer-events: none !important;
+                                                cursor: default !important;
+                                                text-decoration: none !important;
+                                                color: inherit !important;
                                             }
-                                        `}
+                                        </style>${previewHtml}`}
                                     />
+
                                 </div>
 
                             </div>

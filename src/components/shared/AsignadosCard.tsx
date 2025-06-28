@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { getHoverBorderClass } from "../../utils/getHover";
+import { useNavigate } from "react-router-dom";
 
 interface Estado {
   valor: number;
@@ -20,6 +21,7 @@ const AsignadosCard: React.FC<AsignadosCardProps> = ({ titulo, total, estados, f
   // Motion value para animar número
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
+  const navigate = useNavigate();
 
   useEffect(() => {
     const controls = animate(count, total, {
@@ -30,15 +32,43 @@ const AsignadosCard: React.FC<AsignadosCardProps> = ({ titulo, total, estados, f
     return controls.stop;
   }, [total]);
 
+  const getRoutes = (title: string) => {
+    switch (title) {
+      case "Registrado":
+        navigate("/dashboard/registrados");
+        break;
+      case "Asignado":
+        navigate("/dashboard/asignados");
+        break;
+      case "En proceso":
+        navigate("/dashboard/en-proceso");
+        break;
+      case "En espera":
+        navigate("/dashboard/en-espera");
+        break;
+      case "Finalizado":
+        navigate("/dashboard/finalizado");
+        break;
+      case "Anulado":
+        navigate("/dashboard/anulado");
+        break;
+      default:
+        console.warn("No existe ese estado", title)
+        break;
+    }
+  }
+
   return (
     <div
       className={`
         card-glow-hover rounded-2xl shadow-lg p-4
         max-w-xs w-[220px] text-black
         flex flex-col gap-2 justify-around
+        active:scale-95
         ${borderHover}
-        cursor-default
+        cursor-pointer
       `}
+      onClick={() => getRoutes(titulo)}
     >
       <h2 className="text-lg font-semibold text-center">{titulo}</h2>
 

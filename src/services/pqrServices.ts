@@ -352,15 +352,15 @@ export const UsersServices = {
       };
     }
   },
-  getUserType: async(): Promise<ApiResponse<UserType[]>> => {
-    try{
+  getUserType: async (): Promise<ApiResponse<UserType[]>> => {
+    try {
       const response = await apiClient.get("/tipousuario/ObtenerAllTipoUsuario")
-      return{
+      return {
         success: true,
         data: response.data
       }
-    }catch(error: any){
-      return{
+    } catch (error: any) {
+      return {
         success: false,
         data: [],
         error: error.response?.data?.message || "Error al tipo de usuarios",
@@ -590,20 +590,14 @@ export const ParametersServices = {
       };
     }
   },
-  updateParameter: async (payload: {
-    codigo: string;
-    descripcion: string;
-    tipoParametro: string;
-    valorString: string | null;
-    valorInt: number | null;
-    valorDecimal: number | null;
-    valorDate: string | null;
-    valorBool: boolean | null;
-    valorImgUrl: string | null;
-    valorHtml: string | null;
-  }): Promise<ApiResponse<Parameters>> => {
+  updateParameter: async (formData: FormData): Promise<ApiResponse<Parameters>> => {
     try {
-      const response = await apiClient.put("/Parametro/Update", payload);
+      const response = await apiClient.put(`/Parametro/Update`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       return {
         success: true,
         data: response.data,
@@ -612,10 +606,48 @@ export const ParametersServices = {
       return {
         success: false,
         data: {} as Parameters,
-        error: error.response?.data?.message || "Error al actualizar Parámetro",
+        error: error.response?.data?.message || "Error al actualizar parámetro",
       };
     }
   },
+  createParameter: async (formData: FormData): Promise<ApiResponse<Parameters>> => {
+    try {
+      const response = await apiClient.post("/Parametro/Create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        transformResponse: [(data) => {
+          try {
+            return JSON.parse(data);
+          } catch {
+            return { mensaje: data }; // Fallback para texto plano
+          }
+        }]
+      });
+
+      return {
+        success: true,
+        data: response.data, // puede ser un objeto con id y mensaje
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Parameters,
+        error: error.response?.data?.mensaje || "Error al crear el parámetro",
+      };
+    }
+  },
+  searchParameters: async (query: string): Promise<ApiResponse<Parameters[]>> => {
+    try {
+      const response = await apiClient.get(`/Parametro/Search?valorTxt=${query}`);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener parámetros",
+      };
+    }
+  }
+
 };
 
 interface AlertasResponse {
