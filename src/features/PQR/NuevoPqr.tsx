@@ -99,7 +99,7 @@ const NuevoPqr = () => {
           departamentoCod: 0,
           municipioCod: 0,
           radicado: "",
-          fecha: "",
+          fecha: getLocalDate(),
           tipoPQRId: "",
           origen: "",
           asunto: "",
@@ -520,7 +520,7 @@ const NuevoPqr = () => {
                 type="date"
                 max={hoy}
                 className={`w-lg ${errores.fecha ? "border-red-500" : ""}`}
-                value={getLocalDate()}
+                value={formData.fecha}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, fecha: e.target.value }))
                 }
