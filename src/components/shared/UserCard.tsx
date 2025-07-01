@@ -21,6 +21,8 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
                   ? " #dc2626"
                   : pqr.estadoVencimiento === "POR VENCER"
                   ? "#ffe900"
+                  : pqr.estadoVencimiento === "EN ESPERA"
+                  ? "#38b6ff"
                   : "#22c55e",
             }}
           >

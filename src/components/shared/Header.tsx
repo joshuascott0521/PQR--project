@@ -7,12 +7,15 @@ import UserDropdownMenu from "./UserDropDownMenu";
 import NotificationList from "./NotificationList";
 import { Menu } from "lucide-react";
 import { NotificacionesService } from "../../services/pqrServices";
+import { CSSTransition } from "react-transition-group";
 
 interface HeaderProps {
   setIsCollapse: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Header = ({ setIsCollapse }: HeaderProps) => {
+  const nodeRef = useRef(null);
+
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -101,12 +104,23 @@ const Header = ({ setIsCollapse }: HeaderProps) => {
               </span>
             )}
           </button>
-
-          {showNotifications && (
-            <div className="absolute right-0 mt-2 w-[600px] z-50 transform">
-              <NotificationList setUnreadCount={setUnreadCount} />
+          <CSSTransition
+            in={showNotifications}
+            timeout={300}
+            classNames="fade"
+            unmountOnExit
+            nodeRef={nodeRef}
+          >
+            <div
+              ref={nodeRef}
+              className="absolute right-0 mt-2 w-[600px] z-50 transform bg-white rounded-lg shadow-lg"
+            >
+              <NotificationList
+                setUnreadCount={setUnreadCount}
+                setShowNotifications={setShowNotifications}
+              />
             </div>
-          )}
+          </CSSTransition>
         </div>
 
         <UserDropdownMenu />

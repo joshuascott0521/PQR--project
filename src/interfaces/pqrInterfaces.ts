@@ -200,16 +200,16 @@ export interface Usuario {
   estado?: string;
   pqrResumen?: {
     [estado: string]: number; // Ejemplo: "VENCIDO": 44
-  },
-  password?: string,
-  verifyPassword?: string,
+  };
+  password?: string;
+  verifyPassword?: string;
 }
 
-export interface UserType{
-  id: string,
-  nombre: string,
-  role: string,
-  estado?: number
+export interface UserType {
+  id: string;
+  nombre: string;
+  role: string;
+  estado?: number;
 }
 
 export interface DetallePqrCreate {
@@ -244,7 +244,7 @@ export interface PqrCount {
 }
 
 export interface DetalleVencimiento {
-  estadoVencimiento: string
+  estadoVencimiento: string;
   cantidad: number;
 }
 
@@ -254,18 +254,17 @@ export interface EstadoFlujoData {
   detallesVencimiento: DetalleVencimiento[];
 }
 
-
 export interface Parameters {
-  codigo: string,
-  descripcion: string,
-  tipoParametro: string,
-  valorString: string | null,
-  valorInt: number | null,
-  valorDecimal: number | null,
-  valorDate: string | null,
-  valorBool: boolean | null,
-  valorImgUrl: string | null,
-  valorHtml: string | null,
+  codigo: string;
+  descripcion: string;
+  tipoParametro: string;
+  valorString: string | null;
+  valorInt: number | null;
+  valorDecimal: number | null;
+  valorDate: string | null;
+  valorBool: boolean | null;
+  valorImgUrl: string | null;
+  valorHtml: string | null;
 }
 
 export interface AlertaNotificacion {
