@@ -129,7 +129,9 @@ const NuevoPqr = () => {
     const maxSizeBytes = size * 1024 * 1024;
     const archivosValidos = nuevos.filter((file) => {
       if (file.size > maxSizeBytes) {
-        toast.error(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        toast.error(
+          `El archivo "${file.name}" excede el límite de ${size} MB.`
+        );
         return false;
       }
       return true;
@@ -167,21 +169,50 @@ const NuevoPqr = () => {
       }
     };
 
-    const { documentoCliente, email, celular, radicado, asunto, descripcion } = formData;
+    const { documentoCliente, email, celular, radicado, asunto, descripcion } =
+      formData;
 
-    validarCampo("documentoCliente", !documentoCliente.trim(), "Por favor ingresa el documento del cliente.");
+    validarCampo(
+      "documentoCliente",
+      !documentoCliente.trim(),
+      "Por favor ingresa el documento del cliente."
+    );
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    validarCampo("email", !email.trim(), "Por favor ingresa el correo electrónico.");
-    validarCampo("email", Boolean(email.trim() && !emailRegex.test(email)), "El correo electrónico no es válido.");
+    validarCampo(
+      "email",
+      !email.trim(),
+      "Por favor ingresa el correo electrónico."
+    );
+    validarCampo(
+      "email",
+      Boolean(email.trim() && !emailRegex.test(email)),
+      "El correo electrónico no es válido."
+    );
 
-    validarCampo("celular", !/^\d{10}$/.test(celular), "El número de celular debe tener exactamente 10 dígitos.");
+    validarCampo(
+      "celular",
+      !/^\d{10}$/.test(celular),
+      "El número de celular debe tener exactamente 10 dígitos."
+    );
 
-    validarCampo("radicado", radicado !== null && radicado.trim() === "", "Por favor ingresa el número de radicado.");
+    validarCampo(
+      "radicado",
+      radicado !== null && radicado.trim() === "",
+      "Por favor ingresa el número de radicado."
+    );
 
-    validarCampo("asunto", !asunto.trim(), "Por favor escribe un asunto para la solicitud.");
+    validarCampo(
+      "asunto",
+      !asunto.trim(),
+      "Por favor escribe un asunto para la solicitud."
+    );
 
-    validarCampo("descripcion", !descripcion.trim(), "Por favor describe brevemente la solicitud.");
+    validarCampo(
+      "descripcion",
+      !descripcion.trim(),
+      "Por favor describe brevemente la solicitud."
+    );
 
     if (archivos.length === 0) {
       mensajesError.push("Debes subir al menos un archivo de soporte.");
@@ -345,8 +376,9 @@ const NuevoPqr = () => {
                     <FloatingLabel
                       id="documentoCliente"
                       label="Documento Cliente"
-                      className={`pr-12 ${errores.documentoCliente ? "border-red-500" : ""
-                        }`}
+                      className={`pr-12 ${
+                        errores.documentoCliente ? "border-red-500" : ""
+                      }`}
                       value={formData.documentoCliente}
                       onChange={(e) =>
                         setFormData((prev) => ({
@@ -369,8 +401,9 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="nombresYApellidos"
                     label="Nombres y Apellidos"
-                    className={`w-lg ${errores.nombreCliente ? "border-red-500" : ""
-                      }`}
+                    className={`w-lg ${
+                      errores.nombreCliente ? "border-red-500" : ""
+                    }`}
                     value={formData.nombreCliente}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -391,8 +424,9 @@ const NuevoPqr = () => {
                       label: tc.nombre,
                     }))}
                     placeholder="Elige una opción"
-                    className={`w-lg ${errores.tipoClienteId ? "border-red-500" : ""
-                      }`}
+                    className={`w-lg ${
+                      errores.tipoClienteId ? "border-red-500" : ""
+                    }`}
                   />
 
                   <FloatingLabel
@@ -411,8 +445,9 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="celular"
                     label="Celular"
-                    className={`w-lg ${errores.celular ? "border-red-500" : ""
-                      }`}
+                    className={`w-lg ${
+                      errores.celular ? "border-red-500" : ""
+                    }`}
                     value={formData.celular}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -425,8 +460,9 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="direccion"
                     label="Dirección"
-                    className={`w-lg ${errores.direccion ? "border-red-500" : ""
-                      }`}
+                    className={`w-lg ${
+                      errores.direccion ? "border-red-500" : ""
+                    }`}
                     value={formData.direccion}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -469,8 +505,9 @@ const NuevoPqr = () => {
                       value: dep.cod?.toString() || "",
                       label: dep.nombre || "",
                     }))}
-                    className={`w-lg ${errores.departamentoCod ? "border-red-500" : ""
-                      }`}
+                    className={`w-lg ${
+                      errores.departamentoCod ? "border-red-500" : ""
+                    }`}
                   />
 
                   <FloatingSelect
@@ -495,8 +532,9 @@ const NuevoPqr = () => {
                         }));
                       }
                     }}
-                    className={`w-full ${errores.municipioCod ? "border-red-500" : ""
-                      }`}
+                    className={`w-full ${
+                      errores.municipioCod ? "border-red-500" : ""
+                    }`}
                   />
                 </>
               )}
@@ -555,11 +593,10 @@ const NuevoPqr = () => {
               />
             </div>
             <div className="w-full flex items-center gap-3 mt-2">
-              {/* Ícono izquierdo */}
+              {/* Ícono izquierdo
               <div className="w-10 h-10 bg-black rounded-full flex justify-center items-center">
                 <FaSearch className="text-white text-lg" />
-              </div>
-
+              </div> */}
               {/* Campo de texto central (flex-grow para tomar el espacio restante) */}
               <div className="flex-grow">
                 <FloatingLabel
@@ -572,11 +609,10 @@ const NuevoPqr = () => {
                   className={`${errores.asunto ? "border-red-500" : ""}`}
                 />
               </div>
-
               {/* Ícono derecho */}
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center">
+              {/* <div className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center">
                 <List className="w-5 h-5 stroke-white stroke-2" />
-              </div>
+              </div> */}
             </div>
             <div className="mt-2">
               <textarea
@@ -591,10 +627,11 @@ const NuevoPqr = () => {
                 }
                 rows={4}
                 placeholder="Descripción"
-                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion
-                  ? "border-red-500 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-green-400 "
-                  }`}
+                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
+                  errores.descripcion
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:ring-green-400 "
+                }`}
               />
             </div>
             <div className="space-y-3 mt-4">
@@ -624,10 +661,11 @@ const NuevoPqr = () => {
               {/* Botón de subir archivos */}
               <label
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${archivos.length >= 5
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-emerald-400 text-white hover:bg-emerald-500"
-                  }
+                     ${
+                       archivos.length >= 5
+                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                         : "bg-emerald-400 text-white hover:bg-emerald-500"
+                     }
                     `}
               >
                 <Paperclip className="w-4 h-4" />

@@ -9,13 +9,16 @@ import {
   DropdownMenuSeparator,
 } from "../shared/DropDownMenu";
 
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const UserDropdownMenu = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<{ nombre: string, tipoUsuId: string }>({ nombre: "", tipoUsuId: ""});
+  const [user, setUser] = useState<{ nombre: string; tipoUsuId: string }>({
+    nombre: "",
+    tipoUsuId: "",
+  });
 
   useEffect(() => {
     const rawUser = localStorage.getItem("userData");
@@ -40,7 +43,9 @@ const UserDropdownMenu = () => {
           />
         </div>
         <div className="hidden sm:flex flex-col items-start">
-          <span className="pr-4 text-sm font-semibold">{user.nombre.split(' ')[0]}</span>
+          <span className="pr-4 text-sm font-semibold">
+            {user.nombre.split(" ")[0]}
+          </span>
           <span className="pr-4 text-xs text-gray-500">{user.tipoUsuId}</span>
         </div>
       </DropdownMenuTrigger>
@@ -51,10 +56,10 @@ const UserDropdownMenu = () => {
           <User className="mr-2 h-4 w-4" />
           <span>Portal</span>
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        {/* <DropdownMenuItem>
           <Settings className="mr-2 h-4 w-4" />
           <span>Configuración</span>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
