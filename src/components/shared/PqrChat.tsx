@@ -98,6 +98,57 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
               </div>
             )}
 
+            <div className="flex justify-start items-center space-x-3 mt-4">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center ">
+                <i className="fas fa-bell mr-2"></i> NOTIFICAR
+              </button>
+              <button className="bg-green-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center hover:bg-green-700">
+                <i className="fas fa-check-circle mr-2"></i> NOTIFICADO
+              </button>
+            </div>
+            {/* Tabla de notificaciones */}
+            <div className="mt-4 border border-gray-200 rounded-md overflow-hidden">
+              <table className="min-w-full text-sm text-left text-gray-700 bg-white">
+                <thead className="bg-white text-gray-600 uppercase text-xs font-semibold">
+                  <tr>
+                    <th className="px-4 py-2">ID ENVÍO</th>
+                    <th className="px-4 py-2">TIPO</th>
+                    <th className="px-4 py-2">CORREO/CELULAR</th>
+                    <th className="px-4 py-2">NOMBRE</th>
+                    <th className="px-4 py-2">ESTADO</th>
+                    <th className="px-4 py-2">FECHA</th>
+                    <th className="px-4 py-2">VER</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t-2">
+                    <td className="px-4 py-2">2025000011</td>
+                    <td className="px-4 py-2">SMS</td>
+                    <td className="px-4 py-2">3048807718</td>
+                    <td className="px-4 py-2">RONALD MORENO GONZALEZ</td>
+                    <td className="px-4 py-2 text-green-600 font-bold">
+                      NOTIFICADO
+                    </td>
+                    <td className="px-4 py-2">12-02-2025</td>
+                    <td className="px-4 py-2">
+                      <i className="fas fa-search text-blue-500 cursor-pointer"></i>
+                    </td>
+                  </tr>
+                  <tr className="border-t-2">
+                    <td className="px-4 py-2">2025000009</td>
+                    <td className="px-4 py-2">EMAIL</td>
+                    <td className="px-4 py-2">rony@gmail.com</td>
+                    <td className="px-4 py-2">RONALD MORENO GONZALEZ</td>
+                    <td className="px-4 py-2 text-gray-500">ENVIADO</td>
+                    <td className="px-4 py-2">10-02-2025</td>
+                    <td className="px-4 py-2">
+                      <i className="fas fa-search text-blue-500 cursor-pointer"></i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
             {detalle.adjuntos?.length > 0 && (
               <div className="mt-4 flex space-x-3">
                 {detalle.adjuntos.map((archivo) => (

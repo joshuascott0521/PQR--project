@@ -238,7 +238,9 @@ const PqrData = () => {
                   pqr?.estadoVencimiento === "VENCIDO"
                     ? " #dc2626"
                     : pqr?.estadoVencimiento === "POR VENCER"
-                    ? "#ffe900 x"
+                    ? "#ffe900"
+                    : pqr?.estadoVencimiento === "EN ESPERA"
+                    ? "#38b6ff"
                     : "#22c55e",
               }}
             >
