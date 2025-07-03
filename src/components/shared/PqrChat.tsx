@@ -21,7 +21,7 @@ const PqrChat = ({ detalles }: { detalles: DetallePqr["detalle"] }) => {
   return (
     <>
       {detalles?.map((detalle) => (
-        <div className="max-w-[1150px] w-full  mx-auto bg-white rounded-lg p-6 shadow-sm mb-5">
+        <div className=" w-full  mx-auto bg-white rounded-lg p-6 shadow-sm mb-5">
           <div className="flex justify-between items-start mb-3">
             <div className="flex items-center space-x-3">
               <div>
