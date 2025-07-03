@@ -12,6 +12,7 @@ import type {
   Evento,
   Municipio,
   Parameters,
+  Password,
   Pqr,
   PqrCount,
   SolicitudRequisitoDTO,
@@ -397,6 +398,19 @@ export const UsersServices = {
       };
     }
   },
+  changePass: async (payload: Password): Promise<ApiResponse<Password>> => {
+    try {
+      const response = await apiClient.put("/usuario/UpdatePassword", payload);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Password,
+        error:
+          error.response?.data?.message || "Error al actualizar contraseña",
+      };
+    }
+  }
 };
 
 export const Origen = {
@@ -430,7 +444,6 @@ export const ClientesServices = {
       };
     }
   },
-
   getByDoc: async (doc: string): Promise<ApiResponse<Cliente>> => {
     try {
       const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`);

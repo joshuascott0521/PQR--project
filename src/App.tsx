@@ -36,6 +36,8 @@ import LoginForm from "./features/Usuarios/LoginFrm";
 import ResetPassword from "./pages/ResetPassword";
 import Metricas from "./features/PQR/Metricas";
 import FuncionarioDetalleWrapper from "./utils/FuncionarioWrapper";
+import { VistaPerfil } from "./features/Usuarios/VistaPerfil";
+import { ChangePassword } from "./features/Usuarios/ChangePassword";
 
 function App() {
   return (
@@ -66,6 +68,8 @@ function App() {
           {/* Rutas protegidas bajo el layout Dashboard */}
           <Route path="/dashboard" element={<Dashboard />}>
             <Route path="/dashboard/statistic" element={<Metricas />} />
+            <Route path="my-profile" element={<VistaPerfil />} />
+            <Route path="change-my-password" element={<ChangePassword />} />
             <Route path="all-pqr" element={<AllPqr />} />
             <Route path="vencidos" element={<Vencidos />} />
             <Route path="por-vencer" element={<PorVencer />} />

@@ -48,7 +48,7 @@ export default function Solicitud() {
               </p>
               <div className="w-16 h-[5px] bg-white mx-auto my-4"></div>
               <p className="text-sm mb-6 px-2">
-                ©Creapptech S.A.S - Soluciones integrales basadas en tecnología.
+                © Creapptech S.A.S - Soluciones integrales basadas en tecnología.
               </p>
               <input
                 type="button"

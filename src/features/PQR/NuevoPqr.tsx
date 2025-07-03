@@ -3,7 +3,7 @@ import { FloatingLabel } from "../../components/shared/FloatingLabel";
 import { FaSearch } from "react-icons/fa";
 import { FloatingSelect } from "../../components/shared/FloatingSelect";
 import { useEffect, useState } from "react";
-import { List, File, X, Paperclip } from "lucide-react";
+import { File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type {
   CreatePqr,

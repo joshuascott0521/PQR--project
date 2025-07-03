@@ -1,7 +1,7 @@
 export function getHoverBorderClass(fondo: string): string {
   switch (fondo) {
     case "registrado": return "hover:shadow-[#F97316]";
-    case "asignado": return "hover:shadow-[#9B1B30]";
+    case "asignado": return "hover:shadow-[#562A2A]";
     case "en proceso": return "hover:shadow-[#0E9F6E]";
     case "en espera": return "hover:shadow-[#2563EB]";
     case "finalizado": return "hover:shadow-[#6D28D9]";

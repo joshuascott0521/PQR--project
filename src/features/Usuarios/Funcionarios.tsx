@@ -10,16 +10,18 @@ const Funcionarios = () => {
 
     const [funcionarios, setFuncionarios] = useState<Usuario[]>([])
     const navigate = useNavigate();
+    const userDataString = localStorage.getItem("userData");
+    const userData = userDataString ? JSON.parse(userDataString) : null;
+    const usuarioId = userData?.id;
 
     useEffect(() => {
         const fetchFuncionarios = async () => {
             try {
                 const funcionarioRes = await UsersServices.getAll();
-                if (!funcionarioRes.success) throw new Error(funcionarioRes.error)
-
-                setFuncionarios(funcionarioRes.data)
-
-
+                if (!funcionarioRes.success) throw new Error(funcionarioRes.error);
+                
+                const filtrados = funcionarioRes.data.filter(funcionario => funcionario.id !== usuarioId)
+                setFuncionarios(filtrados);
             } catch (error) {
                 console.error(error)
             }

@@ -2,13 +2,13 @@ import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import type { Usuario } from "../../interfaces/pqrInterfaces";
 
-interface ClienteCardProps {
+interface FuncionarioCardProps {
   mostrarEditar?: boolean;
   funcionario: Usuario;
 }
 
 
-const FuncionarioCard = ({ mostrarEditar = false, funcionario }: ClienteCardProps) => {
+const FuncionarioCard = ({ mostrarEditar = false, funcionario }: FuncionarioCardProps) => {
   const navigate = useNavigate();
   return (
     <div

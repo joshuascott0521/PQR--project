@@ -151,6 +151,7 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
                             }))}
                             placeholder="Elige una opción"
                             className="w-lg"
+                            disabled
                         />
 
                         <FloatingLabel

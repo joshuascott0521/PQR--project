@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
 } from "../shared/DropDownMenu";
 
-import { LogOut, User } from "lucide-react";
+import { RotateCcwKey, LogOut, UserRoundPen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -52,14 +52,14 @@ const UserDropdownMenu = () => {
 
       <DropdownMenuContent side="bottom" sideOffset={12}>
         <DropdownMenuLabel className="text-xs">Mi cuenta</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => navigate("/portal-pqr")}>
-          <User className="mr-2 h-4 w-4" />
-          <span>Portal</span>
+        <DropdownMenuItem onClick={() => navigate("/dashboard/my-profile")}>
+          <UserRoundPen className="mr-2 h-4 w-4" />
+          <span>Editar Perfil</span>
         </DropdownMenuItem>
-        {/* <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Configuración</span>
-        </DropdownMenuItem> */}
+        <DropdownMenuItem onClick={() => navigate("/dashboard/change-my-password")}>
+          <RotateCcwKey  className="mr-2 h-4 w-4" />
+          <span>Cambiar Clave</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />

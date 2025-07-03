@@ -205,6 +205,13 @@ export interface Usuario {
   verifyPassword?: string;
 }
 
+export interface Password{
+  id: string;
+  passwordAntigua: string;
+  passwordNueva: string;
+  passwordConfirmacion: string;
+}
+
 export interface UserType {
   id: string;
   nombre: string;
