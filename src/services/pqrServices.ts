@@ -11,6 +11,7 @@ import type {
   EstadoFlujoData,
   Evento,
   Municipio,
+  NotificacionDetalle,
   Parameters,
   Password,
   Pqr,
@@ -410,7 +411,7 @@ export const UsersServices = {
           error.response?.data?.message || "Error al actualizar contraseña",
       };
     }
-  }
+  },
 };
 
 export const Origen = {
@@ -764,6 +765,27 @@ export const AuthServices = {
       return {
         success: false,
         error: errorMsg,
+      };
+    }
+  },
+};
+export const NotificacionServices = {
+  getByDetalle: async (
+    pqrId: string,
+    item: number
+  ): Promise<ApiResponse<NotificacionDetalle[]>> => {
+    try {
+      const response = await apiClient.get(`/PQRNotificacion/GetByDetalle`, {
+        params: { pqrId, item },
+      });
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message ||
+          "Error al obtener las notificaciones del detalle",
       };
     }
   },

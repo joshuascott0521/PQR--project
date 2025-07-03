@@ -241,7 +241,9 @@ const PqrData = () => {
                     ? "#ffe900"
                     : pqr?.estadoVencimiento === "EN ESPERA"
                     ? "#38b6ff"
-                    : "#22c55e",
+                    : pqr?.estadoVencimiento === "A TIEMPO"
+                    ? "#22c55e"
+                    : "#d1d5db",
               }}
             >
               {pqr?.diasRestantes}
@@ -297,7 +299,13 @@ const PqrData = () => {
         </div>
         <div className="flex mt-5 flex-col max-h-[300px] overflow-y-auto h-full">
           <div className="space-y-4">
-            {pqr?.detalle && <PqrChat key={pqr.id} detalles={pqr.detalle} />}
+            {pqr?.detalle && (
+              <PqrChat
+                key={pqr.id}
+                detalles={pqr.detalle}
+                detallePqrId={pqr.id}
+              />
+            )}
           </div>
         </div>
         <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[265px]">

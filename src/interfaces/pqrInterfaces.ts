@@ -153,6 +153,8 @@ export interface Detalle {
   terceroAsignado: terceroAsignado;
   estado?: string;
   adjuntos: Adjunto[];
+  notificado?: boolean;
+  notificable?: boolean;
 }
 export interface Tercero {
   tipoTercero?: string;
@@ -205,7 +207,7 @@ export interface Usuario {
   verifyPassword?: string;
 }
 
-export interface Password{
+export interface Password {
   id: string;
   passwordAntigua: string;
   passwordNueva: string;
@@ -286,4 +288,12 @@ export interface AlertaNotificacion {
   tipoAlerta: "Nuevo" | "Alerta" | string;
   mensaje: string;
   estado: string;
+}
+export interface NotificacionDetalle {
+  idEnvio: number;
+  tipo: string;
+  destinatario: string;
+  nombre: string;
+  estado: string;
+  fecha: string;
 }
