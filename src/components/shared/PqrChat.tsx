@@ -1,6 +1,9 @@
 import { useState } from "react";
 import type { DetallePqr } from "../../interfaces/pqrInterfaces";
-import { ArchivoServices } from "../../services/pqrServices";
+import {
+  ArchivoServices,
+  NotificacionesService,
+} from "../../services/pqrServices";
 import { NotificacionServices } from "../../services/pqrServices";
 import { showToast } from "../../utils/toastUtils";
 import { useNavigate } from "react-router-dom";
@@ -66,6 +69,24 @@ const PqrChat = ({
       } finally {
         setLoadingItems((prev) => prev.filter((i) => i !== item));
       }
+    }
+  };
+  const verDetalleNotificacion = async (idEnvio: number) => {
+    try {
+      const result = await NotificacionServices.getUrlRedireccion(idEnvio);
+      console.log("📦 Respuesta del detalle de notificación:", result);
+
+      if (result?.data) {
+        window.open(result.data, "_blank"); // ← esto abre en nueva pestaña
+      } else {
+        showToast(
+          "No se encontró información relacionada con esta notificación."
+        );
+      }
+    } catch (error: any) {
+      showToast(
+        error.message || "Error al obtener el detalle de la notificación."
+      );
     }
   };
 
@@ -232,7 +253,13 @@ const PqrChat = ({
                             {noti.fecha?.slice(0, 10)}
                           </td>
                           <td className="px-4 py-2">
-                            <i className="fas fa-search text-blue-500 cursor-pointer"></i>
+                            <i
+                              className="fas fa-search text-blue-500 cursor-pointer hover:text-blue-700"
+                              title="Ver detalle"
+                              onClick={() =>
+                                verDetalleNotificacion(noti.idEnvio)
+                              }
+                            ></i>
                           </td>
                         </tr>
                       ))

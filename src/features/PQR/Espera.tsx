@@ -75,7 +75,6 @@ const EnEspera = () => {
           );
           return unique;
         });
-
       } catch (err) {
         console.error(err);
       } finally {
@@ -133,7 +132,7 @@ const EnEspera = () => {
         ref={scrollRef}
       >
         {error && <p className="text-red-600">{error}</p>}
-        {!setLoadingMore && !error && pqrs.length === 0 && (
+        {!loadingMore && !error && pqrs.length === 0 && (
           <p className="text-center text-gray-500 mt-4">
             No hay PQRs en espera.
           </p>
@@ -142,8 +141,8 @@ const EnEspera = () => {
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-              <CardSkeleton size="medium" key={i} />
-            ))
+                <CardSkeleton size="medium" key={i} />
+              ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

@@ -157,8 +157,8 @@ export const PqrServices = {
 
       return {
         success: true,
-        data: response.data
-      }
+        data: response.data,
+      };
     } catch (error: any) {
       if (
         error.response?.status === 404 &&
@@ -177,8 +177,6 @@ export const PqrServices = {
       );
     }
   },
-
-
 
   uploadFiles: async (
     archivos: File[]
@@ -809,6 +807,22 @@ export const NotificacionServices = {
         error:
           error.response?.data?.message ||
           "Error al obtener las notificaciones del detalle",
+      };
+    }
+  },
+  getUrlRedireccion: async (idEnvio: number): Promise<ApiResponse<string>> => {
+    try {
+      const response = await apiClient.get(
+        `/PQRNotificacion/GetUrlRedireccion/${idEnvio}`
+      );
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: "",
+        error:
+          error.response?.data?.message ||
+          "Error al obtener la URL de redirección",
       };
     }
   },

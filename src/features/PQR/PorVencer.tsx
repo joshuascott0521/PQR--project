@@ -70,7 +70,6 @@ const PorVencer = () => {
           setHasMore(false);
         }
 
-
         setPqrs((prev) => {
           const combined = [...prev, ...data.data];
           const unique = Array.from(
@@ -79,7 +78,7 @@ const PorVencer = () => {
           return unique;
         });
 
-        console.log("🔴🔴🔴🔴🔴", data)
+        console.log("🔴🔴🔴🔴🔴", data);
       } catch (err) {
         console.log("❌❌❌❌❌❌", err);
       } finally {
@@ -114,8 +113,8 @@ const PorVencer = () => {
         setInitialLoading(false);
 
         setLoadingMore(false);
-      }catch(err){
-        console.log("❌❌❌❌❌❌", err)
+      } catch (err) {
+        console.log("❌❌❌❌❌❌", err);
       }
     };
 
@@ -150,8 +149,8 @@ const PorVencer = () => {
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-              <CardSkeleton size="medium" key={i} />
-            ))
+                <CardSkeleton size="medium" key={i} />
+              ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

@@ -136,7 +136,7 @@ const Registrado = () => {
         ref={scrollRef}
       >
         {error && <p className="text-red-600">{error}</p>}
-        {!setLoadingMore && !error && pqrs.length === 0 && (
+        {!loadingMore && !error && pqrs.length === 0 && (
           <p className="text-center text-gray-500 mt-4">
             No hay PQRs registrados.
           </p>
