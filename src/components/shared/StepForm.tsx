@@ -46,7 +46,7 @@ export default function StepForm() {
     direccion: "",
     departamentoCod: 0,
     municipioCod: 0,
-    radicado: "",
+    radicado: null,
     fecha: new Date().toISOString(),
     tipoPQRId: "",
     origen: "",

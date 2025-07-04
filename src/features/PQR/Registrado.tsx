@@ -66,12 +66,12 @@ const Registrado = () => {
           estadoProceso: "Registrado",
         });
 
-        if (data.length < 10) {
+        if (Array.isArray(data) && data.length < 10) {
           setHasMore(false);
         }
 
         setPqrs((prev) => {
-          const combined = [...prev, ...data];
+          const combined = [...prev, ...data.data];
           const unique = Array.from(
             new Map(combined.map((item) => [item.id, item])).values()
           );

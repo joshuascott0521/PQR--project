@@ -64,19 +64,24 @@ const PorVencer = () => {
           estadoVencimiento: "Por vencer",
         });
 
-        if (data.length < 10) {
+        if (!data.success) throw new Error(data.error);
+
+        if (Array.isArray(data) && data.length < 10) {
           setHasMore(false);
         }
 
+
         setPqrs((prev) => {
-          const combined = [...prev, ...data];
+          const combined = [...prev, ...data.data];
           const unique = Array.from(
             new Map(combined.map((item) => [item.id, item])).values()
           );
           return unique;
         });
+
+        console.log("🔴🔴🔴🔴🔴", data)
       } catch (err) {
-        console.error(err);
+        console.log("❌❌❌❌❌❌", err);
       } finally {
         setLoadingMore(false);
       }
@@ -88,28 +93,30 @@ const PorVencer = () => {
   useEffect(() => {
     setInitialLoading(true);
     const cargar = async () => {
-      const userData = localStorage.getItem("userData");
-      if (!userData) {
-        setError("Usuario no encontrado");
+      try {
+        const userData = localStorage.getItem("userData");
+        if (!userData) {
+          setError("Usuario no encontrado");
+          setInitialLoading(false);
+          return;
+        }
+
+        const user = JSON.parse(userData);
+        const usuid = user?.id;
+        const res = await PqrServices.getPqrCount("POR VENCER", usuid);
+
+        if (res.success && res.data.cantidad !== null) {
+          setConteo(res.data);
+          setTimeout(() => {
+            setShowRealCount(true);
+          }, 2500);
+        }
         setInitialLoading(false);
-        return;
+
+        setLoadingMore(false);
+      }catch(err){
+        console.log("❌❌❌❌❌❌", err)
       }
-
-      const user = JSON.parse(userData);
-      const usuid = user?.id;
-      const res = await PqrServices.getPqrCount("POR VENCER", usuid);
-
-      if (res.success) {
-        setConteo(res.data);
-
-        // Mostrar el número real después de 2.5 segundos
-        setTimeout(() => {
-          setShowRealCount(true);
-        }, 2500);
-      }
-      setInitialLoading(false);
-
-      setLoadingMore(false);
     };
 
     cargar();
@@ -134,7 +141,7 @@ const PorVencer = () => {
         ref={scrollRef}
       >
         {error && <p className="text-red-600">{error}</p>}
-        {!setLoadingMore && !error && pqrs.length === 0 && (
+        {!loadingMore && !error && pqrs.length === 0 && (
           <p className="text-center text-gray-500 mt-4">
             No hay PQRs por vencer.
           </p>
@@ -143,8 +150,8 @@ const PorVencer = () => {
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-                <CardSkeleton size="medium" key={i} />
-              ))
+              <CardSkeleton size="medium" key={i} />
+            ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

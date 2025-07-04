@@ -6,6 +6,7 @@ import { SolicitudServices, PqrServices } from "../../services/pqrServices";
 import type { SolicitudRequisitoDTO } from "../../interfaces/pqrInterfaces";
 import { showToast } from "../../utils/toastUtils";
 import toast from "react-hot-toast";
+import { EliminarEmojis } from "../../utils/EliminarEmojis";
 
 export default function SolicitudFrm() {
   const [archivos, setArchivos] = useState<File[]>([]);
@@ -158,7 +159,7 @@ export default function SolicitudFrm() {
             placeholder="Responda a la solicitud"
             className="w-full border border-gray-300 rounded-md p-2 h-[120px] resize-none"
             value={mensaje}
-            onChange={(e) => setMensaje(e.target.value)}
+            onChange={(e) => setMensaje(EliminarEmojis(e.target.value))}
           ></textarea>
 
           <div className="space-y-3 mt-4">

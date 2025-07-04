@@ -104,7 +104,7 @@ const PqrChat = ({
                       )
                     }
                   >
-                    {`${detalle.tercero.nombre} (${detalle.tercero.tipoTercero})`}
+                    {`${detalle.tercero.nombre} (${detalle.tercero.cargoTercero})`}
                   </p>
                 </div>
                 <p className="text-xs text-gray-700 leading-tight">
@@ -147,7 +147,7 @@ const PqrChat = ({
                     </p>
                   )}
                   <p className="font-semibold text-sm leading-tight text-gray-900">
-                    {`${detalle.terceroAsignado.nombre} (${detalle.terceroAsignado.tipoTercero})`}
+                    {`${detalle.terceroAsignado.nombre} (${detalle.terceroAsignado.cargoTercero})`}
                   </p>
                 </div>
               </div>

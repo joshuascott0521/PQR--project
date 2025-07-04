@@ -8,6 +8,7 @@ import { Paperclip, X, File } from "lucide-react";
 
 import LoadingScreenBool from "../../components/shared/LoadingScreenBool";
 import { showToast } from "../../utils/toastUtils";
+import { EliminarEmojis } from "../../utils/EliminarEmojis";
 
 const PqrData = () => {
   const [loading, setLoading] = useState(false);
@@ -217,6 +218,8 @@ const PqrData = () => {
     }
   }, [requiereAsignar]);
 
+  
+
   return (
     <>
       <LoadingScreenBool active={loading} />
@@ -228,8 +231,8 @@ const PqrData = () => {
                 pqr?.estadoVencimiento === "VENCIDO"
                   ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
                   : pqr?.estadoVencimiento === "POR VENCER"
-                  ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
-                  : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
+                    ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
+                    : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
               }
               className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
               aria-label="Number 13"
@@ -238,12 +241,12 @@ const PqrData = () => {
                   pqr?.estadoVencimiento === "VENCIDO"
                     ? " #dc2626"
                     : pqr?.estadoVencimiento === "POR VENCER"
-                    ? "#ffe900"
-                    : pqr?.estadoVencimiento === "EN ESPERA"
-                    ? "#38b6ff"
-                    : pqr?.estadoVencimiento === "A TIEMPO"
-                    ? "#22c55e"
-                    : "#d1d5db",
+                      ? "#ffe900"
+                      : pqr?.estadoVencimiento === "EN ESPERA"
+                        ? "#38b6ff"
+                        : pqr?.estadoVencimiento === "A TIEMPO"
+                          ? "#22c55e"
+                          : "#d1d5db",
               }}
             >
               {pqr?.diasRestantes}
@@ -343,11 +346,12 @@ const PqrData = () => {
                 id="descripcion"
                 name="descripcion"
                 value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
+                onChange={(e) => setDescripcion(EliminarEmojis(e.target.value))}
                 rows={3}
                 placeholder="Descripción"
                 className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-green-400 mt-5"
               />
+
             </div>
 
             <div className=" mt-0">
@@ -381,11 +385,10 @@ const PqrData = () => {
 
             <div className="flex flex-wrap items-center justify-between">
               <label
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${
-                  archivos.length >= 5
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-emerald-400 text-white hover:bg-emerald-500"
-                }`}
+                  }`}
               >
                 <Paperclip className="w-4 h-4" />
                 {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}

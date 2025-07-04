@@ -71,7 +71,7 @@ const Vencidos = () => {
         }
 
         setPqrs((prev) => {
-          const combined = [...prev, ...data];
+          const combined = [...prev, ...data.data];
           const unique = Array.from(
             new Map(combined.map((item) => [item.id, item])).values()
           );
@@ -108,10 +108,8 @@ const Vencidos = () => {
       const usuid = user?.id;
       const res = await PqrServices.getPqrCount("VENCIDO", usuid);
 
-      if (res.success) {
+      if (res.success && res.data.cantidad !== null) {
         setConteo(res.data);
-
-        // Mostrar el número real después de 2.5 segundos
         setTimeout(() => {
           setShowRealCount(true);
         }, 2500);
@@ -152,8 +150,8 @@ const Vencidos = () => {
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-                <CardSkeleton size="medium" key={i} />
-              ))
+              <CardSkeleton size="medium" key={i} />
+            ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

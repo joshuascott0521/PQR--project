@@ -143,19 +143,42 @@ export const PqrServices = {
     size,
     estadoProceso,
     estadoVencimiento,
-  }: GetPqrParams & { usuid: string }): Promise<Pqr[]> => {
-    const response = await apiClient.get<Pqr[]>("/PQR/GetByEstadoPQR", {
-      params: {
-        usuid,
-        pagenumber: page,
-        pagesize: size,
-        estadoProceso,
-        estadoVencimiento,
-      },
-    });
+  }: GetPqrParams & { usuid: string }): Promise<ApiResponse<Pqr[]>> => {
+    try {
+      const response = await apiClient.get<Pqr[]>("/PQR/GetByEstadoPQR", {
+        params: {
+          usuid,
+          pagenumber: page,
+          pagesize: size,
+          estadoProceso,
+          estadoVencimiento,
+        },
+      });
 
-    return response.data;
+      return {
+        success: true,
+        data: response.data
+      }
+    } catch (error: any) {
+      if (
+        error.response?.status === 404 &&
+        error.response?.data?.code === "NOT_FOUND"
+      ) {
+        return {
+          success: false,
+          data: [],
+          error: error.response?.data?.message || "Error al traer pqrs",
+        }; // No hay PQRs, pero no es un fallo
+      }
+      console.log("❌❌❌❌❌❌", error);
+      console.error("Error real al obtener PQR por estado:", error);
+      throw new Error(
+        error.response?.data?.message || "Error al consultar los PQR."
+      );
+    }
   },
+
+
 
   uploadFiles: async (
     archivos: File[]

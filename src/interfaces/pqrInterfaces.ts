@@ -7,7 +7,7 @@ export interface CreatePqr {
   direccion: string;
   departamentoCod: number;
   municipioCod: number;
-  radicado: string | null;
+  radicado?: string | null;
   fecha: string;
   tipoPQRId: string;
   origen: string;
@@ -162,6 +162,7 @@ export interface Tercero {
   id?: string;
   nombre?: string;
   codigoColorFondo?: string;
+  cargoTercero: string;
 }
 export interface terceroAsignado {
   tipoTercero?: string;
@@ -170,6 +171,7 @@ export interface terceroAsignado {
   image?: string;
   codigoColorFondo?: string;
   accion?: string;
+  cargoTercero: string;
 }
 
 export interface Cliente {
