@@ -92,19 +92,23 @@ const PqrChat = ({
                 </div>
               </div>
               <div>
-                <p
-                  className="font-semibold text-sm leading-tight text-blue-400 cursor-pointer underline"
-                  onClick={() =>
-                    getDetalle(
-                      detalle?.tercero?.id,
-                      detalle.tercero.tipoTercero
-                    )
-                  }
-                >
-                  {`${detalle.tercero.nombre} (${detalle.tercero.tipoTercero})`}
-                </p>
+                <div className="flex items-center gap-2">
+                  {/* {" "} */}
+                  <p>{` ${detalle.orden}. `}</p>
+                  <p
+                    className="font-semibold text-sm leading-tight text-blue-400 cursor-pointer underline"
+                    onClick={() =>
+                      getDetalle(
+                        detalle?.tercero?.id,
+                        detalle.tercero.tipoTercero
+                      )
+                    }
+                  >
+                    {`${detalle.tercero.nombre} (${detalle.tercero.tipoTercero})`}
+                  </p>
+                </div>
                 <p className="text-xs text-gray-700 leading-tight">
-                  {detalle.fechaCreacion?.slice(0, 10)}
+                  {detalle.fechaCreacionStr}
                 </p>
               </div>
             </div>

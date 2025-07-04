@@ -155,6 +155,7 @@ export interface Detalle {
   adjuntos: Adjunto[];
   notificado?: boolean;
   notificable?: boolean;
+  fechaCreacionStr?: string;
 }
 export interface Tercero {
   tipoTercero?: string;
