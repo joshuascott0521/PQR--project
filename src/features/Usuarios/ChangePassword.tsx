@@ -20,26 +20,80 @@ export const ChangePassword = () => {
         passwordConfirmacion: ""
     });
 
+    const [errores, setErrores] = useState({
+        passwordAntigua: false,
+        passwordNueva: false,
+        passwordConfirmacion: false,
+    });
+
+
     const handleCancel = () => {
         navigate("/dashboard/statistic");
     }
 
+    const validarFormulario = (): boolean => {
+        const campos = ["passwordAntigua", "passwordNueva", "passwordConfirmacion"] as const;
+
+        const nuevoErrores = {
+            passwordAntigua: false,
+            passwordNueva: false,
+            passwordConfirmacion: false,
+        };
+
+        let esValido = true;
+
+        campos.forEach((campo) => {
+            const valor = formData[campo];
+
+            const tieneError =
+                !valor ||                // Vacío
+                /\s/.test(valor) ||      // Contiene espacios
+                valor.length < 8;        // Menos de 8 caracteres
+
+            if (tieneError) {
+                nuevoErrores[campo] = true;
+                esValido = false;
+            }
+        });
+
+        // Validar coincidencia
+        if (formData.passwordNueva !== formData.passwordConfirmacion) {
+            nuevoErrores.passwordNueva = true;
+            nuevoErrores.passwordConfirmacion = true;
+            esValido = false;
+        }
+
+        setErrores(nuevoErrores);
+
+        if (!esValido) {
+            showToast("Corrige los campos marcados en rojo", "error");
+        }
+
+        return esValido;
+    };
+
+
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
+        if (!validarFormulario()) return;
+
         try {
-          const response = await UsersServices.changePass(formData);
-          if (response.success) {
-            showToast("¡Contraseña actualizada exitosamente!", "success");
-    
-            navigate("/dashboard/statistic");
-          } else {
-            console.error("Error al actualizar Contraseña:", response.error);
-          }
+            const response = await UsersServices.changePass(formData);
+            if (response.success) {
+                showToast("¡Contraseña actualizada exitosamente!", "success");
+                navigate("/dashboard/statistic");
+            } else {
+                console.error("Error al actualizar Contraseña:", response.error);
+                showToast("Error al actualizar contraseña");
+            }
         } catch (error) {
-          console.error("Error inesperado al actualizar contraseña:", error);
+            console.error("Error inesperado al actualizar contraseña:", error);
+            showToast("Ocurrió un error inesperado", "error");
         }
-      };
+    };
+
 
     return (
         <div className="h-full flex flex-col">
@@ -60,7 +114,7 @@ export const ChangePassword = () => {
                             id="contraseñaActual"
                             label="Contraseña Actual"
                             type="password"
-                            className="w-full"
+                            className={`w-full ${errores.passwordAntigua ? "border border-red-500" : ""}`}
                             value={formData.passwordAntigua}
                             onChange={(e) =>
                                 setFormData((prev) => ({ ...prev, passwordAntigua: e.target.value }))
@@ -71,7 +125,7 @@ export const ChangePassword = () => {
                             id="contraseñaNueva"
                             label="Contraseña Nueva"
                             type="password"
-                            className="w-full"
+                            className={`w-full ${errores.passwordNueva ? "border border-red-500" : ""}`}
                             value={formData.passwordNueva}
                             onChange={(e) =>
                                 setFormData((prev) => ({ ...prev, passwordNueva: e.target.value }))
@@ -81,7 +135,7 @@ export const ChangePassword = () => {
                             id="contraseñaNuevaConfirmacion"
                             label="Confirmar Contraseña"
                             type="password"
-                            className="w-full"
+                            className={`w-full ${errores.passwordConfirmacion ? "border border-red-500" : ""}`}
                             value={formData.passwordConfirmacion}
                             onChange={(e) =>
                                 setFormData((prev) => ({ ...prev, passwordConfirmacion: e.target.value }))

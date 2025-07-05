@@ -4,6 +4,7 @@ import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
 import { AnimatedCount } from "../../components/shared/AnimatedCount";
 import { CardSkeleton } from "../../components/shared/CardSkeleton";
+import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const PorVencer = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -141,16 +142,20 @@ const PorVencer = () => {
       >
         {error && <p className="text-red-600">{error}</p>}
         {!loadingMore && !error && pqrs.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">
-            No hay PQRs por vencer.
-          </p>
+          <div className="flex h-full w-full items-center justify-center">
+            <NoMoreResults
+              message="Sin PQRs por vencer"
+              subtitle="En este momento no hay PQRs próximos a su fecha límite."
+              showAnimation={true}
+            />
+          </div>
         )}
 
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-                <CardSkeleton size="medium" key={i} />
-              ))
+              <CardSkeleton size="medium" key={i} />
+            ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

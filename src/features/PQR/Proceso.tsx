@@ -7,6 +7,7 @@ import { CardSkeleton } from "../../components/shared/CardSkeleton";
 // import { AiOutlineFolderView } from "react-icons/ai";
 import { Eye } from "lucide-react";
 import type { AxiosError } from "axios";
+import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const EnProceso = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -145,9 +146,13 @@ const EnProceso = () => {
       >
         {error && <p className="text-red-600">{error}</p>}
         {!loadingMore && !error && pqrs.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">
-            No hay PQRs en proceso.
-          </p>
+          <div className="flex h-full w-full items-center justify-center">
+            <NoMoreResults
+              message="No hay a PQRs en proceso"
+              subtitle="No se encontraron PQRs en estado de proceso."
+              showAnimation={true}
+            />
+          </div>
         )}
 
         <div className="space-y-4">

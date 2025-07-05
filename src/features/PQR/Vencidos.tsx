@@ -5,6 +5,7 @@ import UserCard from "../../components/shared/UserCard";
 import { AnimatedCount } from "../../components/shared/AnimatedCount";
 import { CardSkeleton } from "../../components/shared/CardSkeleton";
 import type { AxiosError } from "axios";
+import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const Vencidos = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -142,9 +143,13 @@ const Vencidos = () => {
       >
         {error && <p className="text-red-600">{error}</p>}
         {!loadingMore && !error && pqrs.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">
-            No hay PQRs vencidos.
-          </p>
+          <div className="flex h-full w-full items-center justify-center">
+            <NoMoreResults
+              message="No hay a PQRs vencidos"
+              subtitle="No se encontraron PQRs en estado de vencimiento."
+              showAnimation={true}
+            />
+          </div>
         )}
 
         <div className="space-y-4">

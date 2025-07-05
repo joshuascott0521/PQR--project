@@ -36,35 +36,49 @@ const PqrData = () => {
 
   useEffect(() => {
     const fetchPqr = async () => {
-      setLoading(true);
-      console.log(id);
+      try {
+        setLoading(true);
+        console.log(id);
 
-      const result = await PqrServices.getById(id!);
-      if (result.success) {
-        setPqr(result.data);
-        setLoading(false);
-      } else {
-        setError(result.error || "Error desconocido");
+        const result = await PqrServices.getById(id!);
+        if (result.success) {
+          setPqr(result.data);
+          setLoading(false);
+        } else {
+          setError(result.error || "Error desconocido");
+        }
+      } catch (err) {
+        console.error(err)
       }
     };
 
     const fetchEventos = async () => {
-      const response = await typeSelectComents.getEvento(id!);
-      if (response.success && response.data) {
-        setEventos(response.data);
-        console.log("💗💗✅✅✅", response);
+      try {
+        const response = await typeSelectComents.getEvento(id!);
+        if (response.success && response.data) {
+          if (response.data.find((e: Evento) => e.id !== "")) {
+            setEventos(response.data);
+            console.log("💗💗✅✅✅", response);
+          }
+        }
+      } catch (err) {
+        console.error(err)
       }
     };
     const fetchUsuarios = async () => {
-      const response = await typeSelectComents.getUsuarios();
-      if (response.success && response.data) {
-        const opciones = response.data.map((usuario: any) => ({
-          label: usuario.nombre,
-          value: usuario.id,
-        }));
-        setUsuarios(opciones);
-        setLoading(false);
-        console.log("Usuarios desde backend:", opciones);
+      try {
+        const response = await typeSelectComents.getUsuarios();
+        if (response.success && response.data) {
+          const opciones = response.data.map((usuario: any) => ({
+            label: usuario.nombre,
+            value: usuario.id,
+          }));
+          setUsuarios(opciones);
+          setLoading(false);
+          console.log("Usuarios desde backend:", opciones);
+        }
+      } catch (err) {
+        console.error(err)
       }
     };
 
@@ -218,7 +232,7 @@ const PqrData = () => {
     }
   }, [requiereAsignar]);
 
-  
+
 
   return (
     <>
@@ -386,8 +400,8 @@ const PqrData = () => {
             <div className="flex flex-wrap items-center justify-between">
               <label
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
-                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    : "bg-emerald-400 text-white hover:bg-emerald-500"
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-emerald-400 text-white hover:bg-emerald-500"
                   }`}
               >
                 <Paperclip className="w-4 h-4" />

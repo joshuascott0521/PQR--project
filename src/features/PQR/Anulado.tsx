@@ -7,6 +7,7 @@ import { CardSkeleton } from "../../components/shared/CardSkeleton";
 // import { AiOutlineFolderView } from "react-icons/ai";
 import { FileCheck } from "lucide-react";
 import type { AxiosError } from "axios";
+import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const Anulado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -145,9 +146,13 @@ const Anulado = () => {
       >
         {error && <p className="text-red-600">{error}</p>}
         {!loadingMore && !error && pqrs.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">
-            No hay PQRs anulados.
-          </p>
+          <div className="flex h-full w-full items-center justify-center">
+            <NoMoreResults
+              message="No hay a PQRs anulados"
+              subtitle="No se encontraron PQRs en estado anulado."
+              showAnimation={true}
+            />
+          </div>
         )}
 
         <div className="space-y-4">
