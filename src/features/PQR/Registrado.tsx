@@ -65,6 +65,7 @@ const Registrado = () => {
           page: currentPage,
           size: 10,
           estadoProceso: "Registrado",
+          orden: 1,
         });
 
         if (Array.isArray(data) && data.length < 10) {

@@ -65,6 +65,7 @@ const EnProceso = () => {
           usuid,
           page: currentPage,
           size: 10,
+          orden: 1,
           estadoProceso: "EN PROCESO",
         });
 

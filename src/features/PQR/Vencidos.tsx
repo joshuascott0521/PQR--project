@@ -64,6 +64,7 @@ const Vencidos = () => {
           page: currentPage,
           size: 10,
           estadoVencimiento: "Vencido",
+          orden: 1,
         });
 
         if (!data || data.length === 0) {

@@ -63,6 +63,7 @@ const ATiempo = () => {
           page: currentPage,
           size: 10,
           estadoVencimiento: "A tiempo",
+          orden: 1,
         });
 
         if (Array.isArray(data) && data.length < 10) {
@@ -147,8 +148,8 @@ const ATiempo = () => {
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-              <CardSkeleton size="medium" key={i} />
-            ))
+                <CardSkeleton size="medium" key={i} />
+              ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

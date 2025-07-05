@@ -28,6 +28,7 @@ export interface GetPqrParams {
   size: number;
   estadoProceso?: string;
   estadoVencimiento?: string;
+  orden?: number;
 }
 export const typeSelectComents = {
   getEvento: async (id: string): Promise<ApiResponse<Evento[]>> => {
@@ -142,6 +143,7 @@ export const PqrServices = {
     page,
     size,
     estadoProceso,
+    orden,
     estadoVencimiento,
   }: GetPqrParams & { usuid: string }): Promise<ApiResponse<Pqr[]>> => {
     try {
@@ -152,6 +154,7 @@ export const PqrServices = {
           pagesize: size,
           estadoProceso,
           estadoVencimiento,
+          orden,
         },
       });
 

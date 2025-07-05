@@ -66,6 +66,7 @@ const Asignado = () => {
           page: currentPage,
           size: 10,
           estadoProceso: "Asignado",
+          orden: 1,
         });
 
         if (!data || data.length === 0) {

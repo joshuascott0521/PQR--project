@@ -63,6 +63,7 @@ const PorVencer = () => {
           page: currentPage,
           size: 10,
           estadoVencimiento: "Por vencer",
+          orden: 1,
         });
 
         if (!data.success) throw new Error(data.error);
@@ -154,8 +155,8 @@ const PorVencer = () => {
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-              <CardSkeleton size="medium" key={i} />
-            ))
+                <CardSkeleton size="medium" key={i} />
+              ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

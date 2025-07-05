@@ -63,6 +63,7 @@ const EnEspera = () => {
           page: currentPage,
           size: 10,
           estadoProceso: "En espera",
+          orden: 1,
         });
 
         if (Array.isArray(data) && data.length < 10) {
