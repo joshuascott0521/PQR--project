@@ -24,6 +24,7 @@ import {
 } from "../../libs/alerts";
 
 import { showToast } from "../../utils/toastUtils";
+import LoadingScreenBool from "./LoadingScreenBool";
 
 export default function StepForm() {
   const [step, setStep] = useState(0);
@@ -55,6 +56,7 @@ export default function StepForm() {
     adjuntos: [],
     usuarioId: "",
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -357,6 +359,7 @@ export default function StepForm() {
     if (!confirmado) return;
 
     try {
+      setLoading(true);
       let archivosSubidos: ArchivoSubido[] = [];
 
       if (archivos.length > 0) {
@@ -377,6 +380,7 @@ export default function StepForm() {
       });
 
       if (res.success) {
+        setLoading(false);
         mostrarAlertaExito("¡PQR registrado exitosamente!");
 
         console.log("Respuesta PQR ✅✅✅✅", res.data);
@@ -416,407 +420,407 @@ export default function StepForm() {
   };
 
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-      <div className="w-[520px]">
-        <div className="bg-white/70  rounded-2xl shadow-lg w-full  p-10 border border-gray-100">
-          {/* Step Indicators */}
-          <div className="relative flex justify-between mb-6">
-            <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-300 z-0" />
-            {["Paso 1", "Paso 2", "Paso 3"].map((label, index) => (
-              <div
-                key={index}
-                className="flex-1 flex flex-col items-center relative z-10"
-              >
+    <>
+      <LoadingScreenBool active={loading} />
+      <div className="w-full h-screen flex justify-center items-center">
+        <div className="w-[520px]">
+          <div className="bg-white/70  rounded-2xl shadow-lg w-full  p-10 border border-gray-100">
+            {/* Step Indicators */}
+            <div className="relative flex justify-between mb-6">
+              <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-300 z-0" />
+              {["Paso 1", "Paso 2", "Paso 3"].map((label, index) => (
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
-                    index < step
+                  key={index}
+                  className="flex-1 flex flex-col items-center relative z-10"
+                >
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${index < step
                       ? "bg-green-500 text-white border-green-500"
                       : index === step
-                      ? "bg-white text-green-500 border-green-500"
-                      : "bg-gray-200 text-gray-500 border-gray-300"
-                  }`}
-                >
-                  {index + 1}
+                        ? "bg-white text-green-500 border-green-500"
+                        : "bg-gray-200 text-gray-500 border-gray-300"
+                      }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <span className="mt-2 text-sm font-medium text-black">
+                    {label}
+                  </span>
                 </div>
-                <span className="mt-2 text-sm font-medium text-black">
-                  {label}
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* Form Steps */}
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 text-black text-sm"
-          >
-            {step === 0 && (
-              <div>
-                <h2 className="text-lg font-semibold mb-2 text-center">
-                  Datos del Solicitante
-                </h2>
-                <div className="border-b border-gray-500 mb-2" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FloatingLabel
-                    minLength={8}
-                    maxLength={15}
-                    id="documento"
-                    label="Documento"
-                    value={formatearDocumento(formData.documentoCliente)}
-                    onChange={(e) => {
-                      // Elimina los puntos para guardar limpio
-                      let valorSinPuntos = e.target.value.replace(/\D/g, "");
+            {/* Form Steps */}
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4 text-black text-sm"
+            >
+              {step === 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-2 text-center">
+                    Datos del Solicitante
+                  </h2>
+                  <div className="border-b border-gray-500 mb-2" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FloatingLabel
+                      minLength={8}
+                      maxLength={15}
+                      id="documento"
+                      label="Documento"
+                      value={formatearDocumento(formData.documentoCliente)}
+                      onChange={(e) => {
+                        // Elimina los puntos para guardar limpio
+                        let valorSinPuntos = e.target.value.replace(/\D/g, "");
 
-                      // Limita a 10 dígitos
-                      if (valorSinPuntos.length > 10) {
-                        valorSinPuntos = valorSinPuntos.slice(0, 10);
-                      }
+                        // Limita a 10 dígitos
+                        if (valorSinPuntos.length > 10) {
+                          valorSinPuntos = valorSinPuntos.slice(0, 10);
+                        }
 
-                      // Guarda limpio en formData
-                      setFormData((prev) => ({
-                        ...prev,
-                        documentoCliente: valorSinPuntos,
-                      }));
-                    }}
-                    className={errores.documentoCliente ? "border-red-500" : ""}
-                  />
-
-                  <FloatingLabel
-                    id="nombresYApellidos"
-                    label="Nombres y Apellidos"
-                    value={formData.nombreCliente}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        nombreCliente: e.target.value,
-                      }))
-                    }
-                    className={errores.nombreCliente ? "border-red-500" : ""}
-                  />
-                  <FloatingSelect
-                    label="Tipo Cliente"
-                    value={formData.tipoClienteId}
-                    onChange={(value) =>
-                      setFormData((prev) => ({ ...prev, tipoClienteId: value }))
-                    }
-                    options={tipoCliente.map((tc) => ({
-                      value: tc.id,
-                      label: tc.nombre,
-                    }))}
-                    placeholder="Elige una opción"
-                    className={errores.tipoClienteId ? "border-red-500" : ""}
-                  />
-                  <FloatingLabel
-                    id="email"
-                    label="Email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
-                    }
-                    className={errores.email ? "border-red-500" : ""}
-                  />
-                  <FloatingLabel
-                    id="celular"
-                    label="Celular"
-                    maxLength={13} // 10 dígitos + 2 espacios
-                    value={formatearCelular(formData.celular)}
-                    onChange={(e) => {
-                      // Quitar todos los caracteres que no sean dígitos
-                      let valorSinEspacios = e.target.value.replace(/\D/g, "");
-
-                      // Limitar a 10 dígitos
-                      if (valorSinEspacios.length > 10) {
-                        valorSinEspacios = valorSinEspacios.slice(0, 10);
-                      }
-
-                      // Actualizar el estado sin espacios (para el backend)
-                      setFormData((prev) => ({
-                        ...prev,
-                        celular: valorSinEspacios,
-                      }));
-                    }}
-                    className={errores.celular ? "border-red-500" : ""}
-                  />
-
-                  <FloatingLabel
-                    id="direccion"
-                    label="Dirección"
-                    value={formData.direccion}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        direccion: e.target.value,
-                      }))
-                    }
-                    className={errores.direccion ? "border-red-500" : ""}
-                  />
-                  <FloatingSelect
-                    label="Departamento"
-                    value={
-                      formData.departamentoCod === 0
-                        ? ""
-                        : formData.departamentoCod.toString()
-                    }
-                    placeholder="Seleccionar Departamento"
-                    onChange={async (value) => {
-                      const cod = Number(value);
-                      const dep = listaDepartamentos.find((d) => d.cod === cod);
-                      if (dep) {
+                        // Guarda limpio en formData
                         setFormData((prev) => ({
                           ...prev,
-                          departamentoCod: dep.cod,
-                          municipioCod: 0, // Reinicia el municipio al cambiar de departamento
+                          documentoCliente: valorSinPuntos,
                         }));
-                        try {
-                          const municipioRes = await RegionServices.getMun(
-                            dep.cod
-                          );
-                          if (municipioRes.success) {
-                            setListaMunicipios(municipioRes.data);
-                          } else {
-                            setListaMunicipios([]);
-                          }
-                        } catch {
-                          setListaMunicipios([]);
-                        }
-                      }
-                    }}
-                    options={listaDepartamentos.map((dep) => ({
-                      value: dep.cod?.toString() || "",
-                      label: dep.nombre || "",
-                    }))}
-                    className={errores.departamentoCod ? "border-red-500" : ""}
-                  />
-
-                  {formData.departamentoCod !== 0 && (
-                    <FloatingSelect
-                      label="Municipio"
-                      placeholder="Seleccionar Municipio"
-                      value={
-                        formData.municipioCod === 0
-                          ? ""
-                          : formData.municipioCod.toString()
-                      }
-                      options={listaMunicipios.map((mun) => ({
-                        value: mun.cod.toString(),
-                        label: mun.nombre,
-                      }))}
-                      onChange={(value) => {
-                        const cod = parseInt(value, 10);
-                        const mun = listaMunicipios.find((m) => m.cod === cod);
-                        if (mun) {
-                          setFormData((prev) => ({
-                            ...prev,
-                            municipioCod: mun.cod,
-                          }));
-                        }
                       }}
-                      className={errores.municipioCod ? "border-red-500" : ""}
+                      className={errores.documentoCliente ? "border-red-500" : ""}
                     />
-                  )}
-                </div>
-                <div className="mt-6 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
-                  >
-                    Siguiente
-                  </button>
-                </div>
-              </div>
-            )}
 
-            {step === 1 && (
-              <div>
-                <h2 className="text-lg font-semibold mb-2 text-center">
-                  Datos del PQR
-                </h2>
-                <div className="border-b border-gray-500 mb-2" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  <FloatingLabel
-                    id="fecha"
-                    label="Fecha Solicitud"
-                    type="date"
-                    value={getLocalDate()}
-                    readOnly
-                  />
-                  <FloatingSelect
-                    label="Tipo Petición"
-                    value={formData.tipoPQRId}
-                    onChange={(value) =>
-                      setFormData((prev) => ({ ...prev, tipoPQRId: value }))
-                    }
-                    options={tipoPQRListado.map((tc) => ({
-                      value: tc.id,
-                      label: tc.nombre,
-                    }))}
-                    placeholder="Elige una opción"
-                    className={errores.tipoPQRId ? "border-red-500" : ""}
-                  />
-                  <div className="md:col-span-2">
                     <FloatingLabel
-                      id="asunto"
-                      label="Asunto"
-                      value={formData.asunto}
+                      id="nombresYApellidos"
+                      label="Nombres y Apellidos"
+                      value={formData.nombreCliente}
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          asunto: e.target.value,
+                          nombreCliente: e.target.value,
                         }))
                       }
-                      className={errores.asunto ? "border-red-500" : ""}
+                      className={errores.nombreCliente ? "border-red-500" : ""}
                     />
+                    <FloatingSelect
+                      label="Tipo Cliente"
+                      value={formData.tipoClienteId}
+                      onChange={(value) =>
+                        setFormData((prev) => ({ ...prev, tipoClienteId: value }))
+                      }
+                      options={tipoCliente.map((tc) => ({
+                        value: tc.id,
+                        label: tc.nombre,
+                      }))}
+                      placeholder="Elige una opción"
+                      className={errores.tipoClienteId ? "border-red-500" : ""}
+                    />
+                    <FloatingLabel
+                      id="email"
+                      label="Email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
+                      className={errores.email ? "border-red-500" : ""}
+                    />
+                    <FloatingLabel
+                      id="celular"
+                      label="Celular"
+                      maxLength={13} // 10 dígitos + 2 espacios
+                      value={formatearCelular(formData.celular)}
+                      onChange={(e) => {
+                        // Quitar todos los caracteres que no sean dígitos
+                        let valorSinEspacios = e.target.value.replace(/\D/g, "");
+
+                        // Limitar a 10 dígitos
+                        if (valorSinEspacios.length > 10) {
+                          valorSinEspacios = valorSinEspacios.slice(0, 10);
+                        }
+
+                        // Actualizar el estado sin espacios (para el backend)
+                        setFormData((prev) => ({
+                          ...prev,
+                          celular: valorSinEspacios,
+                        }));
+                      }}
+                      className={errores.celular ? "border-red-500" : ""}
+                    />
+
+                    <FloatingLabel
+                      id="direccion"
+                      label="Dirección"
+                      value={formData.direccion}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          direccion: e.target.value,
+                        }))
+                      }
+                      className={errores.direccion ? "border-red-500" : ""}
+                    />
+                    <FloatingSelect
+                      label="Departamento"
+                      value={
+                        formData.departamentoCod === 0
+                          ? ""
+                          : formData.departamentoCod.toString()
+                      }
+                      placeholder="Seleccionar Departamento"
+                      onChange={async (value) => {
+                        const cod = Number(value);
+                        const dep = listaDepartamentos.find((d) => d.cod === cod);
+                        if (dep) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            departamentoCod: dep.cod,
+                            municipioCod: 0, // Reinicia el municipio al cambiar de departamento
+                          }));
+                          try {
+                            const municipioRes = await RegionServices.getMun(
+                              dep.cod
+                            );
+                            if (municipioRes.success) {
+                              setListaMunicipios(municipioRes.data);
+                            } else {
+                              setListaMunicipios([]);
+                            }
+                          } catch {
+                            setListaMunicipios([]);
+                          }
+                        }
+                      }}
+                      options={listaDepartamentos.map((dep) => ({
+                        value: dep.cod?.toString() || "",
+                        label: dep.nombre || "",
+                      }))}
+                      className={errores.departamentoCod ? "border-red-500" : ""}
+                    />
+
+                    {formData.departamentoCod !== 0 && (
+                      <FloatingSelect
+                        label="Municipio"
+                        placeholder="Seleccionar Municipio"
+                        value={
+                          formData.municipioCod === 0
+                            ? ""
+                            : formData.municipioCod.toString()
+                        }
+                        options={listaMunicipios.map((mun) => ({
+                          value: mun.cod.toString(),
+                          label: mun.nombre,
+                        }))}
+                        onChange={(value) => {
+                          const cod = parseInt(value, 10);
+                          const mun = listaMunicipios.find((m) => m.cod === cod);
+                          if (mun) {
+                            setFormData((prev) => ({
+                              ...prev,
+                              municipioCod: mun.cod,
+                            }));
+                          }
+                        }}
+                        className={errores.municipioCod ? "border-red-500" : ""}
+                      />
+                    )}
                   </div>
-                  <div className="md:col-span-2">
-                    <div className="w-full">
-                      <textarea
-                        id="descripcion"
-                        name="descripcion"
-                        value={formData.descripcion}
+                  <div className="mt-6 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {step === 1 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-2 text-center">
+                    Datos del PQR
+                  </h2>
+                  <div className="border-b border-gray-500 mb-2" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <FloatingLabel
+                      id="fecha"
+                      label="Fecha Solicitud"
+                      type="date"
+                      value={getLocalDate()}
+                      readOnly
+                    />
+                    <FloatingSelect
+                      label="Tipo Petición"
+                      value={formData.tipoPQRId}
+                      onChange={(value) =>
+                        setFormData((prev) => ({ ...prev, tipoPQRId: value }))
+                      }
+                      options={tipoPQRListado.map((tc) => ({
+                        value: tc.id,
+                        label: tc.nombre,
+                      }))}
+                      placeholder="Elige una opción"
+                      className={errores.tipoPQRId ? "border-red-500" : ""}
+                    />
+                    <div className="md:col-span-2">
+                      <FloatingLabel
+                        id="asunto"
+                        label="Asunto"
+                        value={formData.asunto}
                         onChange={(e) =>
                           setFormData((prev) => ({
                             ...prev,
-                            descripcion: e.target.value,
+                            asunto: e.target.value,
                           }))
                         }
-                        onBlur={(e) => {
-                          const descripcion = e.target.value.trim();
-                          if (
-                            descripcion.length > 0 &&
-                            descripcion.length < 6
-                          ) {
-                            showToast(
-                              "La descripción debe tener al menos 6 caracteres"
-                            );
-                          }
-                        }}
-                        rows={4}
-                        placeholder="Descripción"
-                        className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
-                          errores.descripcion
-                            ? "border-red-500 focus:ring-red-500"
-                            : "border-gray-300 focus:ring-green-500"
-                        }`}
+                        className={errores.asunto ? "border-red-500" : ""}
                       />
                     </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 flex justify-between">
-                  <button
-                    onClick={handleBack}
-                    type="button"
-                    className="bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors"
-                  >
-                    Atrás
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleNext}
-                    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
-                  >
-                    Siguiente
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div>
-                <h2 className="text-lg font-semibold mb-1 text-center">
-                  Soportes de la Solicitud
-                </h2>
-                <div className="border-b border-gray-500 mb-2" />
-                <RequisitosAdjuntos />
-                <div className="flex flex-col gap-2">
-                  {/* Botón de subir archivos */}
-                  <label
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${
-                       archivos.length >= 5
-                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                         : "bg-emerald-400 text-white hover:bg-emerald-500"
-                     }
-                    `}
-                  >
-                    <Paperclip className="w-4 h-4" />
-                    {archivos.length >= 5
-                      ? "Límite alcanzado"
-                      : "Subir archivos"}
-                    <input
-                      key={inputKey}
-                      type="file"
-                      multiple
-                      className="hidden"
-                      onChange={handleArchivos}
-                      disabled={archivos.length >= 5}
-                    />
-                  </label>
-
-                  {/* Contenedor con adjuntos envueltos sin scroll */}
-                  <div className="flex flex-wrap gap-2">
-                    {archivos.map((archivo, index) => (
-                      <div
-                        key={index}
-                        className="flex items-center gap-1 bg-gray-100 border border-gray-300 rounded-full px-3 py-1 w-[180px] flex-shrink-0"
-                      >
-                        <File className="w-4 h-4 text-gray-700" />
-                        <p className="text-xs text-gray-800 truncate flex-1">
-                          {archivo.name}
-                        </p>
-                        <button
-                          type="button"
-                          onClick={() => eliminarArchivo(index)}
-                          className="text-gray-500 hover:text-red-500 transition-colors"
-                          aria-label="Eliminar archivo"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                    <div className="md:col-span-2">
+                      <div className="w-full">
+                        <textarea
+                          id="descripcion"
+                          name="descripcion"
+                          value={formData.descripcion}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              descripcion: e.target.value,
+                            }))
+                          }
+                          onBlur={(e) => {
+                            const descripcion = e.target.value.trim();
+                            if (
+                              descripcion.length > 0 &&
+                              descripcion.length < 6
+                            ) {
+                              showToast(
+                                "La descripción debe tener al menos 6 caracteres"
+                              );
+                            }
+                          }}
+                          rows={4}
+                          placeholder="Descripción"
+                          className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion
+                            ? "border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:ring-green-500"
+                            }`}
+                        />
                       </div>
-                    ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex justify-between">
+                    <button
+                      onClick={handleBack}
+                      type="button"
+                      className="bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors"
+                    >
+                      Atrás
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
+                    >
+                      Siguiente
+                    </button>
                   </div>
                 </div>
+              )}
 
-                <div className="flex items-center space-x-2 mt-2">
-                  <input
-                    type="checkbox"
-                    id="autorizacion"
-                    className="w-5 h-5 accent-black rounded border border-gray-400"
-                    checked={autorizado}
-                    onChange={(e) => setAutorizado(e.target.checked)}
-                  />
-                  <label
-                    htmlFor="autorizacion"
-                    className="text-gray-800 text-sm"
-                  >
-                    Autorizo tratamiento de datos y notificaciones electrónicas.
-                  </label>
-                </div>
+              {step === 2 && (
+                <div>
+                  <h2 className="text-lg font-semibold mb-1 text-center">
+                    Soportes de la Solicitud
+                  </h2>
+                  <div className="border-b border-gray-500 mb-2" />
+                  <RequisitosAdjuntos />
+                  <div className="flex flex-col gap-2">
+                    {/* Botón de subir archivos */}
+                    <label
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
+                     ${archivos.length >= 5
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-emerald-400 text-white hover:bg-emerald-500"
+                        }
+                    `}
+                    >
+                      <Paperclip className="w-4 h-4" />
+                      {archivos.length >= 5
+                        ? "Límite alcanzado"
+                        : "Subir archivos"}
+                      <input
+                        key={inputKey}
+                        type="file"
+                        multiple
+                        className="hidden"
+                        onChange={handleArchivos}
+                        disabled={archivos.length >= 5}
+                      />
+                    </label>
 
-                <div className="mt-6 mb-1 flex justify-between">
-                  <button
-                    onClick={handleBack}
-                    type="button"
-                    className="bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors"
-                  >
-                    Atrás
-                  </button>
-                  <button
-                    type="submit"
-                    className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
-                  >
-                    Enviar PQR
-                  </button>
+                    {/* Contenedor con adjuntos envueltos sin scroll */}
+                    <div className="flex flex-wrap gap-2">
+                      {archivos.map((archivo, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center gap-1 bg-gray-100 border border-gray-300 rounded-full px-3 py-1 w-[180px] flex-shrink-0"
+                        >
+                          <File className="w-4 h-4 text-gray-700" />
+                          <p className="text-xs text-gray-800 truncate flex-1">
+                            {archivo.name}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => eliminarArchivo(index)}
+                            className="text-gray-500 hover:text-red-500 transition-colors"
+                            aria-label="Eliminar archivo"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2 mt-2">
+                    <input
+                      type="checkbox"
+                      id="autorizacion"
+                      className="w-5 h-5 accent-black rounded border border-gray-400"
+                      checked={autorizado}
+                      onChange={(e) => setAutorizado(e.target.checked)}
+                    />
+                    <label
+                      htmlFor="autorizacion"
+                      className="text-gray-800 text-sm"
+                    >
+                      Autorizo tratamiento de datos y notificaciones electrónicas.
+                    </label>
+                  </div>
+
+                  <div className="mt-6 mb-1 flex justify-between">
+                    <button
+                      onClick={handleBack}
+                      type="button"
+                      className="bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors"
+                    >
+                      Atrás
+                    </button>
+                    <button
+                      type="submit"
+                      className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors"
+                    >
+                      Enviar PQR
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
-          </form>
+              )}
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

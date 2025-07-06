@@ -102,15 +102,18 @@ const PqrChat = ({
               <div>
                 <div
                   onClick={() =>
-                    getDetalle(
-                      detalle?.tercero?.id,
-                      detalle.tercero.tipoTercero
-                    )
+                    getDetalle(detalle?.tercero?.id, detalle.tercero.tipoTercero)
                   }
-                  className="flex items-center justify-center w-8 h-8 rounded-full bg-green-200 text-green-700 cursor-pointer"
+                  className={`
+                    flex items-center justify-center w-8 h-8 rounded-full cursor-pointer
+                    ${detalle.tercero.tipoTercero === 'Cliente' ? 'bg-green-200 text-green-700' :
+                    detalle.tercero.tipoTercero === 'Funcionario' ? 'bg-yellow-200 text-yellow-700' :
+                    'bg-gray-200 text-gray-700'}
+                  `}
                 >
                   <i className="fas fa-user"></i>
                 </div>
+
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -150,8 +153,8 @@ const PqrChat = ({
                 detalle.tercero.tipoTercero === "Cliente"
                   ? "#e2ffed"
                   : detalle.tercero.tipoTercero === "Funcionario"
-                  ? "#fff1dc"
-                  : "gray",
+                    ? "#fff1dc"
+                    : "gray",
             }}
           >
             {detalle.descripcion}
@@ -214,11 +217,10 @@ const PqrChat = ({
 
             {/* Tabla de notificaciones */}
             <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                expandedItem === detalle.item
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedItem === detalle.item
                   ? "max-h-[1000px] opacity-100 mt-4"
                   : "max-h-0 opacity-0"
-              }`}
+                }`}
             >
               <div className="border border-gray-200 rounded-md">
                 <table className="min-w-full text-sm text-left text-gray-700 bg-white">

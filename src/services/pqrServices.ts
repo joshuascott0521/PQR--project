@@ -5,6 +5,7 @@ import type {
   ApiResponse,
   ArchivoSubido,
   Cliente,
+  CrearPqrResponse,
   CreatePqr,
   departamento,
   DetallePqrCreate,
@@ -199,7 +200,7 @@ export const PqrServices = {
     }
   },
 
-  createPqr: async (pqr: CreatePqr): Promise<ApiResponse<string[]>> => {
+  createPqr: async (pqr: CreatePqr): Promise<ApiResponse<CrearPqrResponse>> => {
     try {
       const response = await apiClient.post("/PQR/Create", pqr);
       return {
@@ -209,7 +210,10 @@ export const PqrServices = {
     } catch (error: any) {
       return {
         success: false,
-        data: [],
+        data: {
+          id: "",
+          mensaje: "",
+        },
         error: error.response?.data?.message || "Error al crear el PQR",
       };
     }
