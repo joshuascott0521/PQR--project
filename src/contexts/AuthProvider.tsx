@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.error("Token malformado en intervalo, cerrando sesión");
         logout();
       }
-    }, 3000); // Verifica cada 3 segundos (ajustable)
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);

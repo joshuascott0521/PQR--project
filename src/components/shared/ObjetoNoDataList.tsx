@@ -1,4 +1,4 @@
-import { CircleCheck   } from 'lucide-react';
+import { CircleX   } from 'lucide-react';
 
 interface NoMoreResultsProps {
   message?: string;
@@ -34,7 +34,7 @@ const NoMoreResults: React.FC<NoMoreResultsProps> = ({
             absolute inset-0 rounded-2xl bg-slate-50 opacity-50 blur-sm
             ${showAnimation ? 'animate-ping' : ''}
           `} />
-          <CircleCheck size={36} className="text-slate-500 relative z-10" />
+          <CircleX size={36} className="text-slate-500 relative z-10" />
           
         </div>
 

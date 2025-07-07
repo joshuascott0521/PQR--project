@@ -2,7 +2,6 @@ import { useState } from "react";
 import type { DetallePqr } from "../../interfaces/pqrInterfaces";
 import {
   ArchivoServices,
-  NotificacionesService,
 } from "../../services/pqrServices";
 import { NotificacionServices } from "../../services/pqrServices";
 import { showToast } from "../../utils/toastUtils";
