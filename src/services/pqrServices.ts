@@ -5,6 +5,7 @@ import type {
   ApiResponse,
   ArchivoSubido,
   Cliente,
+  CrearPqrResponse,
   CreatePqr,
   departamento,
   DetallePqrCreate,
@@ -180,7 +181,48 @@ export const PqrServices = {
       );
     }
   },
+  getByFuncionarioId: async ({
+    usuid,
+    page,
+    size,
+    estadoProceso,
+    orden,
+    estadoVencimiento,
+  }: GetPqrParams & { usuid: string }): Promise<ApiResponse<Pqr[]>> => {
+    try {
+      const response = await apiClient.get<Pqr[]>("/PQR/GetByFuncionarioId", {
+        params: {
+          usuid,
+          pagenumber: page,
+          pagesize: size,
+          estadoProceso,
+          estadoVencimiento,
+          orden,
+        },
+      });
 
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      if (
+        error.response?.status === 404 &&
+        error.response?.data?.code === "NOT_FOUND"
+      ) {
+        return {
+          success: false,
+          data: [],
+          error: error.response?.data?.message || "Error al traer pqrs",
+        }; // No hay PQRs, pero no es un fallo
+      }
+      console.log("❌❌❌❌❌❌", error);
+      console.error("Error real al obtener PQR por estado:", error);
+      throw new Error(
+        error.response?.data?.message || "Error al consultar los PQR."
+      );
+    }
+  },
   uploadFiles: async (
     archivos: File[]
   ): Promise<ApiResponse<ArchivoSubido[]>> => {
@@ -202,7 +244,7 @@ export const PqrServices = {
     }
   },
 
-  createPqr: async (pqr: CreatePqr): Promise<ApiResponse<string[]>> => {
+  createPqr: async (pqr: CreatePqr): Promise<ApiResponse<CrearPqrResponse>> => {
     try {
       const response = await apiClient.post("/PQR/Create", pqr);
       return {
@@ -212,7 +254,10 @@ export const PqrServices = {
     } catch (error: any) {
       return {
         success: false,
-        data: [],
+        data: {
+          id: "",
+          mensaje: "",
+        },
         error: error.response?.data?.message || "Error al crear el PQR",
       };
     }

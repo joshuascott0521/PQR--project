@@ -133,6 +133,12 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+export interface CrearPqrResponse {
+  id: string;
+  mensaje: string;
+}
+
+
 export interface Funcionario {
   id: string;
   documento: string;
@@ -191,7 +197,7 @@ export interface Evento {
   id?: string;
   nombre?: string;
   accion?: string;
-  obligadoAnexo?: boolean;
+  obligandoAnexo?: boolean;
 }
 export interface Usuario {
   id: string;

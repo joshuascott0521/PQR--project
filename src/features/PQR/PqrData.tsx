@@ -23,7 +23,7 @@ const PqrData = () => {
   const [, setError] = useState<string>("");
 
   const [eventos, setEventos] = useState<Evento[]>([]);
-  const [eventoSeleccionado, setEventoSeleccionado] = useState<string>("");
+  const [eventoSeleccionado, setEventoSeleccionado] = useState<Evento | null>(null);
   const [user, setUser] = useState("");
   const [usuarios, setUsuarios] = useState<{ label: string; value: string }[]>(
     []
@@ -121,9 +121,10 @@ const PqrData = () => {
 
     try {
       // Validar que si el evento es "Asignar" (por label), haya al menos un archivo
-      const eventoAsignar =
-        eventos.find((ev) => ev.id === eventoSeleccionado)?.nombre ===
-        "Asignar";
+      const eventoAsignar = eventoSeleccionado?.nombre === "Asignar";
+
+      const requiereAnexo = eventoSeleccionado?.obligandoAnexo === true;
+
       if (eventoAsignar && archivos.length === 0) {
         showToast("Debe adjuntar al menos un archivo para el evento 'Asignar'");
         setLoading(false);
@@ -136,23 +137,30 @@ const PqrData = () => {
         return;
       }
 
-      const uploadResponse = await PqrServices.uploadFiles(archivos);
-      console.log(uploadResponse);
+      let adjuntos: {
+        item: number;
+        nombre: string;
+        extension: string;
+        urlArchivo: string
+      }[] = [];
 
-      if (!uploadResponse.success) {
+      if (requiereAnexo) {
+        const uploadResponse = await PqrServices.uploadFiles(archivos);
         console.log(uploadResponse);
+        if (!uploadResponse.success) {
+          console.log(uploadResponse);
 
-        showToast(uploadResponse.error || "Error al subir archivos");
-        setLoading(false);
-        return;
+          showToast(uploadResponse.error || "Error al subir archivos");
+          setLoading(false);
+          return;
+        }
+        adjuntos = uploadResponse.data.map((archivo, index) => ({
+          item: index + 1,
+          nombre: archivo.nombre,
+          extension: archivo.extension,
+          urlArchivo: archivo.urlArchivo,
+        }));
       }
-
-      const adjuntos = uploadResponse.data.map((archivo, index) => ({
-        item: index + 1,
-        nombre: archivo.nombre,
-        extension: archivo.extension,
-        urlArchivo: archivo.urlArchivo,
-      }));
 
       const userData = localStorage.getItem("userData");
       if (!userData) {
@@ -170,7 +178,7 @@ const PqrData = () => {
       }
       const datos = {
         pqrId: id || "",
-        eventoId: eventoSeleccionado,
+        eventoId: eventoSeleccionado?.id || "",
         descripcion,
         usuarioId: usuid,
         funcionarioAsignadoId:
@@ -189,7 +197,7 @@ const PqrData = () => {
         setDescripcion("");
         setArchivos([]);
         setInputKey((prev) => prev + 1);
-        setEventoSeleccionado("");
+        setEventoSeleccionado(null)
         setUser("");
 
         setLoading(false);
@@ -218,13 +226,11 @@ const PqrData = () => {
 
   const eventosQueRequierenAsignacion = ["Asignar", "Solicitar a Funcionario"];
 
-  const nombreEventoSeleccionado = eventos.find(
-    (ev) => ev.id === eventoSeleccionado
-  )?.nombre;
+  const nombreEventoSeleccionado = eventoSeleccionado?.nombre ?? "";
 
-  const requiereAsignar = eventosQueRequierenAsignacion.includes(
-    nombreEventoSeleccionado || ""
-  );
+
+  const requiereAsignar = eventosQueRequierenAsignacion.includes(nombreEventoSeleccionado);
+
 
   useEffect(() => {
     if (!requiereAsignar) {
@@ -314,7 +320,14 @@ const PqrData = () => {
             </div>
           </div>
         </div>
-        <div className="flex mt-5 flex-col max-h-[300px] overflow-y-auto h-full">
+        <div
+          className={`flex mt-5 flex-col h-full transition-all duration-300 ${
+            ["Finalizado", "Anulado"].includes(pqr?.estado || "")
+              ? "h-[calc(100vh-250px)] overflow-y-auto"
+              : "max-h-[250px] overflow-y-auto"
+          }`}
+        >
+
           <div className="space-y-4">
             {pqr?.detalle && (
               <PqrChat
@@ -325,105 +338,113 @@ const PqrData = () => {
             )}
           </div>
         </div>
-        <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[265px]">
-          <form className="" onSubmit={handleSubmit}>
-            <div className="flex flex-wrap gap-6 items-center">
-              <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                Nuevo evento:
-              </label>
-              <FloatingSelectLP
-                value={eventoSeleccionado}
-                onChange={setEventoSeleccionado}
-                options={opcionesEventos}
-                showLabelPlaceholder={false}
-              />
-              {requiereAsignar && (
-                <>
-                  <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                    Asignar a:
-                  </label>
-                  <FloatingSelectLP
-                    value={user}
-                    onChange={(value) => {
-                      setUser(value);
-                      console.log("Usuario asignado:", value);
-                    }}
-                    options={usuarios}
-                    showLabelPlaceholder={false}
-                  />
-                </>
-              )}
-            </div>
+        {pqr?.estado !== "Finalizado" && pqr?.estado !== "Anulado" && (
+          <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[265px]">
+            <form className="" onSubmit={handleSubmit}>
+              <div className="flex flex-wrap gap-6 items-center">
+                <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                  Nuevo evento:
+                </label>
+                <FloatingSelectLP
+                  value={eventoSeleccionado?.id ?? ""}
+                  onChange={(value) => {
+                    const seleccionado = eventos.find(e => e.id === value) || null;
+                    setEventoSeleccionado(seleccionado);
+                  }}
+                  options={opcionesEventos}
+                />
 
-            <div>
-              <textarea
-                id="descripcion"
-                name="descripcion"
-                value={descripcion}
-                onChange={(e) => setDescripcion(EliminarEmojis(e.target.value))}
-                rows={3}
-                placeholder="Descripción"
-                className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-green-400 mt-5"
-              />
-
-            </div>
-
-            <div className=" mt-0">
-              {/* Contenedor de archivos */}
-              <div className="flex gap-2 overflow-x-auto flex-nowrap py-2 min-h-[52px] items-center">
-                {archivos.length > 0 ? (
-                  archivos.map((archivo, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 bg-gray-100 border border-gray-300 rounded-full px-3 py-1 max-w-[189px] flex-shrink-0"
-                    >
-                      <File className="w-4 h-4 text-gray-700" />
-                      <p className="text-sm text-gray-800 truncate flex-1">
-                        {archivo.name}
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => eliminarArchivo(index)}
-                        className="text-gray-500 hover:text-red-500 transition-colors"
-                        aria-label="Eliminar archivo"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-sm text-gray-400 px-2 italic"></div>
+                {requiereAsignar && (
+                  <>
+                    <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                      Asignar a:
+                    </label>
+                    <FloatingSelectLP
+                      value={user}
+                      onChange={(value) => {
+                        setUser(value);
+                        console.log("Usuario asignado:", value);
+                      }}
+                      options={usuarios}
+                      showLabelPlaceholder={false}
+                    />
+                  </>
                 )}
               </div>
-            </div>
 
-            <div className="flex flex-wrap items-center justify-between">
-              <label
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-emerald-400 text-white hover:bg-emerald-500"
-                  }`}
-              >
-                <Paperclip className="w-4 h-4" />
-                {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}
-                <input
-                  key={inputKey}
-                  type="file"
-                  multiple
-                  className="hidden"
-                  onChange={handleArchivos}
-                  disabled={archivos.length >= 5}
+              <div>
+                <textarea
+                  id="descripcion"
+                  name="descripcion"
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(EliminarEmojis(e.target.value))}
+                  rows={3}
+                  placeholder="Descripción"
+                  className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-green-400 mt-5"
                 />
-              </label>
-              <button
-                type="submit"
-                className="bg-green-600 hover:bg-green-700 text-white text-lg rounded-3xl px-[22px] py-[7px]"
-              >
-                Guardar
-              </button>
-            </div>
-          </form>
-        </div>
+
+              </div>
+
+              <div className=" mt-0">
+                {/* Contenedor de archivos */}
+                <div className="flex gap-2 overflow-x-auto flex-nowrap py-2 min-h-[52px] items-center">
+                  {archivos.length > 0 ? (
+                    archivos.map((archivo, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-2 bg-gray-100 border border-gray-300 rounded-full px-3 py-1 max-w-[189px] flex-shrink-0"
+                      >
+                        <File className="w-4 h-4 text-gray-700" />
+                        <p className="text-sm text-gray-800 truncate flex-1">
+                          {archivo.name}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => eliminarArchivo(index)}
+                          className="text-gray-500 hover:text-red-500 transition-colors"
+                          aria-label="Eliminar archivo"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-sm text-gray-400 px-2 italic"></div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between">
+                {eventoSeleccionado?.obligandoAnexo &&
+                  <label
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-emerald-400 text-white hover:bg-emerald-500"
+                      }`}
+                  >
+                    <Paperclip className="w-4 h-4" />
+                    {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}
+                    <input
+                      key={inputKey}
+                      type="file"
+                      multiple
+                      className="hidden"
+                      onChange={handleArchivos}
+                      disabled={archivos.length >= 5}
+                    />
+                  </label>
+                }
+                <button
+                  type="submit"
+                  className="ml-auto bg-green-600 hover:bg-green-700 text-white text-lg rounded-3xl px-[22px] py-[7px]"
+                >
+                  Guardar
+                </button>
+
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </>
   );

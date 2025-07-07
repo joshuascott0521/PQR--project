@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import { PqrServices } from "../../services/pqrServices";
 import UserCard from "../../components/shared/UserCard";
+import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const AllPqr = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
@@ -60,13 +61,13 @@ const AllPqr = () => {
           size: 10,
         });
 
-        if (data.length < 10) {
+        if (!data || data.length === 0) {
           setHasMore(false);
+          return;
         }
 
-        // Eliminar duplicados usando el id
         setPqrs((prev) => {
-          const combined = [...prev, ...data];
+          const combined = [...prev, ...data.data];
           const unique = Array.from(
             new Map(combined.map((item) => [item.id, item])).values()
           );
@@ -123,9 +124,13 @@ const AllPqr = () => {
           <p>No hay PQRs vencidos.</p>
         )} */}
         {!loading && !error && pqrs.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">
-            No hay PQRs anulados.
-          </p>
+          <div className="flex h-full w-full items-center justify-center">
+            <NoMoreResults
+              message="No hay a PQRs"
+              subtitle="No se encontraron PQRs en la base de datos"
+              showAnimation={true}
+            />
+          </div>
         )}
 
         <div className="space-y-4">

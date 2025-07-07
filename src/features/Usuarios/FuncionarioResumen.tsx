@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ClienteCardSkeleton from "../../components/shared/ClienteCardSkeleton";
 import type { Pqr, Usuario } from "../../interfaces/pqrInterfaces";
 import FuncionarioCard from "../../components/shared/FuncionarioCard";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 import { PqrServices, UsersServices } from "../../services/pqrServices";
 import ResumenItem from "../../components/shared/ResumeItem";
 import UserCard from "../../components/shared/UserCard";
@@ -69,16 +69,20 @@ const FuncionarioResumen = () => {
     if (!resumen?.id) return;
 
     setLoadingPqrs(true);
+    console.log("🐦‍🔥", resumen, "📌📌", estado);
+
     try {
-      const nuevos = await PqrServices.getByEstado({
+      const nuevos = await PqrServices.getByFuncionarioId({
         usuid: resumen.id,
         page: 1,
         size: 10,
+        orden: 1,
         estadoVencimiento: estado,
       });
 
-      if (nuevos.length < 10) setHasMorePqrs(false);
-      setPqrsFiltrados(nuevos);
+      if (nuevos.data.length < 10) setHasMorePqrs(false);
+      setPqrsFiltrados(nuevos.data);
+      console.log("🗿🗿", nuevos);
     } catch (err) {
       console.error("Error al obtener PQRs iniciales:", err);
     } finally {
@@ -108,12 +112,12 @@ const FuncionarioResumen = () => {
         estadoVencimiento: estado,
       });
 
-      if (!nuevos || nuevos.length === 0 || nuevos.length < 10) {
+      if (!nuevos || nuevos.length === 0 || nuevos.data.length < 10) {
         setHasMorePqrs(false);
       }
 
       setPqrsFiltrados((prev) => {
-        const combinados = [...prev, ...nuevos];
+        const combinados = [...prev, ...nuevos.data];
         const unicos = Array.from(
           new Map(combinados.map((p) => [p.id, p])).values()
         );

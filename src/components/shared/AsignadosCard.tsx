@@ -43,7 +43,7 @@ const AsignadosCard: React.FC<AsignadosCardProps> = ({ titulo, total, estados, f
       case "En proceso":
         navigate("/dashboard/en-proceso");
         break;
-      case "En espera":
+      case "En Espera":
         navigate("/dashboard/en-espera");
         break;
       case "Finalizado":

@@ -293,7 +293,8 @@ const NuevoPqr = () => {
       if (res.success) {
         mostrarAlertaExito("¡PQR registrado exitosamente!");
         console.log("Respuesta PQR ✅✅✅✅", res.data);
-        navigate("/dashboard");
+        const id = res.data.id
+        navigate(`/dashboard/PQR/detalle/${id}`);
       } else {
         console.error("Error al registrar el PQR:", res.error);
       }

@@ -18,4 +18,15 @@ apiClient.interceptors.request.use(
   }
 );
 
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      window.dispatchEvent(new Event("tokenExpired"));
+    }
+    return Promise.reject(error);
+  }
+);
+
+
 export default apiClient;
