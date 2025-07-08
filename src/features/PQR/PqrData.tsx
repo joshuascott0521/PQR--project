@@ -23,7 +23,9 @@ const PqrData = () => {
   const [, setError] = useState<string>("");
 
   const [eventos, setEventos] = useState<Evento[]>([]);
-  const [eventoSeleccionado, setEventoSeleccionado] = useState<Evento | null>(null);
+  const [eventoSeleccionado, setEventoSeleccionado] = useState<Evento | null>(
+    null
+  );
   const [user, setUser] = useState("");
   const [usuarios, setUsuarios] = useState<{ label: string; value: string }[]>(
     []
@@ -48,7 +50,7 @@ const PqrData = () => {
           setError(result.error || "Error desconocido");
         }
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     };
 
@@ -62,7 +64,7 @@ const PqrData = () => {
           }
         }
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     };
     const fetchUsuarios = async () => {
@@ -78,7 +80,7 @@ const PqrData = () => {
           console.log("Usuarios desde backend:", opciones);
         }
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     };
 
@@ -141,7 +143,7 @@ const PqrData = () => {
         item: number;
         nombre: string;
         extension: string;
-        urlArchivo: string
+        urlArchivo: string;
       }[] = [];
 
       if (requiereAnexo) {
@@ -197,7 +199,7 @@ const PqrData = () => {
         setDescripcion("");
         setArchivos([]);
         setInputKey((prev) => prev + 1);
-        setEventoSeleccionado(null)
+        setEventoSeleccionado(null);
         setUser("");
 
         setLoading(false);
@@ -228,17 +230,15 @@ const PqrData = () => {
 
   const nombreEventoSeleccionado = eventoSeleccionado?.nombre ?? "";
 
-
-  const requiereAsignar = eventosQueRequierenAsignacion.includes(nombreEventoSeleccionado);
-
+  const requiereAsignar = eventosQueRequierenAsignacion.includes(
+    nombreEventoSeleccionado
+  );
 
   useEffect(() => {
     if (!requiereAsignar) {
       setUser("");
     }
   }, [requiereAsignar]);
-
-
 
   return (
     <>
@@ -251,8 +251,8 @@ const PqrData = () => {
                 pqr?.estadoVencimiento === "VENCIDO"
                   ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
                   : pqr?.estadoVencimiento === "POR VENCER"
-                    ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
-                    : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
+                  ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
+                  : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
               }
               className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
               aria-label="Number 13"
@@ -261,12 +261,12 @@ const PqrData = () => {
                   pqr?.estadoVencimiento === "VENCIDO"
                     ? " #dc2626"
                     : pqr?.estadoVencimiento === "POR VENCER"
-                      ? "#ffe900"
-                      : pqr?.estadoVencimiento === "EN ESPERA"
-                        ? "#38b6ff"
-                        : pqr?.estadoVencimiento === "A TIEMPO"
-                          ? "#22c55e"
-                          : "#d1d5db",
+                    ? "#ffe900"
+                    : pqr?.estadoVencimiento === "EN ESPERA"
+                    ? "#38b6ff"
+                    : pqr?.estadoVencimiento === "A TIEMPO"
+                    ? "#22c55e"
+                    : "#d1d5db",
               }}
             >
               {pqr?.diasRestantes}
@@ -327,13 +327,13 @@ const PqrData = () => {
               : "max-h-[250px] overflow-y-auto"
           }`}
         >
-
           <div className="space-y-4">
             {pqr?.detalle && (
               <PqrChat
                 key={pqr.id}
                 detalles={pqr.detalle}
                 detallePqrId={pqr.id}
+                cliente={pqr.cliente}
               />
             )}
           </div>
@@ -348,7 +348,8 @@ const PqrData = () => {
                 <FloatingSelectLP
                   value={eventoSeleccionado?.id ?? ""}
                   onChange={(value) => {
-                    const seleccionado = eventos.find(e => e.id === value) || null;
+                    const seleccionado =
+                      eventos.find((e) => e.id === value) || null;
                     setEventoSeleccionado(seleccionado);
                   }}
                   options={opcionesEventos}
@@ -377,12 +378,13 @@ const PqrData = () => {
                   id="descripcion"
                   name="descripcion"
                   value={descripcion}
-                  onChange={(e) => setDescripcion(EliminarEmojis(e.target.value))}
+                  onChange={(e) =>
+                    setDescripcion(EliminarEmojis(e.target.value))
+                  }
                   rows={3}
                   placeholder="Descripción"
                   className="w-full border border-gray-300 rounded-md p-2 text-sm resize-none overflow-y-auto max-h-24 focus:outline-none focus:ring-2 focus:ring-green-400 mt-5"
                 />
-
               </div>
 
               <div className=" mt-0">
@@ -415,15 +417,18 @@ const PqrData = () => {
               </div>
 
               <div className="flex flex-wrap items-center justify-between">
-                {eventoSeleccionado?.obligandoAnexo &&
+                {eventoSeleccionado?.obligandoAnexo && (
                   <label
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-emerald-400 text-white hover:bg-emerald-500"
-                      }`}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${
+                      archivos.length >= 5
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-emerald-400 text-white hover:bg-emerald-500"
+                    }`}
                   >
                     <Paperclip className="w-4 h-4" />
-                    {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}
+                    {archivos.length >= 5
+                      ? "Límite alcanzado"
+                      : "Subir archivos"}
                     <input
                       key={inputKey}
                       type="file"
@@ -433,14 +438,13 @@ const PqrData = () => {
                       disabled={archivos.length >= 5}
                     />
                   </label>
-                }
+                )}
                 <button
                   type="submit"
                   className="ml-auto bg-green-600 hover:bg-green-700 text-white text-lg rounded-3xl px-[22px] py-[7px]"
                 >
                   Guardar
                 </button>
-
               </div>
             </form>
           </div>

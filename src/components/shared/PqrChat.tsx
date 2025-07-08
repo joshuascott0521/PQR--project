@@ -2,19 +2,24 @@ import { useState } from "react";
 import type { DetallePqr } from "../../interfaces/pqrInterfaces";
 import {
   ArchivoServices,
+  NotificacionesService,
 } from "../../services/pqrServices";
 import { NotificacionServices } from "../../services/pqrServices";
 import { showToast } from "../../utils/toastUtils";
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import type { NotificacionDetalle } from "../../interfaces/pqrInterfaces";
+import NotificationForm from "./NotificationForm";
+import { Plus } from "lucide-react";
 
 const PqrChat = ({
   detalles,
   detallePqrId,
+  cliente,
 }: {
   detalles: DetallePqr["detalle"];
   detallePqrId: string;
+  cliente: DetallePqr["cliente"];
 }) => {
   const navigate = useNavigate();
   const [expandedItem, setExpandedItem] = useState<number | null>(null);
@@ -22,6 +27,13 @@ const PqrChat = ({
     Record<number, NotificacionDetalle[]>
   >({});
   const [loadingItems, setLoadingItems] = useState<number[]>([]);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState<number | null>(null);
+
+  const mostrarBoton = (nombreEvento?: string) => {
+    const eventosExcluidos = ["Anular", "Comentario", "Ingreso"];
+    return !!nombreEvento && !eventosExcluidos.includes(nombreEvento.trim());
+  };
 
   const getDetalle = (id: any, tipoTercero: any) => {
     if (tipoTercero === "Cliente") {
@@ -88,6 +100,52 @@ const PqrChat = ({
       );
     }
   };
+  const enviarNotificacion = async (item?: number) => {
+    if (item === undefined) {
+      showToast("No se pudo enviar la notificación: item no definido.");
+      return;
+    }
+    const prueba = NotificacionesService.getMediosNotificacion();
+
+    console.log(cliente);
+
+    const datos = {
+      pqrId: detallePqrId, // este ya es string
+      item, // este ya es number
+      medio: "",
+      destinatario: "",
+      destinatarioDocumento: cliente?.documento ?? "",
+      destinatarioNombre: cliente?.nombre ?? "",
+      destinatarioCalidad: "",
+    };
+    console.log(datos);
+
+    try {
+      const envio = NotificacionesService.enviarNotificaciones(datos);
+
+      // if (envio.success) {
+      //   showToast("✅ Notificación enviada correctamente.");
+      // } else {
+      //   showToast(envio.message || "Error al enviar notificación.");
+      // }
+      console.log((await prueba).data);
+
+      console.log("Resultado del envío de notificación:", envio);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showToast(`❌ Error al enviar la notificación: ${error.message}`);
+      } else {
+        showToast("❌ Error inesperado al enviar la notificación.");
+      }
+      console.error("Error al enviar notificación:", error);
+    }
+  };
+  const handleEnviarFormulario = (data: any) => {
+    console.log("📤 Enviando formulario con datos:", data);
+    setMostrarModal(false);
+    showToast("✅ Formulario enviado (simulado)");
+    // Aquí puedes llamar a NotificacionesService.enviarNotificaciones(data)
+  };
 
   return (
     <>
@@ -101,18 +159,24 @@ const PqrChat = ({
               <div>
                 <div
                   onClick={() =>
-                    getDetalle(detalle?.tercero?.id, detalle.tercero.tipoTercero)
+                    getDetalle(
+                      detalle?.tercero?.id,
+                      detalle.tercero.tipoTercero
+                    )
                   }
                   className={`
                     flex items-center justify-center w-8 h-8 rounded-full cursor-pointer
-                    ${detalle.tercero.tipoTercero === 'Cliente' ? 'bg-green-200 text-green-700' :
-                    detalle.tercero.tipoTercero === 'Funcionario' ? 'bg-yellow-200 text-yellow-700' :
-                    'bg-gray-200 text-gray-700'}
+                    ${
+                      detalle.tercero.tipoTercero === "Cliente"
+                        ? "bg-green-200 text-green-700"
+                        : detalle.tercero.tipoTercero === "Funcionario"
+                        ? "bg-yellow-200 text-yellow-700"
+                        : "bg-gray-200 text-gray-700"
+                    }
                   `}
                 >
                   <i className="fas fa-user"></i>
                 </div>
-
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -152,8 +216,8 @@ const PqrChat = ({
                 detalle.tercero.tipoTercero === "Cliente"
                   ? "#e2ffed"
                   : detalle.tercero.tipoTercero === "Funcionario"
-                    ? "#fff1dc"
-                    : "gray",
+                  ? "#fff1dc"
+                  : "gray",
             }}
           >
             {detalle.descripcion}
@@ -175,51 +239,58 @@ const PqrChat = ({
                 </div>
               </div>
             )}
-
             <div className="flex justify-start items-center space-x-3 mt-4">
               {detalle.notificable && (
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center">
+                <button
+                  onClick={() => {
+                    // setItemSeleccionado(detalle.item ?? null);
+                    setMostrarModal(true);
+                  }}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center"
+                >
                   <i className="fas fa-bell mr-2"></i> NOTIFICAR
                 </button>
               )}
 
-              {detalle.notificado ? (
-                <button
-                  className="bg-green-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center hover:bg-green-700 transition-all"
-                  onClick={() => toggleItem(detalle.item)}
-                >
-                  <i className="fas fa-check-circle mr-2"></i> NOTIFICADO
-                  <span className="ml-2 transition-transform duration-300">
-                    {expandedItem === detalle.item ? (
-                      <FaChevronUp className="text-xs" />
-                    ) : (
-                      <FaChevronDown className="text-xs" />
-                    )}
-                  </span>
-                </button>
-              ) : (
-                <button
-                  className="bg-red-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center hover:bg-red-700 transition-all"
-                  onClick={() => toggleItem(detalle.item)}
-                >
-                  <i className="fas fa-times-circle mr-2"></i> SIN NOTIFICAR
-                  <span className="ml-2 transition-transform duration-300">
-                    {expandedItem === detalle.item ? (
-                      <FaChevronUp className="text-xs" />
-                    ) : (
-                      <FaChevronDown className="text-xs" />
-                    )}
-                  </span>
-                </button>
-              )}
+              {mostrarBoton(detalle.nombreEvento) &&
+                (detalle.notificado ? (
+                  <button
+                    className="bg-green-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center hover:bg-green-700 transition-all"
+                    onClick={() => toggleItem(detalle.item)}
+                  >
+                    <i className="fas fa-check-circle mr-2"></i> NOTIFICADO
+                    <span className="ml-2 transition-transform duration-300">
+                      {expandedItem === detalle.item ? (
+                        <FaChevronUp className="text-xs" />
+                      ) : (
+                        <FaChevronDown className="text-xs" />
+                      )}
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    className="bg-red-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center hover:bg-red-700 transition-all"
+                    onClick={() => toggleItem(detalle.item)}
+                  >
+                    <i className="fas fa-times-circle mr-2"></i> SIN NOTIFICAR
+                    <span className="ml-2 transition-transform duration-300">
+                      {expandedItem === detalle.item ? (
+                        <FaChevronUp className="text-xs" />
+                      ) : (
+                        <FaChevronDown className="text-xs" />
+                      )}
+                    </span>
+                  </button>
+                ))}
             </div>
 
             {/* Tabla de notificaciones */}
             <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedItem === detalle.item
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                expandedItem === detalle.item
                   ? "max-h-[1000px] opacity-100 mt-4"
                   : "max-h-0 opacity-0"
-                }`}
+              }`}
             >
               <div className="border border-gray-200 rounded-md">
                 <table className="min-w-full text-sm text-left text-gray-700 bg-white">
@@ -306,6 +377,37 @@ const PqrChat = ({
           </div>
         </div>
       ))}
+      {mostrarModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center"
+          onClick={() => setMostrarModal(false)}
+        >
+          <div
+            className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full mx-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Botón de cerrar */}
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-3xl font-bold"
+              onClick={() => setMostrarModal(false)}
+            >
+              &times;
+            </button>
+
+            <h2 className="relative pl-12 text-lg font-semibold mb-4 text-gray-800 flex items-center">
+              <div className="w-8 h-8 rounded-full bg-[#00669b] flex items-center justify-center absolute left-0 top-[-2px]">
+                <Plus className="text-white text-lg" />
+              </div>
+              Enviar notificación manual
+            </h2>
+
+            <NotificationForm
+              onSubmit={handleEnviarFormulario}
+              onClose={() => setMostrarModal(false)}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };

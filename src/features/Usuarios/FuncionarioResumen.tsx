@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ClienteCardSkeleton from "../../components/shared/ClienteCardSkeleton";
 import type { Pqr, Usuario } from "../../interfaces/pqrInterfaces";
 import FuncionarioCard from "../../components/shared/FuncionarioCard";
-import { data, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { PqrServices, UsersServices } from "../../services/pqrServices";
 import ResumenItem from "../../components/shared/ResumeItem";
 import UserCard from "../../components/shared/UserCard";
@@ -11,7 +11,7 @@ const colores = {
   "A TIEMPO": "bg-green-300",
   "POR VENCER": "bg-yellow-300",
   VENCIDO: "bg-red-400",
-  FINALIZADOS: "bg-blue-300",
+  FINALIZADO: "bg-blue-300",
   ANULADO: "bg-gray-300",
   "EN ESPERA": "bg-orange-300",
 };
@@ -70,14 +70,14 @@ const FuncionarioResumen = () => {
 
     setLoadingPqrs(true);
     console.log("🐦‍🔥", resumen, "📌📌", estado);
-
+    console.log("🐦‍🔥", estado);
     try {
       const nuevos = await PqrServices.getByFuncionarioId({
-        usuid: resumen.id,
+        funcionarioId: resumen.id,
         page: 1,
         size: 10,
         orden: 1,
-        estadoVencimiento: estado,
+        estado: estado,
       });
 
       if (nuevos.data.length < 10) setHasMorePqrs(false);
@@ -109,7 +109,7 @@ const FuncionarioResumen = () => {
         usuid: funcionario.id,
         page: paginaActual,
         size: 10,
-        estadoVencimiento: estado,
+        estado: estado,
       });
 
       if (!nuevos || nuevos.length === 0 || nuevos.data.length < 10) {

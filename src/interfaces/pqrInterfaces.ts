@@ -62,7 +62,25 @@ export interface DetallePqr {
   codigoColorEstado?: string;
   estado?: string;
   detalle?: Detalle[];
+  cliente?: Cliente;
   funcionario?: Funcionario;
+}
+export interface Cliente {
+  id: string;
+  documento: string;
+  nombre: string;
+  email: string;
+  celular: string;
+  direccion: string;
+  departamentoCod: number;
+  departamentoNombre: string;
+  municipioCod: number;
+  municipioNombre: string;
+  tipoClienteId: string;
+  tipoClienteNombre: string;
+}
+export interface MedioNotificacion {
+  medio: string;
 }
 
 export interface GetPqr {
@@ -138,7 +156,6 @@ export interface CrearPqrResponse {
   mensaje: string;
 }
 
-
 export interface Funcionario {
   id: string;
   documento: string;
@@ -152,7 +169,7 @@ export interface Detalle {
   item?: number;
   orden?: number;
   fechaCreacion?: string;
-  nombreEvento?: string;
+  nombreEvento?: string | undefined;
   descripcion?: string;
   codigoColorEstado?: string;
   tercero: Tercero;
@@ -305,4 +322,14 @@ export interface NotificacionDetalle {
   nombre: string;
   estado: string;
   fecha: string;
+}
+
+export interface EnviarNotificacion {
+  pqrId: string;
+  item: number;
+  medio: string;
+  destinatario: string;
+  destinatarioDocumento: string;
+  destinatarioNombre: string;
+  destinatarioCalidad: string;
 }

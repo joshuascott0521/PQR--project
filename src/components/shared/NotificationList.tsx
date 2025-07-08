@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { BsExclamationCircleFill, BsCheckCircleFill } from "react-icons/bs";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { IoWarning } from "react-icons/io5";
@@ -8,7 +8,6 @@ import { CardSkeleton } from "./CardSkeleton";
 
 interface NotificationListProps {
   setUnreadCount: React.Dispatch<React.SetStateAction<number>>;
-  setShowNotifications: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface RawNotificacion {
@@ -50,107 +49,62 @@ const getIconByState = (state: Notification["estado"]) => {
   }
 };
 
-const NotificationList = ({
-  setUnreadCount,
-  setShowNotifications,
-}: NotificationListProps) => {
+const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const observerRef = useRef<HTMLDivElement | null>(null);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const isFetching = useRef(false);
+  const fetchNotificaciones = async (page = 1) => {
+    const userDataString = localStorage.getItem("userData");
+    const userData = userDataString ? JSON.parse(userDataString) : null;
+    const usuarioId = userData?.id;
+    if (!usuarioId) return;
 
-  const fetchNotificaciones = useCallback(
-    async (page: number) => {
-      if (isFetching.current || !hasMore) return;
-      isFetching.current = true;
-      setIsLoading(true);
+    const { success, data } = await NotificacionesService.getAlertas(
+      usuarioId,
+      page
+    );
+    if (!success || !data) {
+      setHasMore(false);
+      return;
+    }
 
-      const userDataString = localStorage.getItem("userData");
-      const userData = userDataString ? JSON.parse(userDataString) : null;
-      const usuarioId = userData?.id;
-      if (!usuarioId) return;
+    const rawAlertas: RawNotificacion[] = data.alertas;
+    const mapeadas: Notification[] = rawAlertas.map((n) => ({
+      id: n.id,
+      consecutivo: String(n.consecutivo),
+      cliente: n.nombre,
+      asunto: n.asunto,
+      alerta: n.mensaje,
+      tipo: n.tipoPQR,
+      fecha: new Date(n.fechaCreacion).toLocaleDateString("es-CO"),
+      leido: n.estado === "Leido",
+      estado:
+        n.tipoAlerta === "Nuevo"
+          ? "new"
+          : n.tipoAlerta === "Alerta"
+          ? "alert"
+          : "success",
+    }));
 
-      const { success, data } = await NotificacionesService.getAlertas(
-        usuarioId,
-        page
-      );
-      if (!success || !data) {
-        setHasMore(false);
-        setIsLoading(false);
-        return;
-      }
+    setNotifications((prev) => {
+      const existingIds = new Set(prev.map((n) => n.id));
+      const nuevos = mapeadas.filter((n) => !existingIds.has(n.id));
+      return [...prev, ...nuevos];
+    });
 
-      const rawAlertas: RawNotificacion[] = data.alertas;
-      const nuevas: Notification[] = rawAlertas.map((n) => ({
-        id: n.id,
-        consecutivo: String(n.consecutivo),
-        cliente: n.nombre,
-        asunto: n.asunto,
-        alerta: n.mensaje,
-        tipo: n.tipoPQR,
-        fecha: new Date(n.fechaCreacion).toLocaleDateString("es-CO"),
-        leido: n.estado === "Leido",
-        estado: ((): Notification["estado"] => {
-          switch (n.tipoAlerta) {
-            case "Nuevo":
-              return "new";
-            case "Alerta":
-              return "alert";
-            case "Warning":
-              return "warning";
-            case "Success":
-              return "success";
-            default:
-              return "success"; // valor por defecto válido
-          }
-        })(),
-      }));
+    if (mapeadas.length === 0) {
+      setHasMore(false);
+    }
 
-      setNotifications((prev) => {
-        const existentes = new Set(prev.map((n) => n.id));
-        const filtradas = nuevas.filter((n) => !existentes.has(n.id));
-        return [...prev, ...filtradas];
-      });
-
-      if (nuevas.length === 0) {
-        setHasMore(false);
-      }
-
-      setIsLoading(false);
-      isFetching.current = false;
-    },
-    [hasMore]
-  );
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     fetchNotificaciones(pageNumber);
-  }, [pageNumber, fetchNotificaciones]);
-
-  // Intersección con el último elemento
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting && hasMore && !isLoading) {
-          setPageNumber((prev) => prev + 1);
-        }
-      },
-      {
-        root: null,
-        rootMargin: "0px",
-        threshold: 1.0,
-      }
-    );
-
-    if (observerRef.current) observer.observe(observerRef.current);
-    return () => {
-      if (observerRef.current) observer.unobserve(observerRef.current);
-    };
-  }, [hasMore, isLoading]);
+  }, [pageNumber]);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -167,20 +121,24 @@ const NotificationList = ({
 
   const handleClickNotificacion = async (id: number) => {
     try {
-      setShowNotifications(false); // Cierra el menú
-
       const detalle = await NotificacionesService.getAlertaDetalle(id);
 
+      // ✅ Actualiza la notificación con datos del backend
       setNotifications((prev) =>
         prev.map((n) =>
           n.consecutivo === String(detalle.consecutivo)
-            ? { ...n, leido: detalle.estado === "Leido" }
+            ? {
+                ...n,
+                leido: detalle.estado === "Leido",
+              }
             : n
         )
       );
 
+      // ✅ Redirige
       navigate(`/dashboard/PQR/detalle/${detalle.pqrId}`);
 
+      // ✅ Actualiza contador global
       const userDataString = localStorage.getItem("userData");
       const userData = userDataString ? JSON.parse(userDataString) : null;
       const usuarioId = userData?.id;
@@ -203,8 +161,14 @@ const NotificationList = ({
       <div className="p-4 border-b">
         <h2 className="text-lg font-semibold">Alertas</h2>
       </div>
-      <div className="max-h-[350px] overflow-y-auto divide-y">
-        {notifications.length === 0 && !isLoading ? (
+      <div className="max-h-[400px] overflow-y-auto divide-y">
+        {isLoading ? (
+          <div className="flex flex-col gap-2 p-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <CardSkeleton key={i} size="classic" />
+            ))}
+          </div>
+        ) : notifications.length === 0 ? (
           <p className="text-center text-gray-400 py-4">
             No se encontraron alertas.
           </p>
@@ -261,20 +225,22 @@ const NotificationList = ({
             </div>
           ))
         )}
-        {isLoading && (
-          <div className="flex flex-col gap-2 p-4">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <CardSkeleton key={i} size="classic" />
-            ))}
-          </div>
-        )}
-        {!hasMore && notifications.length > 0 && (
+        {!isLoading && !hasMore && (
           <div className="p-4 text-center text-gray-400">
             No hay más alertas.
           </div>
         )}
-        <div ref={observerRef} className="" />{" "}
-        {/* Marcador para scroll infinito */}
+        {!isLoading && hasMore && (
+          <div className="p-4 text-center">
+            <button
+              disabled={isLoading}
+              onClick={() => setPageNumber((prev) => prev + 1)}
+              className="text-blue-600 underline hover:text-blue-800 transition disabled:opacity-50"
+            >
+              Ver más alertas
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

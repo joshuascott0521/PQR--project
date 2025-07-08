@@ -382,6 +382,10 @@ export default function StepForm() {
       if (res.success) {
         setLoading(false);
         mostrarAlertaExito("¡PQR registrado exitosamente!");
+        setTimeout(() => {
+          window.location.href =
+            "https://baranoa-atlantico.gov.co/Paginas/Home.aspx";
+        }, 1000);
 
         console.log("Respuesta PQR ✅✅✅✅", res.data);
         console.log("Carga PQR 🔴🔴🔴🔴🔴", formData);
@@ -434,12 +438,13 @@ export default function StepForm() {
                   className="flex-1 flex flex-col items-center relative z-10"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${index < step
-                      ? "bg-green-500 text-white border-green-500"
-                      : index === step
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
+                      index < step
+                        ? "bg-green-500 text-white border-green-500"
+                        : index === step
                         ? "bg-white text-green-500 border-green-500"
                         : "bg-gray-200 text-gray-500 border-gray-300"
-                      }`}
+                    }`}
                   >
                     {index + 1}
                   </div>
@@ -483,7 +488,9 @@ export default function StepForm() {
                           documentoCliente: valorSinPuntos,
                         }));
                       }}
-                      className={errores.documentoCliente ? "border-red-500" : ""}
+                      className={
+                        errores.documentoCliente ? "border-red-500" : ""
+                      }
                     />
 
                     <FloatingLabel
@@ -502,7 +509,10 @@ export default function StepForm() {
                       label="Tipo Cliente"
                       value={formData.tipoClienteId}
                       onChange={(value) =>
-                        setFormData((prev) => ({ ...prev, tipoClienteId: value }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          tipoClienteId: value,
+                        }))
                       }
                       options={tipoCliente.map((tc) => ({
                         value: tc.id,
@@ -530,7 +540,10 @@ export default function StepForm() {
                       value={formatearCelular(formData.celular)}
                       onChange={(e) => {
                         // Quitar todos los caracteres que no sean dígitos
-                        let valorSinEspacios = e.target.value.replace(/\D/g, "");
+                        let valorSinEspacios = e.target.value.replace(
+                          /\D/g,
+                          ""
+                        );
 
                         // Limitar a 10 dígitos
                         if (valorSinEspacios.length > 10) {
@@ -568,7 +581,9 @@ export default function StepForm() {
                       placeholder="Seleccionar Departamento"
                       onChange={async (value) => {
                         const cod = Number(value);
-                        const dep = listaDepartamentos.find((d) => d.cod === cod);
+                        const dep = listaDepartamentos.find(
+                          (d) => d.cod === cod
+                        );
                         if (dep) {
                           setFormData((prev) => ({
                             ...prev,
@@ -593,7 +608,9 @@ export default function StepForm() {
                         value: dep.cod?.toString() || "",
                         label: dep.nombre || "",
                       }))}
-                      className={errores.departamentoCod ? "border-red-500" : ""}
+                      className={
+                        errores.departamentoCod ? "border-red-500" : ""
+                      }
                     />
 
                     {formData.departamentoCod !== 0 && (
@@ -611,7 +628,9 @@ export default function StepForm() {
                         }))}
                         onChange={(value) => {
                           const cod = parseInt(value, 10);
-                          const mun = listaMunicipios.find((m) => m.cod === cod);
+                          const mun = listaMunicipios.find(
+                            (m) => m.cod === cod
+                          );
                           if (mun) {
                             setFormData((prev) => ({
                               ...prev,
@@ -701,10 +720,11 @@ export default function StepForm() {
                           }}
                           rows={4}
                           placeholder="Descripción"
-                          className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion
-                            ? "border-red-500 focus:ring-red-500"
-                            : "border-gray-300 focus:ring-green-500"
-                            }`}
+                          className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
+                            errores.descripcion
+                              ? "border-red-500 focus:ring-red-500"
+                              : "border-gray-300 focus:ring-green-500"
+                          }`}
                         />
                       </div>
                     </div>
@@ -740,10 +760,11 @@ export default function StepForm() {
                     {/* Botón de subir archivos */}
                     <label
                       className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${archivos.length >= 5
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-emerald-400 text-white hover:bg-emerald-500"
-                        }
+                     ${
+                       archivos.length >= 5
+                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                         : "bg-emerald-400 text-white hover:bg-emerald-500"
+                     }
                     `}
                     >
                       <Paperclip className="w-4 h-4" />
@@ -796,7 +817,8 @@ export default function StepForm() {
                       htmlFor="autorizacion"
                       className="text-gray-800 text-sm"
                     >
-                      Autorizo tratamiento de datos y notificaciones electrónicas.
+                      Autorizo tratamiento de datos y notificaciones
+                      electrónicas.
                     </label>
                   </div>
 

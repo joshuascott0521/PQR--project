@@ -9,8 +9,10 @@ import type {
   CreatePqr,
   departamento,
   DetallePqrCreate,
+  EnviarNotificacion,
   EstadoFlujoData,
   Evento,
+  MedioNotificacion,
   Municipio,
   NotificacionDetalle,
   Parameters,
@@ -25,11 +27,13 @@ import type {
 } from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
+  funcionarioId?: string;
   page: number;
   size: number;
   estadoProceso?: string;
-  estadoVencimiento?: string;
+  estado?: string;
   orden?: number;
+  estadoVencimiento?: string;
 }
 export const typeSelectComents = {
   getEvento: async (id: string): Promise<ApiResponse<Evento[]>> => {
@@ -139,6 +143,7 @@ export const PqrServices = {
       };
     }
   },
+
   getByEstado: async ({
     usuid,
     page,
@@ -182,21 +187,19 @@ export const PqrServices = {
     }
   },
   getByFuncionarioId: async ({
-    usuid,
+    funcionarioId,
     page,
     size,
-    estadoProceso,
     orden,
-    estadoVencimiento,
-  }: GetPqrParams & { usuid: string }): Promise<ApiResponse<Pqr[]>> => {
+    estado,
+  }: GetPqrParams & { funcionarioId: string }): Promise<ApiResponse<Pqr[]>> => {
     try {
       const response = await apiClient.get<Pqr[]>("/PQR/GetByFuncionarioId", {
         params: {
-          usuid,
+          funcionarioId,
           pagenumber: page,
           pagesize: size,
-          estadoProceso,
-          estadoVencimiento,
+          estado,
           orden,
         },
       });
@@ -796,6 +799,39 @@ export const NotificacionesService = {
       return response.data;
     } catch {
       throw new Error("Error al obtener detalle de la alerta");
+    }
+  },
+  enviarNotificaciones: async (
+    enviarNotificacion: EnviarNotificacion
+  ): Promise<ApiResponse<EnviarNotificacion>> => {
+    try {
+      const response = await apiClient.post(
+        "PQRDetalle/enviar-notificacion",
+        enviarNotificacion
+      );
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.log(error);
+      return {
+        success: false,
+        data: {} as EnviarNotificacion,
+
+        // error: error,
+      };
+    }
+  },
+  getMediosNotificacion: async (): Promise<
+    ApiResponse<MedioNotificacion[]>
+  > => {
+    try {
+      const response = await apiClient.get("/PQRDetalle/GetMediosNotificacion");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Clientes",
+      };
     }
   },
 };
