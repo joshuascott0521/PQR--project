@@ -323,8 +323,8 @@ const PqrData = () => {
         <div
           className={`flex mt-5 flex-col h-full transition-all duration-300 ${
             ["Finalizado", "Anulado"].includes(pqr?.estado || "")
-              ? "h-[calc(100vh-250px)] overflow-y-auto"
-              : "max-h-[250px] overflow-y-auto"
+              ? "h-[calc(100vh-220px)] overflow-y-auto"
+              : "max-h-[220px] overflow-y-auto"
           }`}
         >
           <div className="space-y-4">
