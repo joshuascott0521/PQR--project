@@ -9,6 +9,7 @@ import type {
   CreatePqr,
   departamento,
   DetallePqrCreate,
+  DominioConstraint,
   EnviarNotificacion,
   EstadoFlujoData,
   Evento,
@@ -831,6 +832,32 @@ export const NotificacionesService = {
         success: false,
         data: [],
         error: error.response?.data?.message || "Error al cargar Clientes",
+      };
+    }
+  },
+  getCalidadNotificacion: async (): Promise<
+    ApiResponse<DominioConstraint | null>
+  > => {
+    try {
+      const response = await apiClient.get<DominioConstraint[]>(
+        "/Parametro/GetDominiosAll"
+      );
+
+      const calidad = response.data.find(
+        (item) => item.constraintName === "chk_PQRNotificacion_Calidad"
+      );
+
+      return {
+        success: true,
+        data: calidad ?? null,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: null,
+        error:
+          error.response?.data?.message ||
+          "Error al obtener dominios de calidad",
       };
     }
   },

@@ -80,7 +80,9 @@ export interface Cliente {
   tipoClienteNombre: string;
 }
 export interface MedioNotificacion {
-  medio: string;
+  medio?: string;
+  codigo?: string;
+  nombre?: string;
 }
 
 export interface GetPqr {
@@ -332,4 +334,10 @@ export interface EnviarNotificacion {
   destinatarioDocumento: string;
   destinatarioNombre: string;
   destinatarioCalidad: string;
+}
+export interface DominioConstraint {
+  constraintName: string;
+  tableName: string;
+  columnName: string;
+  allowedValues: string[];
 }

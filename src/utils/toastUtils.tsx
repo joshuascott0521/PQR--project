@@ -4,14 +4,17 @@ import toast, { type ToastOptions } from "react-hot-toast";
 const MAX_TOASTS = 4;
 const activeToasts: string[] = [];
 
+/**
+ * Muestra un toast y retorna su ID.
+ */
 export const showToast = (
   message: string,
   type: "error" | "success" | "loading" = "error",
   options: ToastOptions = {}
-) => {
+): string => {
   // Si ya hay 4 toasts, elimina el más antiguo
   if (activeToasts.length >= MAX_TOASTS) {
-    const oldestId = activeToasts.shift(); // elimina el más antiguo
+    const oldestId = activeToasts.shift();
     if (oldestId) toast.dismiss(oldestId);
   }
 
@@ -26,4 +29,17 @@ export const showToast = (
   }
 
   activeToasts.push(toastId);
+  return toastId; // ← Retornar el ID
+};
+
+/**
+ * Elimina un toast dado su ID.
+ */
+export const dismissToast = (toastId: string) => {
+  toast.dismiss(toastId);
+  // También lo quitamos del array de activos si existe
+  const index = activeToasts.indexOf(toastId);
+  if (index !== -1) {
+    activeToasts.splice(index, 1);
+  }
 };

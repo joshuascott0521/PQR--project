@@ -5,12 +5,13 @@ import {
   NotificacionesService,
 } from "../../services/pqrServices";
 import { NotificacionServices } from "../../services/pqrServices";
-import { showToast } from "../../utils/toastUtils";
+import { dismissToast, showToast } from "../../utils/toastUtils";
 import { useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import type { NotificacionDetalle } from "../../interfaces/pqrInterfaces";
 import NotificationForm from "./NotificationForm";
 import { Plus } from "lucide-react";
+import { toast } from "react-toastify";
 
 const PqrChat = ({
   detalles,
@@ -100,51 +101,70 @@ const PqrChat = ({
       );
     }
   };
-  const enviarNotificacion = async (item?: number) => {
-    if (item === undefined) {
-      showToast("No se pudo enviar la notificación: item no definido.");
-      return;
-    }
-    const prueba = NotificacionesService.getMediosNotificacion();
+  // const enviarNotificacion = async (item?: number) => {
+  //   if (item === undefined) {
+  //     showToast("No se pudo enviar la notificación: item no definido.");
+  //     return;
+  //   }
+  //   const prueba = NotificacionesService.getMediosNotificacion();
 
-    console.log(cliente);
+  //   console.log(cliente);
 
-    const datos = {
-      pqrId: detallePqrId, // este ya es string
-      item, // este ya es number
-      medio: "",
-      destinatario: "",
-      destinatarioDocumento: cliente?.documento ?? "",
-      destinatarioNombre: cliente?.nombre ?? "",
-      destinatarioCalidad: "",
-    };
-    console.log(datos);
+  //   const datos = {
+  //     pqrId: detallePqrId, // este ya es string
+  //     item, // este ya es number
+  //     medio: "",
+  //     destinatario: "",
+  //     destinatarioDocumento: cliente?.documento ?? "",
+  //     destinatarioNombre: cliente?.nombre ?? "",
+  //     destinatarioCalidad: "",
+  //   };
+  //   console.log(datos);
+
+  //   try {
+  //     const envio = NotificacionesService.enviarNotificaciones(datos);
+
+  //     // if (envio.success) {
+  //     //   showToast("✅ Notificación enviada correctamente.");
+  //     // } else {
+  //     //   showToast(envio.message || "Error al enviar notificación.");
+  //     // }
+  //     console.log((await prueba).data);
+
+  //     console.log("Resultado del envío de notificación:", envio);
+  //   } catch (error: unknown) {
+  //     if (error instanceof Error) {
+  //       showToast(`❌ Error al enviar la notificación: ${error.message}`);
+  //     } else {
+  //       showToast("❌ Error inesperado al enviar la notificación.");
+  //     }
+  //     console.error("Error al enviar notificación:", error);
+  //   }
+  // };
+  const handleEnviarFormulario = async (data: any) => {
+    const toastId = showToast("Enviando notificación...", "loading");
 
     try {
-      const envio = NotificacionesService.enviarNotificaciones(datos);
+      const envio = await NotificacionesService.enviarNotificaciones(data);
+      setMostrarModal(true);
+      dismissToast(toastId);
 
-      // if (envio.success) {
-      //   showToast("✅ Notificación enviada correctamente.");
-      // } else {
-      //   showToast(envio.message || "Error al enviar notificación.");
-      // }
-      console.log((await prueba).data);
-
-      console.log("Resultado del envío de notificación:", envio);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        showToast(`❌ Error al enviar la notificación: ${error.message}`);
+      if (envio.success) {
+        showToast("Notificación enviada correctamente.", "success");
       } else {
-        showToast("❌ Error inesperado al enviar la notificación.");
+        showToast(envio.message || "❌ Error al enviar notificación.");
       }
-      console.error("Error al enviar notificación:", error);
+
+      setMostrarModal(false);
+    } catch (error: any) {
+      dismissToast(toastId);
+
+      if (error instanceof Error) {
+        showToast(`Error: ${error.message}`);
+      } else {
+        showToast("Error inesperado al enviar notificación.");
+      }
     }
-  };
-  const handleEnviarFormulario = (data: any) => {
-    console.log("📤 Enviando formulario con datos:", data);
-    setMostrarModal(false);
-    showToast("✅ Formulario enviado (simulado)");
-    // Aquí puedes llamar a NotificacionesService.enviarNotificaciones(data)
   };
 
   return (
@@ -243,7 +263,7 @@ const PqrChat = ({
               {detalle.notificable && (
                 <button
                   onClick={() => {
-                    // setItemSeleccionado(detalle.item ?? null);
+                    setItemSeleccionado(detalle.item ?? null); // 👈 guardar item actual
                     setMostrarModal(true);
                   }}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center"
@@ -379,7 +399,7 @@ const PqrChat = ({
       ))}
       {mostrarModal && (
         <div
-          className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center !m-0"
           onClick={() => setMostrarModal(false)}
         >
           <div
@@ -404,6 +424,9 @@ const PqrChat = ({
             <NotificationForm
               onSubmit={handleEnviarFormulario}
               onClose={() => setMostrarModal(false)}
+              cliente={cliente!}
+              pqrId={detallePqrId}
+              item={itemSeleccionado!}
             />
           </div>
         </div>
