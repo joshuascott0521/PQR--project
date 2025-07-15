@@ -11,7 +11,7 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import type { NotificacionDetalle } from "../../interfaces/pqrInterfaces";
 import NotificationForm from "./NotificationForm";
 import { Plus } from "lucide-react";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 
 const PqrChat = ({
   detalles,
@@ -263,7 +263,7 @@ const PqrChat = ({
               {detalle.notificable && (
                 <button
                   onClick={() => {
-                    setItemSeleccionado(detalle.item ?? null); // 👈 guardar item actual
+                    setItemSeleccionado(detalle.item ?? null);
                     setMostrarModal(true);
                   }}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 text-sm rounded-2xl font-semibold flex items-center"
@@ -398,10 +398,7 @@ const PqrChat = ({
         </div>
       ))}
       {mostrarModal && (
-        <div
-          className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center !m-0"
-          onClick={() => setMostrarModal(false)}
-        >
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center !m-0">
           <div
             className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full mx-4 relative"
             onClick={(e) => e.stopPropagation()}

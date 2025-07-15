@@ -276,21 +276,25 @@ const PqrData = () => {
             <div className="flex items-center gap-4 justify-between">
               <div className="flex flex-wrap gap-x-6 gap-y-1 items-center text-sm text-black font-sans w-full">
                 <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                  <span className="font-normal">#</span> {pqr?.consecutivo}
+                  <span className="font-normal">#</span>
+                  {pqr?.consecutivo}
                 </span>
-                <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                  <span className="font-normal">No. Radicado:</span>{" "}
-                  {pqr?.radicado}
-                </span>
+                {pqr?.radicado && (
+                  <span className="font-bold flex items-center gap-1 whitespace-nowrap">
+                    <span className="font-normal">No. Radicado:</span>{" "}
+                    {pqr.radicado}
+                  </span>
+                )}
+
                 <span className="font-bold flex items-center gap-1 whitespace-nowrap">
                   <span className="font-normal">Fecha:</span> {pqr?.fecha}
                 </span>
-                <label className="font-bold flex items-center gap-1 whitespace-nowrap cursor-pointer max-w-[175px] w-full">
+                <div className="font-bold flex items-center gap-1 whitespace-nowrap max-w-[175px] w-full">
                   <span className="font-bold flex items-center gap-1 whitespace-nowrap">
                     <span className="font-normal">Tipo:</span>{" "}
                     {pqr?.tipoPQRNombre}
                   </span>
-                </label>
+                </div>
               </div>
               <div
                 className="px-4 w-full flex justify-center max-w-32 py-1 rounded-full bg-gray-400  text-white font-semibold text-sm  whitespace-nowrap overflow-hidden text-ellipsis"
@@ -304,7 +308,7 @@ const PqrData = () => {
                 <span className="font-bold whitespace-nowrap">Asunto:</span>
                 <span
                   className="font-normal mr-5 max-w-[525px] overflow-hidden text-ellipsis whitespace-nowrap"
-                  title="   Solicitud para revisión prueba para que me devuelvan el dinero porque me embargaron."
+                  title={pqr?.asunto}
                 >
                   {pqr?.asunto}
                 </span>

@@ -6,6 +6,7 @@ import { NotificacionesService } from "../../services/pqrServices";
 // import type { MedioNotificacion } from "../../interfaces/pqrInterfaces";
 import { FloatingSelectLP } from "./FloatingSelectLP";
 import type { Cliente } from "../../interfaces/pqrInterfaces";
+import { showToast } from "../../utils/toastUtils";
 interface NotificationFormData {
   pqrId: string;
   item: number;
@@ -67,7 +68,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
     fetchTipos();
   }, []);
   useEffect(() => {
-    console.log("xddddddddddddddd", pqrId, item);
+    // console.log("xddddddddddddddd", pqrId, item);
 
     const fetchCalidadOptions = async () => {
       const response = await NotificacionesService.getCalidadNotificacion();
@@ -85,26 +86,69 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
   const [errors, setErrors] = useState<Partial<NotificationFormData>>({});
 
   const validateForm = (): boolean => {
+    const {
+      medio,
+      destinatario,
+      destinatarioDocumento,
+      destinatarioNombre,
+      destinatarioCalidad,
+    } = formData;
+
+    const tipoLower = medio.trim().toLowerCase();
+
     const newErrors: Partial<NotificationFormData> = {};
 
-    if (!formData.destinatario.trim()) {
+    if (!medio.trim()) newErrors.medio = "El tipo de medio es obligatorio";
+    if (!destinatario.trim()) {
       newErrors.destinatario = "El destinatario es requerido";
+    } else {
+      if (
+        tipoLower.includes("sms") ||
+        tipoLower.includes("celular") ||
+        tipoLower.includes("móvil") ||
+        tipoLower.includes("teléfono")
+      ) {
+        const onlyNumbers = destinatario.replace(/\D/g, "");
+        if (onlyNumbers.length < 10) {
+          newErrors.destinatario = "El número debe tener al menos 10 dígitos";
+        }
+      } else if (tipoLower.includes("correo") || tipoLower.includes("email")) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(destinatario)) {
+          newErrors.destinatario = "Correo electrónico inválido";
+        }
+      }
     }
-    //  else if (!/^\d{10}$/.test(formData.celular)) {
-    //   newErrors.celular = "El celular debe tener 10 dígitos";
-    // }
 
-    if (!formData.destinatarioDocumento.trim()) {
+    if (!destinatarioDocumento.trim()) {
       newErrors.destinatarioDocumento =
-        "El documento de identidad es requerido";
+        "El documento de identidad es obligatorio";
     }
 
-    if (!formData.destinatarioNombre.trim()) {
-      newErrors.destinatarioNombre = "El nombre es requerido";
+    if (!destinatarioNombre.trim()) {
+      newErrors.destinatarioNombre = "El nombre es obligatorio";
+    }
+
+    if (!destinatarioCalidad.trim()) {
+      newErrors.destinatarioCalidad =
+        "La calidad del destinatario es obligatoria";
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    const keys = Object.keys(newErrors);
+
+    if (keys.length === 0) return true;
+
+    // Si solo hay un campo con error, muestra ese
+    if (keys.length === 1) {
+      const msg = (newErrors as any)[keys[0]];
+      showToast(msg);
+    } else {
+      showToast("Todos los campos son obligatorios");
+    }
+
+    return false;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -119,11 +163,29 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
     value: string
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
+
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
+
+  // 💡 Agrega esto JUSTO aquí abajo:
+  const handleDestinatarioInput = (value: string) => {
+    const tipo = formData.medio.toLowerCase();
+    const esSMS =
+      tipo.includes("sms") ||
+      tipo.includes("celular") ||
+      tipo.includes("móvil") ||
+      tipo.includes("telefono");
+
+    if (esSMS) {
+      const soloNumeros = value.replace(/\D/g, ""); // Quita todo lo que no sea número
+      handleInputChange("destinatario", soloNumeros);
+    } else {
+      handleInputChange("destinatario", value);
+    }
+  };
+
   useEffect(() => {
     if (!formData.medio) return;
 
@@ -158,13 +220,19 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
               Tipo de medio:
             </label>
             <FloatingSelectLP
+              className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-sm h-8 ${
+                errors.medio ? "border-red-500 bg-red-50" : "border-gray-300"
+              }`}
               value={formData.medio}
               onChange={(value) => handleInputChange("medio", value)}
               options={tipoOptions}
             />
+            {/* {errors.medio && (
+              <p className="text-xs text-red-600">{errors.medio}</p>
+            )} */}
           </div>
 
-          {/* Celular */}
+          {/* destinatario */}
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
               Celular/Correo
@@ -172,19 +240,16 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
             <input
               type="text"
               value={formData.destinatario}
-              onChange={(e) =>
-                handleInputChange("destinatario", e.target.value)
-              }
-              placeholder=""
+              onChange={(e) => handleDestinatarioInput(e.target.value)}
               className={` h-8 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-sm ${
                 errors.destinatario
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300"
               }`}
             />
-            {errors.destinatario && (
+            {/* {errors.destinatario && (
               <p className="text-xs text-red-600">{errors.destinatario}</p>
-            )}
+            )} */}
           </div>
 
           {/* Documento de Identidad */}
@@ -198,18 +263,17 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
               onChange={(e) =>
                 handleInputChange("destinatarioDocumento", e.target.value)
               }
-              placeholder="1048213956"
               className={` h-8 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-sm ${
                 errors.destinatarioDocumento
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300"
               }`}
             />
-            {errors.destinatarioDocumento && (
+            {/* {errors.destinatarioDocumento && (
               <p className="text-xs text-red-600">
                 {errors.destinatarioDocumento}
               </p>
-            )}
+            )} */}
           </div>
 
           {/* Nombre */}
@@ -243,13 +307,22 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
               Calidad:
             </label>
             <FloatingSelectLP
-              className="w-20"
+              className={`w-full ${
+                errors.destinatarioCalidad
+                  ? "border border-red-500 bg-red-50"
+                  : ""
+              }`}
               value={formData.destinatarioCalidad}
               onChange={(value) =>
                 handleInputChange("destinatarioCalidad", value)
               }
               options={calidadOptions}
             />
+            {/* {errors.destinatarioCalidad && (
+              <p className="text-xs text-red-600">
+                {errors.destinatarioCalidad}
+              </p>
+            )} */}
           </div>
         </div>
 

@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import { PqrServices } from "../../services/pqrServices";
 import UserCard from "../../components/shared/UserCard";
+import { CardSkeleton } from "../../components/shared/CardSkeleton";
 import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const AllPqr = () => {
@@ -12,6 +13,7 @@ const AllPqr = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [, setConteo] = useState<PqrCount>({ estado: "", cantidad: 0 });
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(loading);
@@ -85,12 +87,15 @@ const AllPqr = () => {
   }, [currentPage]);
 
   useEffect(() => {
+    setInitialLoading(true);
     setLoading(true);
 
     const cargar = async () => {
       const userData = localStorage.getItem("userData");
       if (!userData) {
         setError("Usuario no encontrado");
+        setInitialLoading(false);
+
         setLoading(false);
         return;
       }
@@ -100,6 +105,7 @@ const AllPqr = () => {
       const res = await PqrServices.getPqrCountEstadoFlujo("ANULADO", usuid);
       if (res.success) setConteo(res.data);
       console.log(res);
+      setInitialLoading(false);
     };
 
     cargar();
@@ -134,11 +140,12 @@ const AllPqr = () => {
         )}
 
         <div className="space-y-4">
-          {pqrs.map((pqr) => (
-            <UserCard key={pqr.id} pqr={pqr} />
-          ))}
+          {initialLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <CardSkeleton size="medium" key={i} />
+              ))
+            : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
-
         {loading && (
           <p className="text-center text-gray-500 mt-4">Cargando más PQRs...</p>
         )}

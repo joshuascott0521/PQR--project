@@ -8,6 +8,7 @@ import { CardSkeleton } from "./CardSkeleton";
 
 interface NotificationListProps {
   setUnreadCount: React.Dispatch<React.SetStateAction<number>>;
+  setShowNotifications: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface RawNotificacion {
@@ -49,7 +50,10 @@ const getIconByState = (state: Notification["estado"]) => {
   }
 };
 
-const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
+const NotificationList = ({
+  setUnreadCount,
+  setShowNotifications,
+}: NotificationListProps) => {
   const navigate = useNavigate();
   const [pageNumber, setPageNumber] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -137,7 +141,7 @@ const NotificationList = ({ setUnreadCount }: NotificationListProps) => {
 
       // ✅ Redirige
       navigate(`/dashboard/PQR/detalle/${detalle.pqrId}`);
-
+      setShowNotifications(false);
       // ✅ Actualiza contador global
       const userDataString = localStorage.getItem("userData");
       const userData = userDataString ? JSON.parse(userDataString) : null;
