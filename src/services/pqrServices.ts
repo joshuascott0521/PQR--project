@@ -794,7 +794,7 @@ export const NotificacionesService = {
       return 0;
     }
   },
-  getAlertaDetalle: async (id: number): Promise<{ pqrId: string }> => {
+  getAlertaDetalle: async (id: number):Promise<{ pqrId: string; consecutivo: number; estado: string }> => {
     try {
       const response = await apiClient.get(`/Alerta/Get/${id}`); // ✅ id en la URL
       return response.data;

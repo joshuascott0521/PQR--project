@@ -73,11 +73,11 @@ export interface Cliente {
   celular: string;
   direccion: string;
   departamentoCod: number;
-  departamentoNombre: string;
+  departamentoNombre?: string;
   municipioCod: number;
-  municipioNombre: string;
+  municipioNombre?: string;
   tipoClienteId: string;
-  tipoClienteNombre: string;
+  tipoClienteNombre?: string;
 }
 export interface MedioNotificacion {
   medio?: string;
@@ -106,6 +106,8 @@ export interface GetPqr {
   colorHex: string;
   fecha?: string;
 }
+
+
 
 export interface Adjunto {
   item: number;
@@ -199,7 +201,7 @@ export interface terceroAsignado {
   cargoTercero: string;
 }
 
-export interface Cliente {
+/*export interface Cliente {
   id: string;
   documento: string;
   nombre: string;
@@ -210,7 +212,7 @@ export interface Cliente {
   municipioCod: number;
   tipoClienteId: string;
   tiponame?: string;
-}
+}*/
 
 export interface Evento {
   id?: string;
