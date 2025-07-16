@@ -48,6 +48,7 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
   const [calidadOptions, setCalidadOptions] = useState<
     { value: string; label: string }[]
   >([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchTipos = async () => {
@@ -153,9 +154,11 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      onSubmit(formData);
-    }
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    onSubmit(formData);
   };
 
   const handleInputChange = (
@@ -240,13 +243,32 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
             <input
               type="text"
               value={formData.destinatario}
-              onChange={(e) => handleDestinatarioInput(e.target.value)}
+              onChange={(e) => {
+                const valor = e.target.value;
+
+                if (
+                  formData.medio.toLowerCase().includes("sms") ||
+                  formData.medio.toLowerCase().includes("celular") ||
+                  formData.medio.toLowerCase().includes("móvil") ||
+                  formData.medio.toLowerCase().includes("telefono")
+                ) {
+                  // Solo permitir números y que empiece por 3
+                  if (/^3\d*$/.test(valor) || valor === "") {
+                    handleInputChange("destinatario", valor);
+                  }
+                } else {
+                  // Si es email u otro medio, permitir cualquier texto
+                  handleInputChange("destinatario", valor);
+                }
+              }}
+              placeholder=""
               className={` h-8 w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-sm ${
                 errors.destinatario
                   ? "border-red-500 bg-red-50"
                   : "border-gray-300"
               }`}
             />
+
             {/* {errors.destinatario && (
               <p className="text-xs text-red-600">{errors.destinatario}</p>
             )} */}
@@ -294,11 +316,11 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
                   : "border-gray-300"
               }`}
             />
-            {errors.destinatarioNombre && (
+            {/* {errors.destinatarioNombre && (
               <p className="text-xs text-red-600">
                 {errors.destinatarioNombre}
               </p>
-            )}
+            )} */}
           </div>
 
           {/* Calidad */}
@@ -331,16 +353,25 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm "
+            disabled={isSubmitting}
+            className="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancelar
           </button>
+
           <button
             type="submit"
-            className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl flex items-center gap-2 text-sm"
+            disabled={isSubmitting}
+            className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Send className="w-4 h-4" />
-            Enviar
+            {isSubmitting ? (
+              <span className="animate-pulse">Enviando...</span>
+            ) : (
+              <>
+                <Send className="w-4 h-4" />
+                Enviar
+              </>
+            )}
           </button>
         </div>
       </form>

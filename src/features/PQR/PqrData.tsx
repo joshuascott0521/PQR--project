@@ -243,107 +243,110 @@ const PqrData = () => {
   return (
     <>
       <LoadingScreenBool active={loading} />
-      <div className="h-full max-h-[928px]">
-        <div className="flex gap-1 rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)] px-6 py-4 max-w-full flex-row items-center">
-          <div className="mr-[10px]">
-            <div
-              title={
-                pqr?.estadoVencimiento === "VENCIDO"
-                  ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
-                  : pqr?.estadoVencimiento === "POR VENCER"
-                  ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
-                  : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
-              }
-              className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
-              aria-label="Number 13"
-              style={{
-                backgroundColor:
+      <div className="h-full max-h-[928px] flex flex-col justify-between">
+        <div className=" flex flex-col gap-4 md:max-h-[685px] lg:max-h-[685px] xl:max-h-[800px]">
+          <div className="flex gap-1 rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)] px-6 py-4 max-w-full flex-row items-center">
+            <div className="mr-[10px]">
+              <div
+                title={
                   pqr?.estadoVencimiento === "VENCIDO"
-                    ? " #dc2626"
+                    ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
                     : pqr?.estadoVencimiento === "POR VENCER"
-                    ? "#ffe900"
-                    : pqr?.estadoVencimiento === "EN ESPERA"
-                    ? "#38b6ff"
-                    : pqr?.estadoVencimiento === "A TIEMPO"
-                    ? "#22c55e"
-                    : "#d1d5db",
-              }}
-            >
-              {pqr?.diasRestantes}
+                    ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
+                    : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
+                }
+                className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
+                aria-label="Number 13"
+                style={{
+                  backgroundColor:
+                    pqr?.estadoVencimiento === "VENCIDO"
+                      ? " #dc2626"
+                      : pqr?.estadoVencimiento === "POR VENCER"
+                      ? "#ffe900"
+                      : pqr?.estadoVencimiento === "EN ESPERA"
+                      ? "#38b6ff"
+                      : pqr?.estadoVencimiento === "A TIEMPO"
+                      ? "#22c55e"
+                      : "#d1d5db",
+                }}
+              >
+                {pqr?.diasRestantes}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col w-full">
-            <div className="flex items-center gap-4 justify-between">
-              <div className="flex flex-wrap gap-x-6 gap-y-1 items-center text-sm text-black font-sans w-full">
-                <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                  <span className="font-normal">#</span>
-                  {pqr?.consecutivo}
-                </span>
-                {pqr?.radicado && (
+            <div className="flex flex-col w-full">
+              <div className="flex items-center gap-4 justify-between">
+                <div className="flex flex-wrap gap-x-6 gap-y-1 items-center text-sm text-black font-sans w-full">
                   <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                    <span className="font-normal">No. Radicado:</span>{" "}
-                    {pqr.radicado}
+                    <span className="font-normal">#</span>
+                    {pqr?.consecutivo}
                   </span>
-                )}
+                  {pqr?.radicado && (
+                    <span className="font-bold flex items-center gap-1 whitespace-nowrap">
+                      <span className="font-normal">No. Radicado:</span>{" "}
+                      {pqr.radicado}
+                    </span>
+                  )}
 
-                <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                  <span className="font-normal">Fecha:</span> {pqr?.fecha}
-                </span>
-                <div className="font-bold flex items-center gap-1 whitespace-nowrap max-w-[175px] w-full">
                   <span className="font-bold flex items-center gap-1 whitespace-nowrap">
-                    <span className="font-normal">Tipo:</span>{" "}
-                    {pqr?.tipoPQRNombre}
+                    <span className="font-normal">Fecha:</span> {pqr?.fecha}
+                  </span>
+                  <div className="font-bold flex items-center gap-1 whitespace-nowrap max-w-[175px] w-full">
+                    <span className="font-bold flex items-center gap-1 whitespace-nowrap">
+                      <span className="font-normal">Tipo:</span>{" "}
+                      {pqr?.tipoPQRNombre}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  className="px-4 w-full flex justify-center max-w-32 py-1 rounded-full bg-gray-400  text-white font-semibold text-sm  whitespace-nowrap overflow-hidden text-ellipsis"
+                  style={{ backgroundColor: pqr?.codigoColorEstado }}
+                >
+                  {pqr?.estado}
+                </div>
+              </div>
+              <div className="flex">
+                <div className="text-sm font-sans text-black max-w-full flex flex-wrap gap-1">
+                  <span className="font-bold whitespace-nowrap">Asunto:</span>
+                  <span
+                    className="font-normal mr-5 max-w-[525px] overflow-hidden text-ellipsis whitespace-nowrap"
+                    title={pqr?.asunto}
+                  >
+                    {pqr?.asunto}
+                  </span>
+                </div>
+                <div className="text-sm font-sans text-black max-w-full flex flex-wrap gap-1">
+                  <span className="font-bold whitespace-nowrap">
+                    Responsable:
+                  </span>
+                  <span className="font-normal whitespace-normal max-w-[calc(100%-5rem)]">
+                    {pqr?.funcionario?.nombre}
                   </span>
                 </div>
               </div>
-              <div
-                className="px-4 w-full flex justify-center max-w-32 py-1 rounded-full bg-gray-400  text-white font-semibold text-sm  whitespace-nowrap overflow-hidden text-ellipsis"
-                style={{ backgroundColor: pqr?.codigoColorEstado }}
-              >
-                {pqr?.estado}
-              </div>
             </div>
-            <div className="flex">
-              <div className="text-sm font-sans text-black max-w-full flex flex-wrap gap-1">
-                <span className="font-bold whitespace-nowrap">Asunto:</span>
-                <span
-                  className="font-normal mr-5 max-w-[525px] overflow-hidden text-ellipsis whitespace-nowrap"
-                  title={pqr?.asunto}
-                >
-                  {pqr?.asunto}
-                </span>
-              </div>
-              <div className="text-sm font-sans text-black max-w-full flex flex-wrap gap-1">
-                <span className="font-bold whitespace-nowrap">
-                  Responsable:
-                </span>
-                <span className="font-normal whitespace-normal max-w-[calc(100%-5rem)]">
-                  {pqr?.funcionario?.nombre}
-                </span>
-              </div>
+          </div>
+          <div
+            className={`flex  flex-col h-full transition-all duration-300 ${
+              ["Finalizado", "Anulado"].includes(pqr?.estado || "")
+                ? "h-[calc(100vh-300px)] overflow-y-auto"
+                : "max-h-[300px] overflow-y-auto"
+            }`}
+          >
+            <div className="space-y-4">
+              {pqr?.detalle && (
+                <PqrChat
+                  key={pqr.id}
+                  detalles={pqr.detalle}
+                  detallePqrId={pqr.id}
+                  cliente={pqr.cliente}
+                />
+              )}
             </div>
           </div>
         </div>
-        <div
-          className={`flex mt-5 flex-col h-full transition-all duration-300 ${
-            ["Finalizado", "Anulado"].includes(pqr?.estado || "")
-              ? "h-[calc(100vh-220px)] overflow-y-auto"
-              : "max-h-[220px] overflow-y-auto"
-          }`}
-        >
-          <div className="space-y-4">
-            {pqr?.detalle && (
-              <PqrChat
-                key={pqr.id}
-                detalles={pqr.detalle}
-                detallePqrId={pqr.id}
-                cliente={pqr.cliente}
-              />
-            )}
-          </div>
-        </div>
+
         {pqr?.estado !== "Finalizado" && pqr?.estado !== "Anulado" && (
-          <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[265px]">
+          <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[265px] w-full">
             <form className="" onSubmit={handleSubmit}>
               <div className="flex flex-wrap gap-6 items-center">
                 <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
