@@ -20,7 +20,9 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
                 pqr.estadoVencimiento === "VENCIDO"
                   ? " #dc2626"
                   : pqr.estadoVencimiento === "POR VENCER"
-                  ? "#ffe900 "
+                  ? "#ffe900"
+                  : pqr.estadoVencimiento === "EN ESPERA"
+                  ? "#38b6ff"
                   : "#22c55e",
             }}
           >
@@ -35,24 +37,40 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
               # Consecutivo:{" "}
               <span className="font-normal">{pqr.consecutivo}</span>
             </p>
-            <p className="truncate" title={pqr.asunto}>
-              Asunto: {pqr.asunto}
+            <p className="truncate font-semibold" title={pqr.asunto}>
+              Asunto: <span className="font-normal">{pqr.asunto} </span>
             </p>
-            <p>Radicado: {pqr.radicado}</p>
+            {pqr.radicado?.toString().trim() && (
+              <p className="font-semibold">
+                Radicado: <span className="font-normal">{pqr.radicado}</span>
+              </p>
+            )}
           </div>
 
           <div>
-            <p>
-              Cliente: {pqr.documentoCliente} - {pqr.nombreCliente}
+            <p className="font-semibold truncate">
+              Cliente:{" "}
+              <span className="font-normal">
+                {pqr.documentoCliente} - {pqr.nombreCliente}
+              </span>
             </p>
-            <p>Ingreso: {pqr.fecha}</p>
-            <p>Origen: {pqr.origen}</p>
+            <p className="font-semibold">
+              Ingreso: <span className="font-normal"> {pqr.fecha}</span>
+            </p>
+            <p className="font-semibold">
+              Origen: <span className="font-normal">{pqr.origen}</span>
+            </p>
           </div>
 
           <div>
-            <p>Responsable: {pqr.nombreFuncionario}</p>
-            <p>Tipo: {pqr.nombreTipoPQR}</p>
-            <p>
+            <p className="font-semibold">
+              Responsable:{" "}
+              <span className="font-normal">{pqr.nombreFuncionario}</span>{" "}
+            </p>
+            <p className="font-semibold">
+              Tipo: <span className="font-normal">{pqr.nombreTipoPQR}</span>
+            </p>
+            <p className="font-semibold">
               Estado:{" "}
               <span
                 className="inline-block text-white rounded-full px-3 py-[2px] font-semibold text-xs"

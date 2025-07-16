@@ -59,9 +59,9 @@ const ClienteCard = ({ mostrarEditar = false, cliente }: ClienteCardProps) => {
             <span className="font-semibold text-base">Tipo: </span>
             <span
               className="font-normal text-base "
-              title={cliente.tiponame}
+              title={cliente.tipoClienteNombre}
             >
-              {cliente.tiponame}
+              {cliente.tipoClienteNombre}
             </span>
           </p>
         </div>

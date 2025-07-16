@@ -1,18 +1,16 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
 import { FaCircle } from "react-icons/fa";
-import { FiUserCheck } from "react-icons/fi";
-import { MdOutlineDriveFolderUpload } from "react-icons/md";
-import { CgSandClock } from "react-icons/cg";
-import { CiCircleCheck } from "react-icons/ci";
-import { FaBan } from "react-icons/fa6";
-import { BsFillPeopleFill } from "react-icons/bs";
-import { FaUserCircle } from "react-icons/fa";
-// import { TbSettingsPlus } from "react-icons/tb";
-import { IoHomeOutline } from "react-icons/io5";
-import { AiOutlineFolderView } from "react-icons/ai";
+import { House, Eye, ClipboardCheck, FileCheck, FileX, Clipboard, ShieldUser, Users, SlidersHorizontal, ClipboardList } from "lucide-react"
+
+interface AsideProps {
+  isCollapse: boolean;
+  setIsCollapse: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
 const menuItems = [
-  { label: "inicio", path: "/dashboard", icon: <IoHomeOutline /> },
+  { label: "inicio", path: "/dashboard/statistic", icon: <House /> },
+  { label: "PQRs", path: "/dashboard/all-pqr", icon: <ClipboardList /> },
   {
     label: "Vencidos",
     path: "/dashboard/vencidos",
@@ -28,67 +26,75 @@ const menuItems = [
     path: "/dashboard/a-tiempo",
     icon: <FaCircle className="text-green-500" />,
   },
-  { label: "Registrados", path: "registrados", icon: <FiUserCheck /> },
-  { label: "Asignados", path: "asignados", icon: <AiOutlineFolderView /> },
+  { 
+    label: "En espera", 
+    path: "en-espera", 
+    icon: <FaCircle className="text-sky-400" />
+  },
+  { label: "Registrados", path: "registrados", icon: <Clipboard /> },
+  { label: "Asignados", path: "asignados", icon: <ClipboardCheck /> },
   {
     label: "En proceso",
     path: "en-proceso",
-    icon: <MdOutlineDriveFolderUpload />,
+    icon: <Eye />,
   },
-  { label: "En espera", path: "en-espera", icon: <CgSandClock /> },
-  { label: "Finalizado", path: "finalizado", icon: <CiCircleCheck /> },
-  { label: "Anulados", path: "anulado", icon: <FaBan /> },
+  
+  { label: "Finalizado", path: "finalizado", icon: <FileCheck /> },
+  { label: "Anulados", path: "anulado", icon: <FileX /> },
   //Rutas de administracion
   {
     label: "Funcionarios",
     path: "admin/funcionarios",
-    icon: <BsFillPeopleFill />,
+    icon: <ShieldUser />,
   },
-  { label: "Clientes", path: "admin/cliente", icon: <FaUserCircle /> },
-  // { label: "Parámetros", path: "admin/parametros", icon: <TbSettingsPlus /> },
+  { label: "Clientes", path: "admin/cliente", icon: <Users /> },
+  { label: "Parámetros", path: "admin/parametros", icon: <SlidersHorizontal /> },
+  
+  
 ];
 
-const Aside = () => {
-  return (
-    <aside className=" h-screen border-r-2 border-gray-200 flex flex-col">
-      {/* Logo */}
-      <div className="flex justify-center py-5">
-        <div className="p-[4px]">
-          <img
-            src="/public/Logo-static.png"
-            alt="Logo"
-            className="bg-a-baranoa px-[8px]"
-          />
-        </div>
-      </div>
+const Aside = ({ isCollapse, }: AsideProps) => {
 
+  return (
+    <aside className={`h-screen border-r-2 border-gray-200 flex flex-col transition-all duration-300
+        ${isCollapse ? "w-20" : "w-80"}
+    `}>
       {/* Menú */}
-      <ul className="flex-1 flex flex-col px-5">
+      <ul className="flex flex-col px-2 pt-1 gap-1.5">
         {menuItems.map((item, index) => (
           <li
             key={index}
             className={`flex-1 flex items-center gap-3 w-full text-xl
-              ${index === 4 || index === 9 || index === 11 ? "border-t-2" : ""}
-              ${index === 0 ? "border-t-2 border-b-2 py-[5px] -m-1" : ""}
-        
+              ${index === 2 || index === 6 || index === 11 || index === 13 ? "border-t-2 py-0.5" : ""}
             `}
           >
-            <div
-              className={`flex justify-center items-center w-8
-                ${item.label === "inicio" ? "pl-[10px] mr-[4px]" : ""}
-              `}
-            >
-              {item.icon}
-            </div>
-            <Link
+            <NavLink
               to={item.path}
-              className="text-gray-500 font-semibold flex items-center gap-2"
+              end={item.path === "/dashboard"}
+              className={({ isActive }) =>
+                `flex items-center gap-3 w-full px-2 py-1 rounded-md transition-all
+                 ${isActive ? "bg-green-100 text-green-700 font-bold" : "text-gray-500"}
+                 hover:text-green-700`
+              }
             >
-              {item.label}
-            </Link>
+              <div className="flex justify-center items-center w-8">
+                {item.icon}
+              </div>
+              {/* Ocultar texto si colapsado */}
+              <span
+                className={`capitalize whitespace-nowrap transition-all duration-300 overflow-hidden ml-0
+                ${isCollapse ? "opacity-0 max-w-0" : "opacity-100 max-w-[200px]"}
+                  `}
+              >
+                {item.label}
+              </span>
+
+            </NavLink>
+
           </li>
         ))}
       </ul>
+
     </aside>
   );
 };

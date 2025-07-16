@@ -58,8 +58,8 @@ export const FloatingSelectLP: React.FC<FloatingSelectProps> = ({
           <SelectPrimitive.Content
             side="bottom"
             position="popper"
-            avoidCollisions={false}
-            className="z-50 mt-1 max-h-32 overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md"
+            //avoidCollisions={false}
+            className="z-50 mt-1 max-h-40 overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md"
             style={{ width: "var(--radix-select-trigger-width)" }}
           >
             <SelectPrimitive.ScrollUpButton className="flex items-center justify-center py-1">
@@ -67,22 +67,24 @@ export const FloatingSelectLP: React.FC<FloatingSelectProps> = ({
             </SelectPrimitive.ScrollUpButton>
 
             <SelectPrimitive.Viewport className="p-1">
-              {options.map((option) => (
-                <SelectPrimitive.Item
-                  key={option.value}
-                  value={option.value}
-                  className="relative cursor-pointer select-none rounded-sm py-1.5 pl-8 pr-2 text-sm text-gray-700 focus:bg-green-100 focus:text-green-900"
-                >
-                  <span className="absolute left-2">
-                    <SelectPrimitive.ItemIndicator>
-                      <Check className="h-4 w-4 text-green-500" />
-                    </SelectPrimitive.ItemIndicator>
-                  </span>
-                  <SelectPrimitive.ItemText>
-                    {option.label}
-                  </SelectPrimitive.ItemText>
-                </SelectPrimitive.Item>
-              ))}
+              {options
+                .filter((item) => item.value)
+                .map((option) => (
+                  <SelectPrimitive.Item
+                    key={option.value}
+                    value={option.value}
+                    className="relative cursor-pointer select-none rounded-sm py-1.5 pl-8 pr-2 text-sm text-gray-700 focus:bg-green-100 focus:text-green-900"
+                  >
+                    <span className="absolute left-2">
+                      <SelectPrimitive.ItemIndicator>
+                        <Check className="h-4 w-4 text-green-500" />
+                      </SelectPrimitive.ItemIndicator>
+                    </span>
+                    <SelectPrimitive.ItemText>
+                      {option.label}
+                    </SelectPrimitive.ItemText>
+                  </SelectPrimitive.Item>
+                ))}
             </SelectPrimitive.Viewport>
 
             <SelectPrimitive.ScrollDownButton className="flex items-center justify-center py-1">

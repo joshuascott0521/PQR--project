@@ -16,7 +16,7 @@ export default function Solicitud() {
 
         {/* Formulario encima */}
         <div className="relative z-10 h-full overflow-y-auto p-4">
-          <div className="bg-white rounded-lg shadow-lg p-4">
+          <div className="bg-gray-50 rounded-lg shadow-lg p-4">
             <SolicitudFrm />
           </div>
         </div>
@@ -25,7 +25,7 @@ export default function Solicitud() {
       {/* VISTA ESCRITORIO: Diseño dos columnas */}
       <div className="hidden md:flex w-full h-screen">
         {/* Columna izquierda: Formulario */}
-        <div className="w-1/2 h-full overflow-y-auto px-10 py-10 bg-white">
+        <div className="w-1/2 h-full overflow-y-auto px-10 py-10 bg-gray-50">
           <SolicitudFrm />
         </div>
 
@@ -48,15 +48,16 @@ export default function Solicitud() {
               </p>
               <div className="w-16 h-[5px] bg-white mx-auto my-4"></div>
               <p className="text-sm mb-6 px-2">
-                ©CreAppTech - Soluciones integrales basadas en tecnología.
+                © Creapptech S.A.S - Soluciones integrales basadas en tecnología.
               </p>
               <input
                 type="button"
                 value="Conócenos"
-                onClick={() => window.open("https://www.creapptech.com/", "_blank")}
+                onClick={() =>
+                  window.open("https://www.creapptech.com/", "_blank")
+                }
                 className="bg-emeraldBright rounded-3xl w-36 h-8 text-white text-lg font-bold"
               />
-
             </div>
           </div>
         </div>

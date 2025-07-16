@@ -3,7 +3,7 @@ import { FloatingLabel } from "../../components/shared/FloatingLabel";
 import { FaSearch } from "react-icons/fa";
 import { FloatingSelect } from "../../components/shared/FloatingSelect";
 import { useEffect, useState } from "react";
-import { List, File, X, Paperclip } from "lucide-react";
+import { File, X, Paperclip } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type {
   CreatePqr,
@@ -21,12 +21,15 @@ import {
   TipoClienteServices,
   TipoPqrServices,
 } from "../../services/pqrServices";
-import toast from "react-hot-toast";
 import {
   mostrarAlertaConfirmacion,
   mostrarAlertaExito,
 } from "../../libs/alerts";
 import ClienteSkeleton from "../../components/shared/Spinner";
+import { showToast } from "../../utils/toastUtils";
+import toast from "react-hot-toast";
+import { EliminarEmojis } from "../../utils/EliminarEmojis";
+
 const NuevoPqr = () => {
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
@@ -63,6 +66,7 @@ const NuevoPqr = () => {
     usuarioId: "",
   });
 
+  // Consumos de endpoints
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -96,7 +100,7 @@ const NuevoPqr = () => {
           departamentoCod: 0,
           municipioCod: 0,
           radicado: "",
-          fecha: "",
+          fecha: getLocalDate(),
           tipoPQRId: "",
           origen: "",
           asunto: "",
@@ -117,7 +121,7 @@ const NuevoPqr = () => {
 
     // Límite de cantidad de archivos
     if (archivos.length + nuevos.length > 5) {
-      toast.error("Solo puedes subir hasta 5 archivos.");
+      showToast("Solo puedes subir hasta 5 archivos.");
       return;
     }
 
@@ -126,7 +130,9 @@ const NuevoPqr = () => {
     const maxSizeBytes = size * 1024 * 1024;
     const archivosValidos = nuevos.filter((file) => {
       if (file.size > maxSizeBytes) {
-        alert(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        toast.error(
+          `El archivo "${file.name}" excede el límite de ${size} MB.`
+        );
         return false;
       }
       return true;
@@ -146,101 +152,105 @@ const NuevoPqr = () => {
     navigate("/dashboard");
   };
 
-  const validateForm = () => {
-    if (!formData.documentoCliente.trim()) {
-      toast.error("Por favor ingresa el documento del cliente.");
-      setErrores({ documentoCliente: true });
-      return false;
-    }
-    if (!formData.nombreCliente.trim()) {
-      toast.error("Por favor ingresa el nombre completo del cliente.");
-      setErrores({ nombreCliente: true });
-      return false;
-    }
-    if (!formData.tipoClienteId) {
-      toast.error("Por favor selecciona el tipo de cliente.");
-      setErrores({ tipoClienteId: true });
-      return false;
-    }
+  const validateForm = (): boolean => {
+    const erroresDetectados: { [key: string]: boolean } = {};
+    let hayError = false;
 
-    if (!formData.email.trim()) {
-      toast.error("Por favor ingresa el correo electrónico.");
-      setErrores({ email: true });
-      return false;
-    }
+    const mensajesError: string[] = [];
+
+    const validarCampo = (
+      campo: string,
+      condicion: boolean,
+      mensaje: string
+    ) => {
+      if (condicion) {
+        erroresDetectados[campo] = true;
+        mensajesError.push(mensaje);
+        hayError = true;
+      }
+    };
+
+    const { documentoCliente, email, celular, radicado, asunto, descripcion } =
+      formData;
+
+    validarCampo(
+      "documentoCliente",
+      !documentoCliente.trim(),
+      "Por favor ingresa el documento del cliente."
+    );
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast.error("El correo electrónico no es válido.");
-      setErrores({ email: true });
-      return false;
-    }
+    validarCampo(
+      "email",
+      !email.trim(),
+      "Por favor ingresa el correo electrónico."
+    );
+    validarCampo(
+      "email",
+      Boolean(email.trim() && !emailRegex.test(email)),
+      "El correo electrónico no es válido."
+    );
 
-    if (!formData.celular.trim()) {
-      toast.error("Por favor ingresa el número de celular.");
-      setErrores({ celular: true });
-      return false;
-    }
+    validarCampo(
+      "celular",
+      !/^\d{10}$/.test(celular),
+      "El número de celular debe tener exactamente 10 dígitos."
+    );
 
-    if (!formData.direccion.trim()) {
-      toast.error("Por favor ingresa la dirección.");
-      setErrores({ direccion: true });
-      return false;
-    }
+    validarCampo(
+      "radicado",
+      radicado != null && radicado.trim() === "",
+      "Por favor ingresa el número de radicado."
+    );
 
-    if (formData.departamentoCod === 0) {
-      toast.error("Selecciona un departamento.");
-      setErrores({ departamentoCod: true });
-      return false;
-    }
-    if (formData.municipioCod === 0) {
-      toast.error("Selecciona un municipio.");
-      setErrores({ municipioCod: true });
-      return false;
-    }
+    validarCampo(
+      "asunto",
+      !asunto.trim(),
+      "Por favor escribe un asunto para la solicitud."
+    );
 
-    if (!formData.radicado?.trim()) {
-      toast.error("Por favor ingresa el radicado de la petición.");
-      setErrores({ radicado: true });
-      return false;
-    }
-
-    if (!formData.fecha || formData.fecha.trim() === "") {
-      toast.error("Por favor ingresa la fecha de la petición.");
-      setErrores({ fecha: true });
-      return false;
-    }
-
-    if (!formData.tipoPQRId) {
-      toast.error("Por favor selecciona el tipo de petición.");
-      setErrores({ tipoPQRId: true });
-      return false;
-    }
-
-    if (!formData.origen) {
-      toast.error("Por favor selecciona el origen de la petición.");
-      setErrores({ origen: true });
-      return false;
-    }
-
-    if (!formData.asunto.trim()) {
-      toast.error("Por favor escribe un asunto para la solicitud.");
-      setErrores({ asunto: true });
-      return false;
-    }
-    if (!formData.descripcion.trim()) {
-      toast.error("Por favor describe brevemente la solicitud.");
-      setErrores({ descripcion: true });
-      return false;
-    }
+    validarCampo(
+      "descripcion",
+      !descripcion.trim(),
+      "Por favor describe brevemente la solicitud."
+    );
 
     if (archivos.length === 0) {
-      toast.error("Debes subir al menos un archivo de soporte.");
-      return false;
+      mensajesError.push("Debes subir al menos un archivo de soporte.");
+      hayError = true;
     }
 
-    setErrores({});
-    return true;
+    const camposObligatorios: [string, any][] = [
+      ["nombreCliente", formData.nombreCliente],
+      ["tipoClienteId", formData.tipoClienteId],
+      ["direccion", formData.direccion],
+      ["departamentoCod", formData.departamentoCod],
+      ["municipioCod", formData.municipioCod],
+      ["fecha", formData.fecha],
+      ["tipoPQRId", formData.tipoPQRId],
+      ["origen", formData.origen],
+    ];
+
+    const faltantesGenericos = camposObligatorios.some(([campo, valor]) => {
+      const invalido = !valor || valor === "" || valor === 0;
+      if (invalido) erroresDetectados[campo] = true;
+      return invalido;
+    });
+
+    if (faltantesGenericos) {
+      hayError = true;
+      mensajesError.push("Por favor complete todos los campos.");
+    }
+
+    // Mostrar solo un toast
+    if (mensajesError.length === 1) {
+      showToast(mensajesError[0]);
+    } else if (mensajesError.length > 1) {
+      showToast("Por favor complete los campos obligatorios.");
+    }
+
+    setErrores(erroresDetectados);
+    return !hayError;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -259,7 +269,7 @@ const NuevoPqr = () => {
 
       if (!user || !user.id) {
         console.error("No se encontró ID de usuario");
-        alert(
+        toast.error(
           "No se pudo identificar al usuario. Por favor vuelve a iniciar sesión."
         );
         return;
@@ -283,7 +293,8 @@ const NuevoPqr = () => {
       if (res.success) {
         mostrarAlertaExito("¡PQR registrado exitosamente!");
         console.log("Respuesta PQR ✅✅✅✅", res.data);
-        navigate("/dashboard");
+        const id = res.data.id
+        navigate(`/dashboard/PQR/detalle/${id}`);
       } else {
         console.error("Error al registrar el PQR:", res.error);
       }
@@ -294,7 +305,7 @@ const NuevoPqr = () => {
 
   const handleBuscarCliente = async () => {
     if (!formData.documentoCliente.trim()) {
-      toast.error("Debes ingresar un documento para buscar.");
+      showToast("Debes ingresar un documento para buscar.");
       return;
     }
 
@@ -303,7 +314,7 @@ const NuevoPqr = () => {
     try {
       const res = await ClientesServices.getByDoc(formData.documentoCliente);
       if (!res.success || !res.data) {
-        toast.error("No se encontró ningún cliente con ese documento.");
+        showToast("No se encontró ningún cliente con ese documento.");
         return;
       }
 
@@ -328,13 +339,18 @@ const NuevoPqr = () => {
         }
       }
 
-      toast.success("Cliente encontrado y datos cargados.");
+      showToast("Cliente encontrado y datos cargados.", "success");
     } catch (error) {
       console.error("Error al buscar cliente:", error);
-      toast.error("Hubo un error al buscar el cliente.");
+      showToast("Hubo un error al buscar el cliente.");
     } finally {
       setCargandoCliente(false); // <-- desactivar skeleton
     }
+  };
+
+  const getLocalDate = () => {
+    const tzoffset = new Date().getTimezoneOffset() * 60000; // offset en ms
+    return new Date(Date.now() - tzoffset).toISOString().split("T")[0];
   };
 
   return (
@@ -362,9 +378,8 @@ const NuevoPqr = () => {
                     <FloatingLabel
                       id="documentoCliente"
                       label="Documento Cliente"
-                      className={`pr-12 ${
-                        errores.documentoCliente ? "border-red-500" : ""
-                      }`}
+                      className={`pr-12 ${errores.documentoCliente ? "border-red-500" : ""
+                        }`}
                       value={formData.documentoCliente}
                       onChange={(e) =>
                         setFormData((prev) => ({
@@ -387,9 +402,8 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="nombresYApellidos"
                     label="Nombres y Apellidos"
-                    className={`w-lg ${
-                      errores.nombreCliente ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.nombreCliente ? "border-red-500" : ""
+                      }`}
                     value={formData.nombreCliente}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -410,9 +424,8 @@ const NuevoPqr = () => {
                       label: tc.nombre,
                     }))}
                     placeholder="Elige una opción"
-                    className={`w-lg ${
-                      errores.tipoClienteId ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.tipoClienteId ? "border-red-500" : ""
+                      }`}
                   />
 
                   <FloatingLabel
@@ -431,9 +444,8 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="celular"
                     label="Celular"
-                    className={`w-lg ${
-                      errores.celular ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.celular ? "border-red-500" : ""
+                      }`}
                     value={formData.celular}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -446,9 +458,8 @@ const NuevoPqr = () => {
                   <FloatingLabel
                     id="direccion"
                     label="Dirección"
-                    className={`w-lg ${
-                      errores.direccion ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.direccion ? "border-red-500" : ""
+                      }`}
                     value={formData.direccion}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -491,9 +502,8 @@ const NuevoPqr = () => {
                       value: dep.cod?.toString() || "",
                       label: dep.nombre || "",
                     }))}
-                    className={`w-lg ${
-                      errores.departamentoCod ? "border-red-500" : ""
-                    }`}
+                    className={`w-lg ${errores.departamentoCod ? "border-red-500" : ""
+                      }`}
                   />
 
                   <FloatingSelect
@@ -518,9 +528,8 @@ const NuevoPqr = () => {
                         }));
                       }
                     }}
-                    className={`w-full ${
-                      errores.municipioCod ? "border-red-500" : ""
-                    }`}
+                    className={`w-full ${errores.municipioCod ? "border-red-500" : ""
+                      }`}
                   />
                 </>
               )}
@@ -533,7 +542,7 @@ const NuevoPqr = () => {
                 id="noRadicado"
                 label="No. Radicado"
                 className={`w-lg ${errores.radicado ? "border-red-500" : ""}`}
-                value={formData.radicado}
+                value={formData.radicado ?? ""}
                 onChange={(e) =>
                   setFormData((prev) => ({ ...prev, radicado: e.target.value }))
                 }
@@ -579,11 +588,10 @@ const NuevoPqr = () => {
               />
             </div>
             <div className="w-full flex items-center gap-3 mt-2">
-              {/* Ícono izquierdo */}
+              {/* Ícono izquierdo
               <div className="w-10 h-10 bg-black rounded-full flex justify-center items-center">
                 <FaSearch className="text-white text-lg" />
-              </div>
-
+              </div> */}
               {/* Campo de texto central (flex-grow para tomar el espacio restante) */}
               <div className="flex-grow">
                 <FloatingLabel
@@ -596,30 +604,29 @@ const NuevoPqr = () => {
                   className={`${errores.asunto ? "border-red-500" : ""}`}
                 />
               </div>
-
               {/* Ícono derecho */}
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center">
+              {/* <div className="w-10 h-10 bg-blue-500 rounded-full flex justify-center items-center">
                 <List className="w-5 h-5 stroke-white stroke-2" />
-              </div>
+              </div> */}
             </div>
             <div className="mt-2">
               <textarea
                 id="descripcion"
                 name="descripcion"
                 value={formData.descripcion}
-                onChange={(e) =>
+                onChange={(e) => {
+                  const sinEmojis = EliminarEmojis(e.target.value);
                   setFormData((prev) => ({
                     ...prev,
-                    descripcion: e.target.value,
-                  }))
-                }
+                    descripcion: sinEmojis,
+                  }));
+                }}
                 rows={4}
                 placeholder="Descripción"
-                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
-                  errores.descripcion
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 focus:ring-blue-500"
-                }`}
+                className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-300 focus:ring-green-400 "
+                  }`}
               />
             </div>
             <div className="space-y-3 mt-4">
@@ -649,11 +656,10 @@ const NuevoPqr = () => {
               {/* Botón de subir archivos */}
               <label
                 className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${
-                       archivos.length >= 5
-                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                         : "bg-emerald-400 text-white hover:bg-emerald-500"
-                     }
+                     ${archivos.length >= 5
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-emerald-400 text-white hover:bg-emerald-500"
+                  }
                     `}
               >
                 <Paperclip className="w-4 h-4" />

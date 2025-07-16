@@ -1,26 +1,39 @@
 import apiClient from "../api/apiClient";
 import type {
   Adjunto,
+  AlertaNotificacion,
   ApiResponse,
   ArchivoSubido,
   Cliente,
+  CrearPqrResponse,
   CreatePqr,
   departamento,
   DetallePqrCreate,
+  DominioConstraint,
+  EnviarNotificacion,
+  EstadoFlujoData,
   Evento,
+  MedioNotificacion,
   Municipio,
+  NotificacionDetalle,
+  Parameters,
+  Password,
   Pqr,
   PqrCount,
   SolicitudRequisitoDTO,
   tipoCliente,
   TipoPqr,
+  UserType,
   Usuario,
 } from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
+  funcionarioId?: string;
   page: number;
   size: number;
   estadoProceso?: string;
+  estado?: string;
+  orden?: number;
   estadoVencimiento?: string;
 }
 export const typeSelectComents = {
@@ -131,26 +144,89 @@ export const PqrServices = {
       };
     }
   },
+
   getByEstado: async ({
     usuid,
     page,
     size,
     estadoProceso,
+    orden,
     estadoVencimiento,
-  }: GetPqrParams & { usuid: string }): Promise<Pqr[]> => {
-    const response = await apiClient.get<Pqr[]>("/PQR/GetByEstadoPQR", {
-      params: {
-        usuid,
-        pagenumber: page,
-        pagesize: size,
-        estadoProceso,
-        estadoVencimiento,
-      },
-    });
+  }: GetPqrParams & { usuid: string }): Promise<ApiResponse<Pqr[]>> => {
+    try {
+      const response = await apiClient.get<Pqr[]>("/PQR/GetByEstadoPQR", {
+        params: {
+          usuid,
+          pagenumber: page,
+          pagesize: size,
+          estadoProceso,
+          estadoVencimiento,
+          orden,
+        },
+      });
 
-    return response.data;
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      if (
+        error.response?.status === 404 &&
+        error.response?.data?.code === "NOT_FOUND"
+      ) {
+        return {
+          success: false,
+          data: [],
+          error: error.response?.data?.message || "Error al traer pqrs",
+        }; // No hay PQRs, pero no es un fallo
+      }
+      console.log("❌❌❌❌❌❌", error);
+      console.error("Error real al obtener PQR por estado:", error);
+      throw new Error(
+        error.response?.data?.message || "Error al consultar los PQR."
+      );
+    }
   },
+  getByFuncionarioId: async ({
+    funcionarioId,
+    page,
+    size,
+    orden,
+    estado,
+  }: GetPqrParams & { funcionarioId: string }): Promise<ApiResponse<Pqr[]>> => {
+    try {
+      const response = await apiClient.get<Pqr[]>("/PQR/GetByFuncionarioId", {
+        params: {
+          funcionarioId,
+          pagenumber: page,
+          pagesize: size,
+          estado,
+          orden,
+        },
+      });
 
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      if (
+        error.response?.status === 404 &&
+        error.response?.data?.code === "NOT_FOUND"
+      ) {
+        return {
+          success: false,
+          data: [],
+          error: error.response?.data?.message || "Error al traer pqrs",
+        }; // No hay PQRs, pero no es un fallo
+      }
+      console.log("❌❌❌❌❌❌", error);
+      console.error("Error real al obtener PQR por estado:", error);
+      throw new Error(
+        error.response?.data?.message || "Error al consultar los PQR."
+      );
+    }
+  },
   uploadFiles: async (
     archivos: File[]
   ): Promise<ApiResponse<ArchivoSubido[]>> => {
@@ -172,7 +248,7 @@ export const PqrServices = {
     }
   },
 
-  createPqr: async (pqr: CreatePqr): Promise<ApiResponse<string[]>> => {
+  createPqr: async (pqr: CreatePqr): Promise<ApiResponse<CrearPqrResponse>> => {
     try {
       const response = await apiClient.post("/PQR/Create", pqr);
       return {
@@ -182,7 +258,10 @@ export const PqrServices = {
     } catch (error: any) {
       return {
         success: false,
-        data: [],
+        data: {
+          id: "",
+          mensaje: "",
+        },
         error: error.response?.data?.message || "Error al crear el PQR",
       };
     }
@@ -288,6 +367,27 @@ export const PqrServices = {
       };
     }
   },
+  getPqrStatistics: async (
+    usuId: string
+  ): Promise<ApiResponse<EstadoFlujoData[]>> => {
+    try {
+      const response = await apiClient.get("/PQR/GetResumenDashBoard/", {
+        params: { usuId: usuId },
+      });
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message ||
+          "Error al cargar PQRS para estadisticas",
+      };
+    }
+  },
 };
 
 export const UsersServices = {
@@ -327,6 +427,64 @@ export const UsersServices = {
       };
     }
   },
+  getUserType: async (): Promise<ApiResponse<UserType[]>> => {
+    try {
+      const response = await apiClient.get(
+        "/tipousuario/ObtenerAllTipoUsuario"
+      );
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al tipo de usuarios",
+      };
+    }
+  },
+  update: async (funcionario: Usuario): Promise<ApiResponse<Usuario>> => {
+    try {
+      const response = await apiClient.put("/usuario/Update", funcionario);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Usuario,
+        error:
+          error.response?.data?.message || "Error al actualizar funcionario",
+      };
+    }
+  },
+  create: async (funcionario: Usuario): Promise<ApiResponse<string[]>> => {
+    try {
+      const response = await apiClient.post("/usuario/Create", funcionario);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al crear funcionario",
+      };
+    }
+  },
+  changePass: async (payload: Password): Promise<ApiResponse<Password>> => {
+    try {
+      const response = await apiClient.put("/usuario/UpdatePassword", payload);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Password,
+        error:
+          error.response?.data?.message || "Error al actualizar contraseña",
+      };
+    }
+  },
 };
 
 export const Origen = {
@@ -360,7 +518,6 @@ export const ClientesServices = {
       };
     }
   },
-
   getByDoc: async (doc: string): Promise<ApiResponse<Cliente>> => {
     try {
       const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`);
@@ -469,6 +626,314 @@ export const SolicitudServices = {
         success: false,
         data: "",
         error: error.response?.data?.message || "Error al responder solicitud",
+      };
+    }
+  },
+};
+
+export const ParametersServices = {
+  getParameters: async (): Promise<ApiResponse<Parameters[]>> => {
+    try {
+      const response = await apiClient.get("/Parametro/Get");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener parámetros",
+      };
+    }
+  },
+  getTypesParameter: async (): Promise<ApiResponse<string[]>> => {
+    const constrainName = "chk_Parametro_TipoParametro";
+    try {
+      const response = await apiClient.get(
+        `/Parametro/GetDominioByNombre/${constrainName}`
+      );
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Origenes",
+      };
+    }
+  },
+  getParameterByCode: async (
+    code: string
+  ): Promise<ApiResponse<Parameters>> => {
+    try {
+      const respose = await apiClient.get(`/Parametro/Get/${code}`);
+      return {
+        success: true,
+        data: respose.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Parameters,
+        error: error.response?.data?.message || "Error al cargar Parámetro",
+      };
+    }
+  },
+  updateParameter: async (
+    formData: FormData
+  ): Promise<ApiResponse<Parameters>> => {
+    try {
+      const response = await apiClient.put(`/Parametro/Update`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Parameters,
+        error: error.response?.data?.message || "Error al actualizar parámetro",
+      };
+    }
+  },
+  createParameter: async (
+    formData: FormData
+  ): Promise<ApiResponse<Parameters>> => {
+    try {
+      const response = await apiClient.post("/Parametro/Create", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        transformResponse: [
+          (data) => {
+            try {
+              return JSON.parse(data);
+            } catch {
+              return { mensaje: data }; // Fallback para texto plano
+            }
+          },
+        ],
+      });
+
+      return {
+        success: true,
+        data: response.data, // puede ser un objeto con id y mensaje
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Parameters,
+        error: error.response?.data?.mensaje || "Error al crear el parámetro",
+      };
+    }
+  },
+  searchParameters: async (
+    query: string
+  ): Promise<ApiResponse<Parameters[]>> => {
+    try {
+      const response = await apiClient.get(
+        `/Parametro/Search?valorTxt=${query}`
+      );
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al obtener parámetros",
+      };
+    }
+  },
+};
+
+interface AlertasResponse {
+  alertas: AlertaNotificacion[];
+  totalPendientes: number;
+}
+
+export const NotificacionesService = {
+  getAlertas: async (
+    usuarioId: string,
+    pageNumber = 1,
+    pageSize = 3
+  ): Promise<ApiResponse<AlertasResponse>> => {
+    try {
+      const response = await apiClient.get("/Alerta/Get", {
+        params: {
+          usuarioId,
+          pageNumber,
+          pageSize,
+        },
+      });
+
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      const isNoAlertasError =
+        error.response?.data?.errors?.Alerta?.[0] ===
+        "No se encontraron Alertas";
+
+      return {
+        success: false,
+        data: { alertas: [], totalPendientes: 0 },
+        error: isNoAlertasError
+          ? "No se encontraron más alertas"
+          : "Error al obtener notificaciones",
+      };
+    }
+  },
+  getTotalPendientes: async (usuarioId: string): Promise<number> => {
+    try {
+      const response = await apiClient.get("/Alerta/Get", {
+        params: {
+          usuarioId,
+          pageNumber: 1,
+          pageSize: 1, // solo para el conteo
+        },
+      });
+      return response.data.totalPendientes || 0;
+    } catch {
+      return 0;
+    }
+  },
+  getAlertaDetalle: async (id: number):Promise<{ pqrId: string; consecutivo: number; estado: string }> => {
+    try {
+      const response = await apiClient.get(`/Alerta/Get/${id}`); // ✅ id en la URL
+      return response.data;
+    } catch {
+      throw new Error("Error al obtener detalle de la alerta");
+    }
+  },
+  enviarNotificaciones: async (
+    enviarNotificacion: EnviarNotificacion
+  ): Promise<ApiResponse<EnviarNotificacion>> => {
+    try {
+      const response = await apiClient.post(
+        "PQRDetalle/enviar-notificacion",
+        enviarNotificacion
+      );
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.log(error);
+      return {
+        success: false,
+        data: {} as EnviarNotificacion,
+
+        // error: error,
+      };
+    }
+  },
+  getMediosNotificacion: async (): Promise<
+    ApiResponse<MedioNotificacion[]>
+  > => {
+    try {
+      const response = await apiClient.get("/PQRDetalle/GetMediosNotificacion");
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Clientes",
+      };
+    }
+  },
+  getCalidadNotificacion: async (): Promise<
+    ApiResponse<DominioConstraint | null>
+  > => {
+    try {
+      const response = await apiClient.get<DominioConstraint[]>(
+        "/Parametro/GetDominiosAll"
+      );
+
+      const calidad = response.data.find(
+        (item) => item.constraintName === "chk_PQRNotificacion_Calidad"
+      );
+
+      return {
+        success: true,
+        data: calidad ?? null,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: null,
+        error:
+          error.response?.data?.message ||
+          "Error al obtener dominios de calidad",
+      };
+    }
+  },
+};
+
+export const AuthServices = {
+  forgotPassword: async (email: string) => {
+    try {
+      const response = await apiClient.post("/usuario/forgot-password", {
+        email: email,
+      });
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        error:
+          error?.response?.data?.message ||
+          error?.response?.data?.error ||
+          "Error desconocido",
+      };
+    }
+  },
+  resetPassword: async (data: {
+    token?: string;
+    nuevaPassword: string;
+    confirmacionPassword: string;
+  }) => {
+    try {
+      const response = await apiClient.post("/usuario/reset-password", data);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.message || "Error al restaurar la contraseña";
+      return {
+        success: false,
+        error: errorMsg,
+      };
+    }
+  },
+};
+export const NotificacionServices = {
+  getByDetalle: async (
+    pqrId: string,
+    item: number
+  ): Promise<ApiResponse<NotificacionDetalle[]>> => {
+    try {
+      const response = await apiClient.get(`/PQRNotificacion/GetByDetalle`, {
+        params: { pqrId, item },
+      });
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message ||
+          "Error al obtener las notificaciones del detalle",
+      };
+    }
+  },
+  getUrlRedireccion: async (idEnvio: number): Promise<ApiResponse<string>> => {
+    try {
+      const response = await apiClient.get(
+        `/PQRNotificacion/GetUrlRedireccion/${idEnvio}`
+      );
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: "",
+        error:
+          error.response?.data?.message ||
+          "Error al obtener la URL de redirección",
       };
     }
   },

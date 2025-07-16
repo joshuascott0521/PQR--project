@@ -7,8 +7,8 @@ export interface CreatePqr {
   direccion: string;
   departamentoCod: number;
   municipioCod: number;
-  radicado?: string;
-  fecha?: string;
+  radicado?: string | null;
+  fecha: string;
   tipoPQRId: string;
   origen: string;
   asunto: string;
@@ -62,7 +62,27 @@ export interface DetallePqr {
   codigoColorEstado?: string;
   estado?: string;
   detalle?: Detalle[];
+  cliente?: Cliente;
   funcionario?: Funcionario;
+}
+export interface Cliente {
+  id: string;
+  documento: string;
+  nombre: string;
+  email: string;
+  celular: string;
+  direccion: string;
+  departamentoCod: number;
+  departamentoNombre?: string;
+  municipioCod: number;
+  municipioNombre?: string;
+  tipoClienteId: string;
+  tipoClienteNombre?: string;
+}
+export interface MedioNotificacion {
+  medio?: string;
+  codigo?: string;
+  nombre?: string;
 }
 
 export interface GetPqr {
@@ -86,6 +106,8 @@ export interface GetPqr {
   colorHex: string;
   fecha?: string;
 }
+
+
 
 export interface Adjunto {
   item: number;
@@ -133,6 +155,11 @@ export interface ApiResponse<T> {
   error?: string;
 }
 
+export interface CrearPqrResponse {
+  id: string;
+  mensaje: string;
+}
+
 export interface Funcionario {
   id: string;
   documento: string;
@@ -146,19 +173,23 @@ export interface Detalle {
   item?: number;
   orden?: number;
   fechaCreacion?: string;
-  nombreEvento?: string;
+  nombreEvento?: string | undefined;
   descripcion?: string;
   codigoColorEstado?: string;
   tercero: Tercero;
   terceroAsignado: terceroAsignado;
   estado?: string;
   adjuntos: Adjunto[];
+  notificado?: boolean;
+  notificable?: boolean;
+  fechaCreacionStr?: string;
 }
 export interface Tercero {
   tipoTercero?: string;
   id?: string;
   nombre?: string;
   codigoColorFondo?: string;
+  cargoTercero: string;
 }
 export interface terceroAsignado {
   tipoTercero?: string;
@@ -167,9 +198,10 @@ export interface terceroAsignado {
   image?: string;
   codigoColorFondo?: string;
   accion?: string;
+  cargoTercero: string;
 }
 
-export interface Cliente {
+/*export interface Cliente {
   id: string;
   documento: string;
   nombre: string;
@@ -180,28 +212,45 @@ export interface Cliente {
   municipioCod: number;
   tipoClienteId: string;
   tiponame?: string;
-}
+}*/
 
 export interface Evento {
   id?: string;
   nombre?: string;
   accion?: string;
-  obligadoAnexo?: boolean;
+  obligandoAnexo?: boolean;
 }
 export interface Usuario {
   id: string;
   documento: string;
   nombre: string;
   tipoUsuId: string;
-  tipoUsuarioNombre: string;
-  role: string;
-  email?: string;
+  tipoUsuarioNombre?: string;
+  role?: string;
+  email: string;
   celular: string;
-  estado: string;
+  estado?: string;
   pqrResumen?: {
     [estado: string]: number; // Ejemplo: "VENCIDO": 44
   };
+  password?: string;
+  verifyPassword?: string;
 }
+
+export interface Password {
+  id: string;
+  passwordAntigua: string;
+  passwordNueva: string;
+  passwordConfirmacion: string;
+}
+
+export interface UserType {
+  id: string;
+  nombre: string;
+  role: string;
+  estado?: number;
+}
+
 export interface DetallePqrCreate {
   pqrId: string;
   eventoId: string;
@@ -231,4 +280,66 @@ export interface SolicitudRequisitoDTO {
 export interface PqrCount {
   estado: string;
   cantidad: number;
+}
+
+export interface DetalleVencimiento {
+  estadoVencimiento: string;
+  cantidad: number;
+}
+
+export interface EstadoFlujoData {
+  estadoFlujo: string;
+  total: number;
+  detallesVencimiento: DetalleVencimiento[];
+}
+
+export interface Parameters {
+  codigo: string;
+  descripcion: string;
+  tipoParametro: string;
+  valorString: string | null;
+  valorInt: number | null;
+  valorDecimal: number | null;
+  valorDate: string | null;
+  valorBool: boolean | null;
+  valorImgUrl: string | null;
+  valorHtml: string | null;
+}
+
+export interface AlertaNotificacion {
+  id: number;
+  pqrId: string;
+  asunto: string;
+  consecutivo: number;
+  nombre: string;
+  tipoPQR: string;
+  usuarioId: string;
+  fechaCreacion: string;
+  tipoAlerta: "Nuevo" | "Alerta" | string;
+  mensaje: string;
+  estado: string;
+}
+export interface NotificacionDetalle {
+  idEnvio: number;
+  tipo: string;
+  destinatario: string;
+  nombre: string;
+  estado: string;
+  fecha: string;
+}
+
+export interface EnviarNotificacion {
+  pqrId: string;
+  item: number;
+  medio: string;
+  destinatario: string;
+  destinatarioDocumento: string;
+  destinatarioNombre: string;
+  destinatarioCalidad: string;
+}
+export interface DominioConstraint {
+  constraintName: string;
+  tableName: string;
+  columnName: string;
+  allowedValues: string[];
 }

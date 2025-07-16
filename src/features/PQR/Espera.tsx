@@ -1,24 +1,28 @@
 import { useEffect, useRef, useState } from "react";
-
+import { PqrServices } from "../../services/pqrServices";
 import type { Pqr, PqrCount } from "../../interfaces/pqrInterfaces";
 import UserCard from "../../components/shared/UserCard";
-import { CgSandClock } from "react-icons/cg";
-import { PqrServices } from "../../services/pqrServices";
+import { AnimatedCount } from "../../components/shared/AnimatedCount";
+import { CardSkeleton } from "../../components/shared/CardSkeleton";
+import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const EnEspera = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [conteo, setConteo] = useState<PqrCount>({ estado: "", cantidad: 0 });
+  const [showRealCount, setShowRealCount] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const loadingRef = useRef(loading);
+  const loadingRef = useRef(loadingMore);
 
   useEffect(() => {
-    loadingRef.current = loading;
-  }, [loading]);
+    loadingRef.current = loadingMore;
+  }, [loadingMore]);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -26,7 +30,6 @@ const EnEspera = () => {
 
     const handleScroll = () => {
       const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
-
       if (isAtBottom && !loadingRef.current && hasMore) {
         setCurrentPage((prev) => prev + 1);
       }
@@ -38,12 +41,12 @@ const EnEspera = () => {
 
   useEffect(() => {
     const fetchPqrs = async () => {
-      setLoading(true);
+      setLoadingMore(true);
       try {
         const userData = localStorage.getItem("userData");
         if (!userData) {
           setError("Usuario no encontrado");
-          setLoading(false);
+          setLoadingMore(false);
           return;
         }
 
@@ -51,7 +54,7 @@ const EnEspera = () => {
         const usuid = user?.id;
         if (!usuid) {
           setError("ID de usuario inválido");
-          setLoading(false);
+          setLoadingMore(false);
           return;
         }
 
@@ -60,25 +63,24 @@ const EnEspera = () => {
           page: currentPage,
           size: 10,
           estadoProceso: "En espera",
+          orden: 1,
         });
 
-        if (data.length < 10) {
+        if (Array.isArray(data) && data.length < 10) {
           setHasMore(false);
         }
 
-        // Eliminar duplicados usando el id
         setPqrs((prev) => {
-          const combined = [...prev, ...data];
+          const combined = [...prev, ...data.data];
           const unique = Array.from(
             new Map(combined.map((item) => [item.id, item])).values()
           );
           return unique;
         });
       } catch (err) {
-        // setError("Error al cargar los PQRs");
         console.error(err);
       } finally {
-        setLoading(false);
+        setLoadingMore(false);
       }
     };
 
@@ -86,57 +88,44 @@ const EnEspera = () => {
   }, [currentPage]);
 
   useEffect(() => {
-    setLoading(true);
-
+    setInitialLoading(true);
     const cargar = async () => {
       const userData = localStorage.getItem("userData");
       if (!userData) {
         setError("Usuario no encontrado");
-        setLoading(false);
+        setInitialLoading(false);
         return;
       }
 
       const user = JSON.parse(userData);
       const usuid = user?.id;
       const res = await PqrServices.getPqrCountEstadoFlujo("EN ESPERA", usuid);
-      if (res.success) setConteo(res.data);
-      console.log(res);
+
+      if (res.success && res.data.cantidad !== null) {
+        setConteo(res.data);
+        setTimeout(() => {
+          setShowRealCount(true);
+        }, 2500);
+      }
+      setInitialLoading(false);
+
+      setLoadingMore(false);
     };
 
     cargar();
   }, []);
-  //   <div className="h-full flex flex-col">
-  //     <div className="flex mb-[15px] items-center gap-[15px]">
-  //       <CgSandClock className="text-[32px]" />
 
-  //       <div className="flex font-bold text-[33px]">
-  //         <p>PQRS en espera</p>
-  //       </div>
-  //     </div>
-
-  //     <div className="flex-1 overflow-auto bg-gray-100 px-6 py-4 rounded-lg">
-  //       {loading && <p>Cargando...</p>}
-  //       {error && <p className="text-red-600">{error}</p>}
-  //       {!loading && !error && pqrs.length === 0 && (
-  //         <p>No hay PQRs vencidos.</p>
-  //       )}
-
-  //       <div className="space-y-4">
-  //         {/* Aquí mapeamos los datos reales */}
-  //         {pqrs.map((pqr) => (
-  //           <UserCard key={pqr.id} pqr={pqr} />
-  //         ))}
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
-        <CgSandClock className="text-[32px]" />
-
-        <div className="flex font-bold text-[33px]">
-          <p>PQRS en espera {"(" + (conteo.cantidad ?? 0) + ")"}.</p>
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-sky-400 text-xl font-bold text-white"></div>
+        <div className="flex font-bold text-[33px] items-baseline">
+          <p className="flex items-center">PQRS en espera </p>
+          {showRealCount ? (
+            <span>({conteo.cantidad})</span>
+          ) : conteo?.cantidad != null ? (
+            <AnimatedCount target={conteo.cantidad} />
+          ) : null}
         </div>
       </div>
 
@@ -145,26 +134,28 @@ const EnEspera = () => {
         ref={scrollRef}
       >
         {error && <p className="text-red-600">{error}</p>}
-        {/* {!loading && !error && pqrs.length === 0 && (
-          <p>No hay PQRs vencidos.</p>
-        )} */}
-        {!loading && !error && pqrs.length === 0 && (
-          <p className="text-center text-gray-500 mt-4">
-            No hay PQRs en espera.
-          </p>
+        {!loadingMore && !error && pqrs.length === 0 && (
+          <div className="flex h-full w-full items-center justify-center">
+            <NoMoreResults
+              message="No hay a PQRs en espera"
+              subtitle="No se encontraron PQRs en estado de espera."
+              showAnimation={true}
+            />
+          </div>
         )}
 
         <div className="space-y-4">
-          {pqrs.map((pqr) => (
-            <UserCard key={pqr.id} pqr={pqr} />
-          ))}
+          {initialLoading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <CardSkeleton size="medium" key={i} />
+              ))
+            : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 
-        {loading && (
-          <p className="text-center text-gray-500 mt-4">
-            Cargando más datos...
-          </p>
+        {!initialLoading && loadingMore && (
+          <p className="text-center text-gray-500 mt-4">Cargando más PQRs...</p>
         )}
+
         {!hasMore && (
           <p className="text-center text-gray-400 mt-4">
             No hay más resultados

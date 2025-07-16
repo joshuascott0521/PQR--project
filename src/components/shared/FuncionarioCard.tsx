@@ -2,13 +2,13 @@ import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import type { Usuario } from "../../interfaces/pqrInterfaces";
 
-interface ClienteCardProps {
+interface FuncionarioCardProps {
   mostrarEditar?: boolean;
   funcionario: Usuario;
 }
 
 
-const FuncionarioCard = ({ mostrarEditar = false, funcionario }: ClienteCardProps) => {
+const FuncionarioCard = ({ mostrarEditar = false, funcionario }: FuncionarioCardProps) => {
   const navigate = useNavigate();
   return (
     <div
@@ -89,7 +89,7 @@ const FuncionarioCard = ({ mostrarEditar = false, funcionario }: ClienteCardProp
         {mostrarEditar &&
           <FaEdit
             className="text-yellow-400 text-[30px] hover:text-yellow-500 cursor-pointer active:scale-90"
-            onClick={() => navigate(`/dashboard/cliente/editar/${funcionario.id}`)}
+            onClick={() => navigate(`/dashboard/admin/funcionario/editar/${funcionario.id}`)}
           />
         }
 
