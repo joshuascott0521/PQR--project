@@ -172,23 +172,6 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
     }
   };
 
-  // 💡 Agrega esto JUSTO aquí abajo:
-  const handleDestinatarioInput = (value: string) => {
-    const tipo = formData.medio.toLowerCase();
-    const esSMS =
-      tipo.includes("sms") ||
-      tipo.includes("celular") ||
-      tipo.includes("móvil") ||
-      tipo.includes("telefono");
-
-    if (esSMS) {
-      const soloNumeros = value.replace(/\D/g, ""); // Quita todo lo que no sea número
-      handleInputChange("destinatario", soloNumeros);
-    } else {
-      handleInputChange("destinatario", value);
-    }
-  };
-
   useEffect(() => {
     if (!formData.medio) return;
 

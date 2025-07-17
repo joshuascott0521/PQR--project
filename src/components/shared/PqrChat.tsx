@@ -101,7 +101,7 @@ const PqrChat = ({
       );
     }
   };
-  // const enviarNotificacion = async (item?: number) => {
+
   //   if (item === undefined) {
   //     showToast("No se pudo enviar la notificación: item no definido.");
   //     return;

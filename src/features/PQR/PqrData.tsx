@@ -5,13 +5,16 @@ import PqrChat from "../../components/shared/PqrChat";
 import { PqrServices, typeSelectComents } from "../../services/pqrServices";
 import type { DetallePqr, Evento } from "../../interfaces/pqrInterfaces";
 import { Paperclip, X, File } from "lucide-react";
+import { useLoading } from "../../contexts/LoadingContext";
 
-import LoadingScreenBool from "../../components/shared/LoadingScreenBool";
+// import LoadingScreenBool from "../../components/shared/LoadingScreenBool";
 import { showToast } from "../../utils/toastUtils";
 import { EliminarEmojis } from "../../utils/EliminarEmojis";
+// import LoadingSpinner from "../../components/shared/LoadingSpinner";
 
 const PqrData = () => {
-  const [loading, setLoading] = useState(false);
+  const { showLoading, hideLoading } = useLoading();
+  // const [loading, setLoading] = useState(true);
   const [, setRefreshChat] = useState(false);
 
   const [archivos, setArchivos] = useState<File[]>([]);
@@ -38,14 +41,16 @@ const PqrData = () => {
 
   useEffect(() => {
     const fetchPqr = async () => {
+      showLoading("Procesando información...");
       try {
-        setLoading(true);
+        // setLoading(true);
         console.log(id);
 
         const result = await PqrServices.getById(id!);
         if (result.success) {
           setPqr(result.data);
-          setLoading(false);
+          // setLoading(false);
+          hideLoading();
         } else {
           setError(result.error || "Error desconocido");
         }
@@ -76,7 +81,8 @@ const PqrData = () => {
             value: usuario.id,
           }));
           setUsuarios(opciones);
-          setLoading(false);
+          // setLoading(false);
+          hideLoading();
           console.log("Usuarios desde backend:", opciones);
         }
       } catch (err) {
@@ -119,7 +125,8 @@ const PqrData = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    // setLoading(true);
+    showLoading("Procesando información...");
 
     try {
       // Validar que si el evento es "Asignar" (por label), haya al menos un archivo
@@ -129,13 +136,15 @@ const PqrData = () => {
 
       if (eventoAsignar && archivos.length === 0) {
         showToast("Debe adjuntar al menos un archivo para el evento 'Asignar'");
-        setLoading(false);
+        hideLoading();
+        // setLoading(false);
         return;
       }
 
       if (descripcion.trim().length < 6) {
         showToast("La descripción debe tener al menos 6 caracteres");
-        setLoading(false);
+        // setLoading(false);
+        hideLoading();
         return;
       }
 
@@ -153,7 +162,8 @@ const PqrData = () => {
           console.log(uploadResponse);
 
           showToast(uploadResponse.error || "Error al subir archivos");
-          setLoading(false);
+          // setLoading(false);
+          hideLoading();
           return;
         }
         adjuntos = uploadResponse.data.map((archivo, index) => ({
@@ -167,7 +177,8 @@ const PqrData = () => {
       const userData = localStorage.getItem("userData");
       if (!userData) {
         setError("Usuario no encontrado");
-        setLoading(false);
+        // setLoading(false);
+        hideLoading();
         return;
       }
 
@@ -175,7 +186,8 @@ const PqrData = () => {
       const usuid = userStorage?.id;
       if (!usuid) {
         setError("ID de usuario inválido");
-        setLoading(false);
+        // setLoading(false);
+        hideLoading();
         return;
       }
       const datos = {
@@ -202,7 +214,8 @@ const PqrData = () => {
         setEventoSeleccionado(null);
         setUser("");
 
-        setLoading(false);
+        // setLoading(false);
+        hideLoading();
         const newPqr = await PqrServices.getById(id!);
         if (newPqr.success) {
           setPqr(newPqr.data);
@@ -220,10 +233,12 @@ const PqrData = () => {
       }
       showToast(cleanMessage);
     } finally {
-      setLoading(false);
+      // setLoading(false);
+      hideLoading();
     }
 
-    setLoading(false);
+    // setLoading(false);
+    hideLoading();
   };
 
   const eventosQueRequierenAsignacion = ["Asignar", "Solicitar a Funcionario"];
@@ -242,7 +257,6 @@ const PqrData = () => {
 
   return (
     <>
-      <LoadingScreenBool active={loading} />
       <div className="h-full max-h-[928px] flex flex-col justify-between">
         <div className=" flex flex-col gap-4 md:max-h-[685px] lg:max-h-[685px] xl:max-h-[800px]">
           <div className="flex gap-1 rounded-md bg-white shadow-[0_0_0_1px_rgba(0,0,0,0.1)] px-6 py-4 max-w-full flex-row items-center">
