@@ -12,7 +12,7 @@ const FuncionarioCard = ({ mostrarEditar = false, funcionario }: FuncionarioCard
   const navigate = useNavigate();
   return (
     <div
-      className={`w-full bg-white rounded-lg border border-gray-200 flex items-center gap-6 ${mostrarEditar
+      className={`w-full bg-white rounded-xl border border-gray-200 flex items-center gap-6 ${mostrarEditar
         ? "p-3 cursor-default"
         : "p-4 sm:p-6 shadow-md cursor-pointer hover:shadow-lg hover:bg-gray-50 active:scale-95 active:shadow-md transition"
         }`}

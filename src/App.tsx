@@ -8,7 +8,7 @@ import Dashboard from "./pages/Dashboard/dashboard"; // Tu layout
 import PorVencer from "./features/PQR/PorVencer";
 import LoginForm from "./features/Usuarios/LoginFrm";
 import ForgetPasswordFrm from "./features/Usuarios/ForgetPasswordFrm";
-import { Portal } from "@radix-ui/react-dropdown-menu";
+import Portal from "./pages/portal";
 import { Toaster } from "react-hot-toast";
 import PrivateRoute from "./components/PrivateRoutes";
 import AllPqr from "./features/PQR/AllPqr";

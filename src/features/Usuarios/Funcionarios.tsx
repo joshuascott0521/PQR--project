@@ -5,6 +5,7 @@ import { UsersServices } from "../../services/pqrServices";
 import { ShieldUser } from "lucide-react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { CardSkeleton } from "../../components/shared/CardSkeleton";
 
 const Funcionarios = () => {
 
@@ -13,15 +14,18 @@ const Funcionarios = () => {
     const userDataString = localStorage.getItem("userData");
     const userData = userDataString ? JSON.parse(userDataString) : null;
     const usuarioId = userData?.id;
+    const [initialLoading, setInitialLoading] = useState(true);
 
     useEffect(() => {
+        setInitialLoading(true);
         const fetchFuncionarios = async () => {
             try {
                 const funcionarioRes = await UsersServices.getAll();
                 if (!funcionarioRes.success) throw new Error(funcionarioRes.error);
-                
+
                 const filtrados = funcionarioRes.data.filter(funcionario => funcionario.id !== usuarioId)
                 setFuncionarios(filtrados);
+                setInitialLoading(false)
             } catch (error) {
                 console.error(error)
             }
@@ -51,9 +55,14 @@ const Funcionarios = () => {
                 </div>
             </div>
             <div className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg space-y-4">
-                {funcionarios.map((funcionario) => (
-                    <FuncionarioCard key={funcionario.id} funcionario={funcionario} />
-                ))}
+                {initialLoading
+                    ? Array.from({ length: 5 }).map((_, i) => (
+                        <CardSkeleton size="client" key={i} />
+                    ))
+                    : funcionarios.map((funcionario) => (
+                        <FuncionarioCard key={funcionario.id} funcionario={funcionario} />
+                    ))
+                }
             </div>
         </div>
     )

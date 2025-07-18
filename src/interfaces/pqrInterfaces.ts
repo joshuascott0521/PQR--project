@@ -77,7 +77,7 @@ export interface Cliente {
   municipioCod: number;
   municipioNombre?: string;
   tipoClienteId: string;
-  tipoClienteNombre?: string;
+  tipoName: string;
 }
 export interface MedioNotificacion {
   medio?: string;

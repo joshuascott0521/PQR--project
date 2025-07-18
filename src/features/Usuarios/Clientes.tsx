@@ -6,11 +6,14 @@ import {
   TipoClienteServices,
 } from "../../services/pqrServices";
 import { Users } from "lucide-react";
+import { CardSkeleton } from "../../components/shared/CardSkeleton";
 
 const Clientes = () => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
+    setInitialLoading(true);
     const fetchClients = async () => {
       try {
         const clientRes = await ClientesServices.getAll();
@@ -25,18 +28,19 @@ const Clientes = () => {
           );
           return {
             ...cliente,
-            tiponame: tipo?.nombre || "Sin tipo",
+            tipoName: tipo?.nombre || "Sin tipo",
           };
         });
 
         setClientes(enrichedClientes);
-        console.log(enrichedClientes);
+        setInitialLoading(false);
       } catch (error) {
         console.error(error);
       }
     };
     fetchClients();
   }, []);
+
 
   return (
     <div className="h-full flex flex-col">
@@ -47,9 +51,14 @@ const Clientes = () => {
         </div>
       </div>
       <div className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg space-y-4">
-        {clientes.map((client) => (
-          <ClienteCard key={client.id} cliente={client} />
-        ))}
+        {initialLoading
+          ? Array.from({ length: 5 }).map((_, i) => (
+            <CardSkeleton size="client" key={i} />
+          ))
+          : clientes.map((client) => (
+            <ClienteCard key={client.id} cliente={client} />
+          ))
+        }
       </div>
     </div>
   );

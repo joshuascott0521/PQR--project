@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 interface CardSkeletonProps {
-  size?: "small" | "medium" | "big" | "classic";
+  size?: "small" | "medium" | "client" | "big" | "classic";
 }
 
 export const CardSkeleton = ({ size = "medium" }: CardSkeletonProps) => {
@@ -41,6 +41,11 @@ export const CardSkeleton = ({ size = "medium" }: CardSkeletonProps) => {
       circle: "w-[74px] h-[74px]",
       rows: 3,
     },
+    client: {
+      height: "h-[106px]",
+      circle: "w-[60px] h-[60px]",
+      rows: 2,
+    },
     big: {
       height: "h-[180px]",
       circle: "w-[90px] h-[90px]",
@@ -69,6 +74,11 @@ export const CardSkeleton = ({ size = "medium" }: CardSkeletonProps) => {
           </div>
         ))}
       </div>
+      <>
+        {size === "small" && (
+          <div className={"w-[40px] h-[40px] rounded-xl bg-gray-200"} />
+        )}
+      </>
     </motion.div>
   );
 };
