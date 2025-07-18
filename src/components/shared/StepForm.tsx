@@ -352,7 +352,7 @@ export default function StepForm() {
     if (!confirmado) return;
 
     try {
-      setLoading(true);
+      // setLoading(true);
       let archivosSubidos: ArchivoSubido[] = [];
 
       if (archivos.length > 0) {
@@ -373,6 +373,7 @@ export default function StepForm() {
       });
 
       if (res.success) {
+        showLoading();
         setLoading(false);
         mostrarAlertaExito("¡PQR registrado exitosamente!");
         setTimeout(() => {

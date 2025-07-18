@@ -11,7 +11,6 @@ interface NotificationListProps {
   setShowNotifications: React.Dispatch<React.SetStateAction<boolean>>; // Agrega esto
 }
 
-
 interface RawNotificacion {
   id: number;
   consecutivo: number;
@@ -90,8 +89,8 @@ const NotificationList = ({
         n.tipoAlerta === "Nuevo"
           ? "new"
           : n.tipoAlerta === "Alerta"
-            ? "alert"
-            : "success",
+          ? "alert"
+          : "success",
     }));
 
     setNotifications((prev) => {
@@ -133,9 +132,9 @@ const NotificationList = ({
         prev.map((n) =>
           n.consecutivo === String(detalle.consecutivo)
             ? {
-              ...n,
-              leido: detalle.estado === "Leido",
-            }
+                ...n,
+                leido: detalle.estado === "Leido",
+              }
             : n
         )
       );
@@ -182,8 +181,9 @@ const NotificationList = ({
             <div
               key={notification.id}
               onClick={() => handleClickNotificacion(notification.id)}
-              className={`cursor-pointer p-4 transition-colors flex items-start gap-4 ${notification.leido ? "bg-gray-100" : "bg-white"
-                } hover:bg-gray-50`}
+              className={`cursor-pointer p-4 transition-colors flex items-start gap-4 ${
+                notification.leido ? "bg-gray-100" : "bg-white"
+              } hover:bg-gray-50`}
             >
               <div className="flex-shrink-0">
                 {getIconByState(notification.estado)}
@@ -199,13 +199,13 @@ const NotificationList = ({
                       <span className="font-semibold">Cliente:</span>{" "}
                       {notification.cliente}
                     </p>
-                    <p className="text-sm truncate">
+                    <p className="text-sm truncate" title={notification.asunto}>
                       <span className="font-semibold">Asunto:</span>{" "}
                       {notification.asunto}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm truncate">
+                    <p className="text-sm truncate" title={notification.alerta}>
                       <span className="font-semibold">Alerta:</span>{" "}
                       <span
                         className={
