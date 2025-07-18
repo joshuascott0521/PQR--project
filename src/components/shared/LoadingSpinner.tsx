@@ -68,6 +68,10 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
             object-contain 
             z-10 
             drop-shadow-sm
+            max-w-80
+            h-48
+            w-48
+            animate-spin 
           `}
         />
       </div>
