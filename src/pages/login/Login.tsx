@@ -15,7 +15,7 @@ const Login = () => {
     <>
       <div className="w-screen h-screen bg-neutral-800 flex justify-center items-center bg-image  overflow-hidden">
         <div className="w-[40%] h-[100%] flex  items-center pl-10">
-          <div className="w-[90%] h-[80%]">
+          <div className="w-[90%] h-[70%]">
             <div className="">
               <img src="/public/PqrLogo.png" className="w-[160px] h-auto" />
             </div>
