@@ -43,7 +43,7 @@ const PqrData = () => {
         const result = await PqrServices.getById(id!);
         if (result.success) {
           setPqr(result.data);
-          // hideLoading();
+          hideLoading();
         } else {
           setError(result.error || "Error desconocido");
         }
@@ -76,7 +76,7 @@ const PqrData = () => {
             value: usuario.id,
           }));
           setUsuarios(opciones);
-          // hideLoading();
+          hideLoading();
         }
       } catch (err) {
         console.error(err);
@@ -128,13 +128,13 @@ const PqrData = () => {
 
       if (eventoAsignar && archivos.length === 0) {
         showToast("Debe adjuntar al menos un archivo para el evento 'Asignar'");
-        // hideLoading();
+        hideLoading();
         return;
       }
 
       if (descripcion.trim().length < 6) {
         showToast("La descripción debe tener al menos 6 caracteres");
-        // hideLoading();
+        hideLoading();
         return;
       }
 
@@ -149,7 +149,7 @@ const PqrData = () => {
         const uploadResponse = await PqrServices.uploadFiles(archivos);
         if (!uploadResponse.success) {
           showToast(uploadResponse.error || "Error al subir archivos");
-          // hideLoading();
+          hideLoading();
           return;
         }
         adjuntos = uploadResponse.data.map((archivo, index) => ({
@@ -163,7 +163,7 @@ const PqrData = () => {
       const userData = localStorage.getItem("userData");
       if (!userData) {
         setError("Usuario no encontrado");
-        // hideLoading();
+        hideLoading();
         return;
       }
 
@@ -171,7 +171,7 @@ const PqrData = () => {
       const usuid = userStorage?.id;
       if (!usuid) {
         setError("ID de usuario inválido");
-        // hideLoading();
+        hideLoading();
         return;
       }
       const datos = {
@@ -198,7 +198,7 @@ const PqrData = () => {
         setEventoSeleccionado(null);
         setUser("");
 
-        // hideLoading();
+        hideLoading();
         const newPqr = await PqrServices.getById(id!);
         if (newPqr.success) {
           setPqr(newPqr.data);
@@ -216,10 +216,10 @@ const PqrData = () => {
       }
       showToast(cleanMessage);
     } finally {
-      // hideLoading();
+      hideLoading();
     }
 
-    // hideLoading();
+    hideLoading();
   };
 
   const eventosQueRequierenAsignacion = ["Asignar", "Solicitar a Funcionario"];

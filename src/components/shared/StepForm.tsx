@@ -25,8 +25,10 @@ import {
 
 import { showToast } from "../../utils/toastUtils";
 import LoadingScreenBool from "./LoadingScreenBool";
+import { useLoading } from "../../contexts/LoadingContext";
 
 export default function StepForm() {
+  const { showLoading, hideLoading } = useLoading();
   const [step, setStep] = useState(0);
   const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([]);
   const [listaDepartamentos, setListaDepartamentos] = useState<departamento[]>(
@@ -168,17 +170,6 @@ export default function StepForm() {
 
   const validateStep = () => {
     const nuevosErrores: { [key: string]: true } = {};
-
-    // const algunVacio = Object.values(formData).some(
-    //   (valor) => valor.trim() === ""
-    // );
-
-    // if (algunVacio) {
-    //   showToast("Todos los campos son obligatorios");
-    //   nuevosErrores.documentoCliente = true;
-
-    //   return;
-    // }
 
     if (step === 0) {
       const validaciones = [
@@ -341,6 +332,8 @@ export default function StepForm() {
   const handleBack = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    showLoading("Procesando información...");
+
     e.preventDefault();
 
     // ✅ Validar antes de continuar
