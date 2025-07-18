@@ -40,12 +40,6 @@ const PqrData = () => {
     const fetchPqr = async () => {
       showLoading("Procesando información...");
       try {
-<<<<<<< Updated upstream
-        console.log(id);
-=======
-        // setLoading(true);
->>>>>>> Stashed changes
-
         const result = await PqrServices.getById(id!);
         if (result.success) {
           setPqr(result.data);
@@ -72,7 +66,10 @@ const PqrData = () => {
     };
     const fetchUsuarios = async () => {
       try {
-        const response = await typeSelectComents.getUsuarios();
+        const userDataString = localStorage.getItem("userData");
+        const userData = userDataString ? JSON.parse(userDataString) : null;
+        const usuarioId = userData?.id;
+        const response = await typeSelectComents.getUsuarios(usuarioId);
         if (response.success && response.data) {
           const opciones = response.data.map((usuario: any) => ({
             label: usuario.nombre,

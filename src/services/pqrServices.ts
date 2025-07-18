@@ -25,6 +25,7 @@ import type {
   TipoPqr,
   UserType,
   Usuario,
+  UsuarioAsignar,
 } from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
@@ -52,11 +53,12 @@ export const typeSelectComents = {
       };
     }
   },
-  getUsuarios: async (): Promise<ApiResponse<Usuario[]>> => {
+  getUsuarios: async (id: string): Promise<ApiResponse<UsuarioAsignar[]>> => {
     try {
-      const response = await apiClient.get("usuario/Get");
+      const response = await apiClient.get(`usuario/AsignarById?usuid=${id}`);
       return { success: true, data: response.data };
     } catch (error: any) {
+      console.log(Response);
       return {
         success: false,
         data: [],
@@ -794,7 +796,9 @@ export const NotificacionesService = {
       return 0;
     }
   },
-  getAlertaDetalle: async (id: number):Promise<{ pqrId: string; consecutivo: number; estado: string }> => {
+  getAlertaDetalle: async (
+    id: number
+  ): Promise<{ pqrId: string; consecutivo: number; estado: string }> => {
     try {
       const response = await apiClient.get(`/Alerta/Get/${id}`); // ✅ id en la URL
       return response.data;

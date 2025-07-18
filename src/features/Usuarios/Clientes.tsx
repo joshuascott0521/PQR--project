@@ -33,17 +33,13 @@ const Clientes = () => {
         });
 
         setClientes(enrichedClientes);
-<<<<<<< Updated upstream
         setInitialLoading(false);
-=======
->>>>>>> Stashed changes
       } catch (error) {
         console.error(error);
       }
     };
     fetchClients();
   }, []);
-
 
   return (
     <div className="h-full flex flex-col">
@@ -56,12 +52,11 @@ const Clientes = () => {
       <div className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg space-y-4">
         {initialLoading
           ? Array.from({ length: 5 }).map((_, i) => (
-            <CardSkeleton size="client" key={i} />
-          ))
+              <CardSkeleton size="client" key={i} />
+            ))
           : clientes.map((client) => (
-            <ClienteCard key={client.id} cliente={client} />
-          ))
-        }
+              <ClienteCard key={client.id} cliente={client} />
+            ))}
       </div>
     </div>
   );

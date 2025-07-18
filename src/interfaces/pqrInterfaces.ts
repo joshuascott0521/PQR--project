@@ -107,8 +107,6 @@ export interface GetPqr {
   fecha?: string;
 }
 
-
-
 export interface Adjunto {
   item: number;
   nombre: string;
@@ -220,12 +218,18 @@ export interface Evento {
   accion?: string;
   obligandoAnexo?: boolean;
 }
+export interface UsuarioAsignar {
+  id?: string;
+  nombre?: string;
+  tipoUsuNombre?: string;
+}
 export interface Usuario {
   id: string;
   documento: string;
   nombre: string;
   tipoUsuId: string;
   tipoUsuarioNombre?: string;
+  tipoUsuNombre?: string;
   role?: string;
   email: string;
   celular: string;
