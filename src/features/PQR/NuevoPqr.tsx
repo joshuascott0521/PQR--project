@@ -149,7 +149,7 @@ const NuevoPqr = () => {
   };
 
   const handleClose = () => {
-    navigate("/dashboard");
+    navigate("/dashboard/statistic");
   };
 
   const validateForm = (): boolean => {
@@ -686,13 +686,13 @@ const NuevoPqr = () => {
               <button
                 type="button"
                 onClick={handleClose}
-                className="bg-gray-400 hover:bg-gray-500 w-[80px] h-[30px] rounded-md transition-colors"
+                className="bg-gray-400 text-white hover:bg-gray-500 w-[80px] h-[30px] rounded-md transition-colors"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="bg-green-500 hover:bg-green-600 hover:text-white w-[80px] h-[30px] rounded-md transition-colors"
+                className="bg-green-500 hover:bg-green-600 text-white w-[80px] h-[30px] rounded-md transition-colors"
               >
                 Guardar
               </button>
