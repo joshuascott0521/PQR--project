@@ -34,7 +34,7 @@ const UserCard = ({ pqr }: { pqr: Pqr }) => {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-y-1 text-gray-700 text-sm items-center gap-2.5">
           <div>
             <p className="font-semibold">
-              # Consecutivo:{" "}
+              Consecutivo:{" "}#
               <span className="font-normal">{pqr.consecutivo}</span>
             </p>
             <p className="truncate font-semibold" title={pqr.asunto}>

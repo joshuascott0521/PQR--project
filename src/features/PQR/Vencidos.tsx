@@ -10,13 +10,14 @@ import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 const Vencidos = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
   // const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [conteo, setConteo] = useState<PqrCount>({ estado: "", cantidad: 0 });
   const [showRealCount, setShowRealCount] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [sinResultados, setSinResultados] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(loadingMore);
@@ -69,6 +70,9 @@ const Vencidos = () => {
 
         if (!data || data.length === 0) {
           setHasMore(false);
+          if (currentPage === 1) {
+            setSinResultados(true);
+          }
           return;
         }
 
@@ -79,6 +83,7 @@ const Vencidos = () => {
           );
           return unique;
         });
+        setSinResultados(false);
       } catch (err) {
         const error = err as AxiosError;
         if (error.response?.status === 404) {
@@ -142,8 +147,7 @@ const Vencidos = () => {
         className="flex-1 overflow-auto bg-gray-100 px-6 py-4 rounded-lg"
         ref={scrollRef}
       >
-        {error && <p className="text-red-600">{error}</p>}
-        {!loadingMore && !error && pqrs.length === 0 && (
+        {!initialLoading && sinResultados && (
           <div className="flex h-full w-full items-center justify-center">
             <NoMoreResults
               message="No hay a PQRs vencidos"
@@ -156,8 +160,8 @@ const Vencidos = () => {
         <div className="space-y-4">
           {initialLoading
             ? Array.from({ length: 6 }).map((_, i) => (
-                <CardSkeleton size="medium" key={i} />
-              ))
+              <CardSkeleton size="medium" key={i} />
+            ))
             : pqrs.map((pqr) => <UserCard key={pqr.id} pqr={pqr} />)}
         </div>
 

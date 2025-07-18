@@ -8,8 +8,10 @@ import { showToast } from "../../utils/toastUtils";
 import toast from "react-hot-toast";
 import { EliminarEmojis } from "../../utils/EliminarEmojis";
 import { SolicitudSkeleton } from "./SolititudSkeleton";
+import { useLoading } from "../../contexts/LoadingContext";
 
 export default function SolicitudFrm() {
+  const { showLoading, hideLoading } = useLoading();
   const [archivos, setArchivos] = useState<File[]>([]);
   const [inputKey, setInputKey] = useState(0);
   const [mensaje, setMensaje] = useState("");
@@ -76,11 +78,12 @@ export default function SolicitudFrm() {
 
   useEffect(() => {
     if (!id) return;
-
+    showLoading("Procesando información...");
     const cargarDatos = async () => {
       const result = await SolicitudServices.getById(id);
       if (result.success) {
         setSolicitud(result.data);
+        hideLoading();
       } else {
         showToast(result.error || "Error al cargar solicitud");
       }

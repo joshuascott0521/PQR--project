@@ -11,13 +11,14 @@ import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 const Registrado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
   // const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [conteo, setConteo] = useState<PqrCount>({ estado: "", cantidad: 0 });
   const [showRealCount, setShowRealCount] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [sinResultados, setSinResultados] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(loadingMore);
@@ -68,8 +69,12 @@ const Registrado = () => {
           orden: 1,
         });
 
-        if (Array.isArray(data) && data.length < 10) {
+        if (!data || data.length === 0) {
           setHasMore(false);
+          if (currentPage === 1) {
+            setSinResultados(true);
+          }
+          return;
         }
 
         setPqrs((prev) => {
@@ -79,6 +84,7 @@ const Registrado = () => {
           );
           return unique;
         });
+        setSinResultados(false);
       } catch (err) {
         console.error(err);
       } finally {
@@ -137,8 +143,7 @@ const Registrado = () => {
         className="flex-1 overflow-auto bg-gray-100 px-6 py-4 rounded-lg"
         ref={scrollRef}
       >
-        {error && <p className="text-red-600">{error}</p>}
-        {!loadingMore && !error && pqrs.length === 0 && (
+        {!initialLoading && sinResultados && (
           <div className="flex h-full w-full items-center justify-center">
             <NoMoreResults
               message="No hay a PQRs registrados"
