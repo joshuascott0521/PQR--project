@@ -69,8 +69,6 @@ const FuncionarioResumen = () => {
     if (!resumen?.id) return;
 
     setLoadingPqrs(true);
-    console.log("🐦‍🔥", resumen, "📌📌", estado);
-    console.log("🐦‍🔥", estado);
     try {
       const nuevos = await PqrServices.getByFuncionarioId({
         funcionarioId: resumen.id,
@@ -82,7 +80,6 @@ const FuncionarioResumen = () => {
 
       if (nuevos.data.length < 10) setHasMorePqrs(false);
       setPqrsFiltrados(nuevos.data);
-      console.log("🗿🗿", nuevos);
     } catch (err) {
       console.error("Error al obtener PQRs iniciales:", err);
     } finally {
@@ -96,14 +93,6 @@ const FuncionarioResumen = () => {
     setLoadingPqrs(true);
     try {
       if (!funcionario) return;
-      console.log(
-        "🟢 Enviando usuid:",
-        funcionario?.id,
-        "estado:",
-        estado,
-        "página:",
-        paginaActual
-      );
 
       const nuevos = await PqrServices.getByEstado({
         usuid: funcionario.id,
@@ -123,8 +112,6 @@ const FuncionarioResumen = () => {
         );
         return unicos;
       });
-
-      console.log("🔴🔴🔴", pqrsFiltrados);
     } catch (err) {
       console.error("Error al cargar más PQRs:", err);
     } finally {
@@ -140,7 +127,6 @@ const FuncionarioResumen = () => {
 
         const resumenRes = await UsersServices.getResume(id!);
         if (!resumenRes.success) throw new Error(resumenRes.error);
-        console.log(resumenRes.data);
         setResumen(resumenRes.data);
         setFuncionario(funcionarioRes.data);
       } catch (err) {

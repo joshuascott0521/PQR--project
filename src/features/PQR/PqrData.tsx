@@ -40,7 +40,11 @@ const PqrData = () => {
     const fetchPqr = async () => {
       showLoading("Procesando información...");
       try {
+<<<<<<< Updated upstream
         console.log(id);
+=======
+        // setLoading(true);
+>>>>>>> Stashed changes
 
         const result = await PqrServices.getById(id!);
         if (result.success) {
@@ -60,7 +64,6 @@ const PqrData = () => {
         if (response.success && response.data) {
           if (response.data.find((e: Evento) => e.id !== "")) {
             setEventos(response.data);
-            console.log("💗💗✅✅✅", response);
           }
         }
       } catch (err) {
@@ -77,7 +80,6 @@ const PqrData = () => {
           }));
           setUsuarios(opciones);
           hideLoading();
-          console.log("Usuarios desde backend:", opciones);
         }
       } catch (err) {
         console.error(err);
@@ -148,10 +150,7 @@ const PqrData = () => {
 
       if (requiereAnexo) {
         const uploadResponse = await PqrServices.uploadFiles(archivos);
-        console.log(uploadResponse);
         if (!uploadResponse.success) {
-          console.log(uploadResponse);
-
           showToast(uploadResponse.error || "Error al subir archivos");
           hideLoading();
           return;
@@ -370,7 +369,6 @@ const PqrData = () => {
                       value={user}
                       onChange={(value) => {
                         setUser(value);
-                        console.log("Usuario asignado:", value);
                       }}
                       options={usuarios}
                       showLabelPlaceholder={false}

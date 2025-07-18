@@ -33,7 +33,10 @@ const Clientes = () => {
         });
 
         setClientes(enrichedClientes);
+<<<<<<< Updated upstream
         setInitialLoading(false);
+=======
+>>>>>>> Stashed changes
       } catch (error) {
         console.error(error);
       }

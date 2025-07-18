@@ -387,9 +387,6 @@ export default function StepForm() {
             "https://baranoa-atlantico.gov.co/Paginas/Home.aspx";
         }, 1000);
 
-        console.log("Respuesta PQR ✅✅✅✅", res.data);
-        console.log("Carga PQR 🔴🔴🔴🔴🔴", formData);
-
         // Reiniciar formulario
         setFormData({
           documentoCliente: "",

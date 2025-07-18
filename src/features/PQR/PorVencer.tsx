@@ -79,10 +79,7 @@ const PorVencer = () => {
           );
           return unique;
         });
-
-        console.log("🔴🔴🔴🔴🔴", data);
       } catch (err) {
-        console.log("❌❌❌❌❌❌", err);
       } finally {
         setLoadingMore(false);
       }
@@ -115,9 +112,7 @@ const PorVencer = () => {
         setInitialLoading(false);
 
         setLoadingMore(false);
-      } catch (err) {
-        console.log("❌❌❌❌❌❌", err);
-      }
+      } catch (err) {}
     };
 
     cargar();

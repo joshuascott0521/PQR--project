@@ -43,7 +43,6 @@ const LoginForm = () => {
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
-        console.log(err);
         showToast("Usuario y/o contraseña incorrectos.");
       } else {
         setError("Error desconocido al iniciar sesión");

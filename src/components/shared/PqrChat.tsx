@@ -86,7 +86,6 @@ const PqrChat = ({
   const verDetalleNotificacion = async (idEnvio: number) => {
     try {
       const result = await NotificacionServices.getUrlRedireccion(idEnvio);
-      console.log("📦 Respuesta del detalle de notificación:", result);
 
       if (result?.data) {
         window.open(result.data, "_blank"); // ← esto abre en nueva pestaña
@@ -102,45 +101,6 @@ const PqrChat = ({
     }
   };
 
-  //   if (item === undefined) {
-  //     showToast("No se pudo enviar la notificación: item no definido.");
-  //     return;
-  //   }
-  //   const prueba = NotificacionesService.getMediosNotificacion();
-
-  //   console.log(cliente);
-
-  //   const datos = {
-  //     pqrId: detallePqrId, // este ya es string
-  //     item, // este ya es number
-  //     medio: "",
-  //     destinatario: "",
-  //     destinatarioDocumento: cliente?.documento ?? "",
-  //     destinatarioNombre: cliente?.nombre ?? "",
-  //     destinatarioCalidad: "",
-  //   };
-  //   console.log(datos);
-
-  //   try {
-  //     const envio = NotificacionesService.enviarNotificaciones(datos);
-
-  //     // if (envio.success) {
-  //     //   showToast("✅ Notificación enviada correctamente.");
-  //     // } else {
-  //     //   showToast(envio.message || "Error al enviar notificación.");
-  //     // }
-  //     console.log((await prueba).data);
-
-  //     console.log("Resultado del envío de notificación:", envio);
-  //   } catch (error: unknown) {
-  //     if (error instanceof Error) {
-  //       showToast(`❌ Error al enviar la notificación: ${error.message}`);
-  //     } else {
-  //       showToast("❌ Error inesperado al enviar la notificación.");
-  //     }
-  //     console.error("Error al enviar notificación:", error);
-  //   }
-  // };
   const handleEnviarFormulario = async (data: any) => {
     const toastId = showToast("Enviando notificación...", "loading");
 

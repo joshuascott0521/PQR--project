@@ -25,7 +25,6 @@ const ResetPassword = () => {
     formState: { isSubmitting },
   } = useForm<FormValues>();
 
-  console.log(token);
   const onSubmit = async (data: FormValues) => {
     const { nuevaPassword, confirmacionPassword } = data;
 
@@ -45,8 +44,6 @@ const ResetPassword = () => {
     }
 
     if (!token) {
-      console.log(token);
-
       showToast("Token inválido o expirado", "error");
       return;
     }
@@ -56,7 +53,6 @@ const ResetPassword = () => {
         nuevaPassword,
         confirmacionPassword,
       });
-      console.log(result);
 
       if (result.data) {
         showToast(result.data.mensaje, "success");

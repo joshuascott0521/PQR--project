@@ -104,7 +104,6 @@ const AllPqr = () => {
       const usuid = user?.id;
       const res = await PqrServices.getPqrCountEstadoFlujo("ANULADO", usuid);
       if (res.success) setConteo(res.data);
-      console.log(res);
       setInitialLoading(false);
     };
 

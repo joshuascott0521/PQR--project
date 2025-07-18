@@ -69,8 +69,6 @@ const NotificationForm: React.FC<NotificationFormProps> = ({
     fetchTipos();
   }, []);
   useEffect(() => {
-    // console.log("xddddddddddddddd", pqrId, item);
-
     const fetchCalidadOptions = async () => {
       const response = await NotificacionesService.getCalidadNotificacion();
       if (response.success && response.data) {
