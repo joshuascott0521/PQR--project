@@ -23,13 +23,15 @@ const SearchParameters = ({ query, setQuery }: SearchParametersProps) => {
              [&::-webkit-search-cancel-button]:appearance-none"
                 />
 
-                <button
-                    onClick={clearSearch}
-                    className="text-gray-500 hover:text-red-600 ml-2"
-                    aria-label="Limpiar búsqueda"
-                >
-                    <IoClose className="text-xl" />
-                </button>
+                {query && (
+                    <button
+                        onClick={clearSearch}
+                        className="text-gray-500 hover:text-red-600 ml-2"
+                        aria-label="Limpiar búsqueda"
+                    >
+                        <IoClose className="text-xl" />
+                    </button>
+                )}
             </div>
         </div>
     );
