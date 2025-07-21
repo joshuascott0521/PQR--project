@@ -28,6 +28,32 @@ import LoadingScreenBool from "./LoadingScreenBool";
 import { useLoading } from "../../contexts/LoadingContext";
 
 export default function StepForm() {
+  const PREFIJOS_VALIDOS = [
+    "300",
+    "301",
+    "302",
+    "303",
+    "304",
+    "305",
+    "310",
+    "311",
+    "312",
+    "313",
+    "314",
+    "315",
+    "316",
+    "317",
+    "318",
+    "319",
+    "320",
+    "321",
+    "322",
+    "323",
+    "324",
+    "350",
+    "351",
+    "333",
+  ];
   const { showLoading, hideLoading } = useLoading();
   const [step, setStep] = useState(0);
   const [tipoCliente, setTipoCliente] = useState<tipoCliente[]>([]);
@@ -384,7 +410,7 @@ export default function StepForm() {
           window.location.href =
             "https://baranoa-atlantico.gov.co/Paginas/Home.aspx";
         }, 1000);
-
+        hideLoading();
         // Reiniciar formulario
         setFormData({
           documentoCliente: "",
@@ -534,7 +560,6 @@ export default function StepForm() {
                       maxLength={13} // 10 dígitos + 2 espacios
                       value={formatearCelular(formData.celular)}
                       onChange={(e) => {
-                        // Quitar todos los caracteres que no sean dígitos
                         let valorSinEspacios = e.target.value.replace(
                           /\D/g,
                           ""
@@ -545,13 +570,32 @@ export default function StepForm() {
                           valorSinEspacios = valorSinEspacios.slice(0, 10);
                         }
 
-                        // Actualizar el estado sin espacios (para el backend)
+                        // Validar prefijo cuando ya se digitaron 3 dígitos
+                        if (valorSinEspacios.length >= 3) {
+                          const prefijo = valorSinEspacios.slice(0, 3);
+                          if (!PREFIJOS_VALIDOS.includes(prefijo)) {
+                            showToast(
+                              "El número debe empezar con un prefijo válido en Colombia",
+                              "error"
+                            );
+                            // Limpiar campo si el prefijo es inválido
+                            setFormData((prev) => ({
+                              ...prev,
+                              celular: "",
+                            }));
+                            return;
+                          }
+                        }
+
+                        // Aqui guardo el valor si esta bien todo XD
                         setFormData((prev) => ({
                           ...prev,
                           celular: valorSinEspacios,
                         }));
                       }}
-                      className={errores.celular ? "border-red-500" : ""}
+                      className={
+                        errores.celular ? "border-red-500 bg-red-50" : ""
+                      }
                     />
 
                     <FloatingLabel
