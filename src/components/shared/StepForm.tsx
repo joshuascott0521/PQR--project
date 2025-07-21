@@ -28,6 +28,11 @@ import LoadingScreenBool from "./LoadingScreenBool";
 import { useLoading } from "../../contexts/LoadingContext";
 
 export default function StepForm() {
+  const [loadingTiposCliente, setLoadingTiposCliente] = useState(true);
+  const [loadingDepartamentos, setLoadingDepartamentos] = useState(true);
+  const [loadingTipoPqr, setLoadingTipoPqr] = useState(true);
+  const [loadingMunicipios, setLoadingMunicipios] = useState(false);
+
   const PREFIJOS_VALIDOS = [
     "300",
     "301",
@@ -92,36 +97,29 @@ export default function StepForm() {
         const rawUser = localStorage.getItem("userData");
         const user = rawUser ? JSON.parse(rawUser) : null;
 
-        const tipoClienteRes = await TipoClienteServices.getall();
+        const [tipoClienteRes, departamentosRes, tipoPqrRes] =
+          await Promise.all([
+            TipoClienteServices.getall(),
+            RegionServices.getDepart(),
+            TipoPqrServices.getAll(),
+          ]);
+
         if (!tipoClienteRes.success) throw new Error(tipoClienteRes.error);
-
-        const departamentosRes = await RegionServices.getDepart();
         if (!departamentosRes.success) throw new Error(departamentosRes.error);
-
-        const tipoPqrRes = await TipoPqrServices.getAll();
         if (!tipoPqrRes.success) throw new Error(tipoPqrRes.error);
 
         setTipoCliente(tipoClienteRes.data);
         setListaDepartamentos(departamentosRes.data);
         setTipoPQRListado(tipoPqrRes.data);
 
-        setFormData({
-          documentoCliente: "",
-          nombreCliente: "",
-          tipoClienteId: "",
-          email: "",
-          celular: "",
-          direccion: "",
-          departamentoCod: 0,
-          municipioCod: 0,
-          fecha: new Date().toISOString(),
-          tipoPQRId: "",
-          origen: "",
-          asunto: "",
-          descripcion: "",
-          adjuntos: [],
+        setLoadingTiposCliente(false);
+        setLoadingDepartamentos(false);
+        setLoadingTipoPqr(false);
+
+        setFormData((prev) => ({
+          ...prev,
           usuarioId: user?.id || "",
-        });
+        }));
       } catch (error) {
         console.error("Error al cargar datos iniciales:", error);
       }
@@ -539,6 +537,7 @@ export default function StepForm() {
                         value: tc.id,
                         label: tc.nombre,
                       }))}
+                      loading={loadingTiposCliente}
                       placeholder="Elige una opción"
                       className={errores.tipoClienteId ? "border-red-500" : ""}
                     />
@@ -617,6 +616,7 @@ export default function StepForm() {
                           ? ""
                           : formData.departamentoCod.toString()
                       }
+                      loading={loadingDepartamentos}
                       placeholder="Seleccionar Departamento"
                       onChange={async (value) => {
                         const cod = Number(value);
@@ -627,19 +627,20 @@ export default function StepForm() {
                           setFormData((prev) => ({
                             ...prev,
                             departamentoCod: dep.cod,
-                            municipioCod: 0, // Reinicia el municipio al cambiar de departamento
+                            municipioCod: 0,
                           }));
                           try {
+                            setLoadingMunicipios(true);
                             const municipioRes = await RegionServices.getMun(
                               dep.cod
                             );
-                            if (municipioRes.success) {
-                              setListaMunicipios(municipioRes.data);
-                            } else {
-                              setListaMunicipios([]);
-                            }
+                            setListaMunicipios(
+                              municipioRes.success ? municipioRes.data : []
+                            );
                           } catch {
                             setListaMunicipios([]);
+                          } finally {
+                            setLoadingMunicipios(false);
                           }
                         }
                       }}
@@ -655,6 +656,7 @@ export default function StepForm() {
                     {formData.departamentoCod !== 0 && (
                       <FloatingSelect
                         label="Municipio"
+                        loading={loadingMunicipios}
                         placeholder="Seleccionar Municipio"
                         value={
                           formData.municipioCod === 0
@@ -717,6 +719,7 @@ export default function StepForm() {
                         value: tc.id,
                         label: tc.nombre,
                       }))}
+                      loading={loadingTipoPqr}
                       placeholder="Elige una opción"
                       className={errores.tipoPQRId ? "border-red-500" : ""}
                     />
