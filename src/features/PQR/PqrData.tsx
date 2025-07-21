@@ -11,6 +11,10 @@ import { showToast } from "../../utils/toastUtils";
 import { EliminarEmojis } from "../../utils/EliminarEmojis";
 
 const PqrData = () => {
+  const [loadingEventoSeleccionado, setLoadingEventoSeleccionado] =
+    useState(true);
+  const [loadingUsuarios, setLoadingUsuarios] = useState(true);
+
   const { showLoading, hideLoading } = useLoading();
   const [, setRefreshChat] = useState(false);
 
@@ -53,6 +57,8 @@ const PqrData = () => {
     };
 
     const fetchEventos = async () => {
+      setLoadingEventoSeleccionado(false);
+
       try {
         const response = await typeSelectComents.getEvento(id!);
         if (response.success && response.data) {
@@ -65,6 +71,7 @@ const PqrData = () => {
       }
     };
     const fetchUsuarios = async () => {
+      setLoadingUsuarios(true); // <-- Inicia la carga
       try {
         const userDataString = localStorage.getItem("userData");
         const userData = userDataString ? JSON.parse(userDataString) : null;
@@ -76,10 +83,11 @@ const PqrData = () => {
             value: usuario.id,
           }));
           setUsuarios(opciones);
-          hideLoading();
         }
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoadingUsuarios(false); // <-- Finaliza la carga
       }
     };
 
@@ -348,6 +356,7 @@ const PqrData = () => {
                   Nuevo evento:
                 </label>
                 <FloatingSelectLP
+                  loading={loadingEventoSeleccionado}
                   value={eventoSeleccionado?.id ?? ""}
                   onChange={(value) => {
                     const seleccionado =
@@ -363,6 +372,7 @@ const PqrData = () => {
                       Asignar a:
                     </label>
                     <FloatingSelectLP
+                      loading={loadingUsuarios}
                       value={user}
                       onChange={(value) => {
                         setUser(value);

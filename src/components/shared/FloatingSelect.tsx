@@ -13,7 +13,7 @@ interface FloatingSelectProps {
   onChange: (value: string) => void | Promise<void>;
   options: { value: string; label: string }[];
   disabled?: boolean;
-  loading?: boolean; // 👈 nueva prop
+  loading?: boolean;
   className?: string;
   placeholder?: string;
 }
@@ -24,7 +24,7 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
   onChange,
   options,
   disabled = false,
-  loading = false, // 👈 valor por defecto
+  loading = false,
   className = "",
   placeholder = "",
 }) => {
@@ -33,7 +33,7 @@ export const FloatingSelect: React.FC<FloatingSelectProps> = ({
       <SelectPrimitive.Root
         value={value}
         onValueChange={onChange}
-        disabled={disabled || loading} // 👈 desactivamos si está cargando
+        disabled={disabled || loading}
       >
         <SelectPrimitive.Trigger
           className={cn(
