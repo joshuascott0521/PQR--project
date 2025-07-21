@@ -1,4 +1,5 @@
 import apiClient from "../api/apiClient";
+import apiClientPublic from "../api/apiClientPublic";
 import type {
   Adjunto,
   AlertaNotificacion,
@@ -602,7 +603,7 @@ export const ArchivoServices = {
 export const SolicitudServices = {
   getById: async (id: string): Promise<ApiResponse<SolicitudRequisitoDTO>> => {
     try {
-      const response = await apiClient.get(`/PQRSolicitud/Get/${id}`);
+      const response = await apiClientPublic.get(`/PQRSolicitud/Get/${id}`);
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
@@ -621,7 +622,7 @@ export const SolicitudServices = {
     adjuntos: Adjunto[];
   }): Promise<ApiResponse<string>> => {
     try {
-      const response = await apiClient.put("/PQRSolicitud/Update", payload);
+      const response = await apiClientPublic.put("/PQRSolicitud/Update", payload);
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
