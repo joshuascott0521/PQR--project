@@ -10,119 +10,114 @@ import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
 const Registrado = () => {
   const [pqrs, setPqrs] = useState<Pqr[]>([]);
-  // const [loading, setLoading] = useState(false);
-  const [, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [conteo, setConteo] = useState<PqrCount>({ estado: "", cantidad: 0 });
   const [showRealCount, setShowRealCount] = useState(false);
+
+  const [, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
+
   const [loadingMore, setLoadingMore] = useState(false);
   const [sinResultados, setSinResultados] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [hasMore, setHasMore] = useState(true);
+
   const scrollRef = useRef<HTMLDivElement>(null);
-  const loadingRef = useRef(loadingMore);
+
+  const fetchPqrs = async (currentPage: number) => {
+    if (!hasMore) return;
+
+    setLoadingMore(true);
+
+    try {
+      const userData = localStorage.getItem("userData");
+      if (!userData) return;
+
+      const user = JSON.parse(userData);
+      const usuid = user?.id;
+      if (!usuid) return;
+
+      const data = await PqrServices.getByEstado({
+        usuid,
+        page: currentPage,
+        size: pageSize,
+        estadoProceso: "REGISTRADO",
+        orden: 1,
+      });
+
+      if (!data || !data.data || data.data.length === 0) {
+        if (currentPage === 1) setSinResultados(true);
+        setHasMore(false);
+        return;
+      }
+
+      setPqrs((prev) => {
+        const combined = [...prev, ...data.data];
+        return Array.from(new Map(combined.map((item) => [item.id, item])).values());
+      });
+
+      if (data.data.length < pageSize) {
+        setHasMore(false);
+      }
+
+      setSinResultados(false);
+    } catch (err) {
+      console.error(err);
+      setHasMore(false);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
 
   useEffect(() => {
-    loadingRef.current = loadingMore;
-  }, [loadingMore]);
+    setLoading(true);
+    setPage(1);
+    setPqrs([]);
+    setHasMore(true);
+    fetchPqrs(1).then(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (page === 1 || !hasMore) return;
+    fetchPqrs(page);
+  }, [page]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
     const handleScroll = () => {
-      const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
-      if (isAtBottom && !loadingRef.current && hasMore) {
-        setCurrentPage((prev) => prev + 1);
+      const bottomReached = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
+      if (bottomReached && !loadingMore && hasMore) {
+        setPage((prev) => prev + 1);
       }
     };
 
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
-  }, [hasMore]);
-
-  useEffect(() => {
-    const fetchPqrs = async () => {
-      setLoadingMore(true);
-      try {
-        const userData = localStorage.getItem("userData");
-        if (!userData) {
-          setError("Usuario no encontrado");
-          setLoadingMore(false);
-          return;
-        }
-
-        const user = JSON.parse(userData);
-        const usuid = user?.id;
-        if (!usuid) {
-          setError("ID de usuario inválido");
-          setLoadingMore(false);
-          return;
-        }
-
-        const data = await PqrServices.getByEstado({
-          usuid,
-          page: currentPage,
-          size: 10,
-          estadoProceso: "Registrado",
-          orden: 1,
-        });
-
-        if (!data || data.length === 0) {
-          setHasMore(false);
-          if (currentPage === 1) {
-            setSinResultados(true);
-          }
-          return;
-        }
-
-        setPqrs((prev) => {
-          const combined = [...prev, ...data.data];
-          const unique = Array.from(
-            new Map(combined.map((item) => [item.id, item])).values()
-          );
-          return unique;
-        });
-        setSinResultados(false);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoadingMore(false);
-      }
-    };
-
-    fetchPqrs();
-  }, [currentPage]);
+  }, [loadingMore, hasMore]);
 
   useEffect(() => {
     setInitialLoading(true);
-    const cargar = async () => {
+    const cargarConteo = async () => {
       const userData = localStorage.getItem("userData");
-      if (!userData) {
-        setError("Usuario no encontrado");
-        setInitialLoading(false);
-        return;
-      }
+      if (!userData) return;
 
       const user = JSON.parse(userData);
       const usuid = user?.id;
       const res = await PqrServices.getPqrCountEstadoFlujo("REGISTRADO", usuid);
 
-      if (res.success) {
+      if (res.success && res.data.cantidad !== null) {
         setConteo(res.data);
-
-        // Mostrar el número real después de 2.5 segundos
         setTimeout(() => {
           setShowRealCount(true);
         }, 2500);
       }
       setInitialLoading(false);
-
-      setLoadingMore(false);
     };
 
-    cargar();
+    cargarConteo();
   }, []);
 
   return (
