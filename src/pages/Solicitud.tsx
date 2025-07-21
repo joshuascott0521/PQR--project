@@ -9,7 +9,7 @@ export default function Solicitud() {
         {/* Imagen de fondo recortada */}
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/Login44.png')" }}
+          style={{ backgroundImage: "url('/Login44.jpg')" }}
         >
           <div className="absolute inset-0 bg-black/40" />
         </div>
