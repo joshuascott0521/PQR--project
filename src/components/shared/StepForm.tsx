@@ -332,8 +332,6 @@ export default function StepForm() {
   const handleBack = () => setStep((prev) => prev - 1);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    showLoading("Procesando información...");
-
     e.preventDefault();
 
     // ✅ Validar antes de continuar
@@ -349,9 +347,13 @@ export default function StepForm() {
       "¿Deseas enviar el PQR?",
       "Una vez enviado, no podrás editarlo. Será procesado por la entidad correspondiente."
     );
-    if (!confirmado) return;
+    if (!confirmado) {
+      return showLoading("Procesando información...");
+    }
 
     try {
+      showLoading("Procesando información...");
+
       // setLoading(true);
       let archivosSubidos: ArchivoSubido[] = [];
 
@@ -371,11 +373,13 @@ export default function StepForm() {
         radicado: "",
         origen: "Portal web",
       });
+      showLoading("Procesando información...");
 
       if (res.success) {
-        showLoading();
         setLoading(false);
         mostrarAlertaExito("¡PQR registrado exitosamente!");
+        showLoading();
+
         setTimeout(() => {
           window.location.href =
             "https://baranoa-atlantico.gov.co/Paginas/Home.aspx";
