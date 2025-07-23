@@ -1,4 +1,3 @@
-// src/utils/alertas.ts
 import Swal from "sweetalert2";
 
 export const mostrarAlertaSimple = (titulo: string, mensaje: string) => {
@@ -24,4 +23,28 @@ export const mostrarAlertaConfirmacion = async (titulo: string, texto: string) =
   });
 
   return result.isConfirmed;
+};
+
+export const mostrarAlertaTemporizada = async (
+  titulo: string,
+  mensaje: string,
+  duracion: number = 2000,
+  icono: "success" | "error" | "warning" | "info" | "question" = "info"
+) => {
+  await Swal.fire({
+    title: titulo,
+    html: mensaje,
+    icon: icono,
+    timer: duracion,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    willClose: () => {
+      // Ya no se necesita clearInterval
+    }
+  }).then((result) => {
+    if (result.dismiss === Swal.DismissReason.timer) {
+      console.log("Se cerró automáticamente por el temporizador");
+    }
+  });
 };

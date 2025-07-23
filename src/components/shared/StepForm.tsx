@@ -20,7 +20,7 @@ import RequisitosAdjuntos from "./RequisitosAdjuntos";
 import {
   mostrarAlertaConfirmacion,
   mostrarAlertaError,
-  mostrarAlertaExito,
+  mostrarAlertaTemporizada,
 } from "../../libs/alerts";
 
 import { showToast } from "../../utils/toastUtils";
@@ -401,7 +401,12 @@ export default function StepForm() {
 
       if (res.success) {
         setLoading(false);
-        mostrarAlertaExito("¡PQR registrado exitosamente!");
+        await mostrarAlertaTemporizada(
+          "Proceso Exitoso",
+          "PQR Registrado Exitosamente...",
+          3000,
+          "success"
+        );
         showLoading();
 
         setTimeout(() => {
@@ -445,9 +450,9 @@ export default function StepForm() {
   return (
     <>
       <LoadingScreenBool active={loading} />
-      <div className="w-full h-screen flex justify-center items-center">
+      <div className="w-full h-full flex justify-center items-center">
         <div className="w-[520px]">
-          <div className="bg-white/70  rounded-2xl shadow-lg w-full  p-10 border border-gray-100">
+          <div className="bg-white/70  rounded-2xl shadow-lg w-full  p-10">
             {/* Step Indicators */}
             <div className="relative flex justify-between mb-6">
               <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-300 z-0" />
@@ -457,13 +462,12 @@ export default function StepForm() {
                   className="flex-1 flex flex-col items-center relative z-10"
                 >
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${
-                      index < step
+                    className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-2 transition-all duration-300 ${index < step
                         ? "bg-green-500 text-white border-green-500"
                         : index === step
-                        ? "bg-white text-green-500 border-green-500"
-                        : "bg-gray-200 text-gray-500 border-gray-300"
-                    }`}
+                          ? "bg-white text-green-500 border-green-500"
+                          : "bg-gray-200 text-gray-500 border-gray-300"
+                      }`}
                   >
                     {index + 1}
                   </div>
@@ -762,11 +766,10 @@ export default function StepForm() {
                           }}
                           rows={4}
                           placeholder="Descripción"
-                          className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${
-                            errores.descripcion
+                          className={`w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 ${errores.descripcion
                               ? "border-red-500 focus:ring-red-500"
                               : "border-gray-300 focus:ring-green-500"
-                          }`}
+                            }`}
                         />
                       </div>
                     </div>
@@ -802,11 +805,10 @@ export default function StepForm() {
                     {/* Botón de subir archivos */}
                     <label
                       className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                     ${
-                       archivos.length >= 5
-                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                         : "bg-emerald-400 text-white hover:bg-emerald-500"
-                     }
+                     ${archivos.length >= 5
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-emerald-400 text-white hover:bg-emerald-500"
+                        }
                     `}
                     >
                       <Paperclip className="w-4 h-4" />
