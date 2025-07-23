@@ -2,8 +2,8 @@
 import { ShieldUser } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { UserType, Usuario } from '../../interfaces/pqrInterfaces';
-import { UsersServices } from '../../services/pqrServices';
+import type { Dependencia, UserType, Usuario } from '../../interfaces/pqrInterfaces';
+import { DependenciaServices, UsersServices } from '../../services/pqrServices';
 import { FloatingLabel } from '../../components/shared/FloatingLabel';
 import { FloatingSelect } from '../../components/shared/FloatingSelect';
 import { showToast } from '../../utils/toastUtils';
@@ -16,6 +16,7 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
     const { code } = useParams();
     const [loading, setLoading] = useState(true);
     const [tipoFuncionario, setTipoFuncionario] = useState<UserType[]>([])
+    const [dependencia, setDependencia] = useState<Dependencia[]>([])
     const [formData, setFormData] = useState<Usuario>({
         id: "",
         documento: "",
@@ -26,6 +27,7 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
         email: "",
         celular: "",
         estado: "",
+        dependenciaId: 0,
     });
 
     const navigate = useNavigate();
@@ -35,11 +37,11 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
             try {
                 const responseUserType = await UsersServices.getUserType();
                 if (!responseUserType.success) throw new Error(responseUserType.error);
+                const responseDependencias = await DependenciaServices.getAll();
+                if (!responseDependencias.success) throw new Error(responseDependencias.error);
 
-
-
-                setTipoFuncionario(responseUserType.data)
-
+                setTipoFuncionario(responseUserType.data);
+                setDependencia(responseDependencias.data);
 
                 if (Editing && code) {
                     const responseFuncionario = await UsersServices.getById(code!);
@@ -70,7 +72,8 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
                     nombre: formData.nombre,
                     tipoUsuId: formData.tipoUsuId,
                     email: formData.email,
-                    celular: formData.celular
+                    celular: formData.celular,
+                    dependenciaid: formData.dependenciaId,
                 }
 
                 const responseUpdateFuncionario = await UsersServices.update(payload);
@@ -151,8 +154,24 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
                             }))}
                             placeholder="Elige una opción"
                             className="w-lg"
-                            
                         />
+                        <FloatingSelect
+                            label="Dependencia"
+                            value={formData.dependenciaId?.toString() ?? ""}
+                            onChange={(value) =>
+                                setFormData((prev) => ({
+                                    ...prev,
+                                    dependenciaId: parseInt(value, 10),
+                                }))
+                            }
+                            options={dependencia.map((d) => ({
+                                value: d.id.toString(),
+                                label: d.nombre,
+                            }))}
+                            placeholder="Elige una opción"
+                        />
+
+
 
                         <FloatingLabel
                             id="email"

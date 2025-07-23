@@ -45,7 +45,7 @@ export const VistaPerfil = () => {
       } catch (error) {
         console.error(error);
       } finally {
-        // setLoading(false); // 👈 Esto asegura que se quite el skeleton
+         setLoading(false); // 👈 Esto asegura que se quite el skeleton
       }
     };
     fecthData();

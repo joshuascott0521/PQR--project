@@ -239,6 +239,14 @@ export interface Usuario {
   };
   password?: string;
   verifyPassword?: string;
+  dependenciaId?: number;
+  dependenciaNombre?: string;
+}
+
+export interface Dependencia {
+  id: number;
+  nombre: string;
+  estado: boolean
 }
 
 export interface Password {
