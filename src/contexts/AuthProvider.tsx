@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginService, type User } from "../services/authService";
 import { AuthContext } from "./AuthContext";
-import { toast } from "react-toastify";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -14,7 +13,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
-    toast.info("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
     navigate("/login");
   };
 

@@ -77,7 +77,7 @@ export interface Cliente {
   municipioCod: number;
   municipioNombre?: string;
   tipoClienteId: string;
-  tipoName: string;
+  tipoName?: string;
 }
 export interface MedioNotificacion {
   medio?: string;
@@ -239,7 +239,7 @@ export interface Usuario {
   };
   password?: string;
   verifyPassword?: string;
-  dependenciaId?: number;
+  dependenciaId?: number | null;
   dependenciaNombre?: string;
 }
 

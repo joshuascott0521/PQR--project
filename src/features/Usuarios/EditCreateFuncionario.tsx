@@ -27,7 +27,7 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
         email: "",
         celular: "",
         estado: "",
-        dependenciaId: 0,
+        dependenciaId: null,
     });
 
     const navigate = useNavigate();
@@ -58,6 +58,7 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
     }, []);
 
     const handleCancel = () => {
+        console.log("DependenciaId actual:", formData.dependenciaId);
         navigate("/dashboard/admin/funcionarios");
     }
 
@@ -155,13 +156,14 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
                             placeholder="Elige una opción"
                             className="w-lg"
                         />
+
                         <FloatingSelect
                             label="Dependencia"
-                            value={formData.dependenciaId?.toString() ?? ""}
+                            value={formData.dependenciaId != null ? formData.dependenciaId.toString() : ""}
                             onChange={(value) =>
                                 setFormData((prev) => ({
                                     ...prev,
-                                    dependenciaId: parseInt(value, 10),
+                                    dependenciaId: value ? parseInt(value, 10) : null,
                                 }))
                             }
                             options={dependencia.map((d) => ({
