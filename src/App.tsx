@@ -29,12 +29,14 @@ import Clientes from "./features/Usuarios/Clientes";
 import EditarCliente from "./features/Usuarios/EditarCliente";
 import FuncionarioResumen from "./features/Usuarios/FuncionarioResumen";
 import Funcionarios from "./features/Usuarios/Funcionarios";
-import Parametros from "./features/Usuarios/Parametros";
+import Parametros from "./features/Parametros/Parametros";
 import { VistaPerfil } from "./features/Usuarios/VistaPerfil";
 import ResetPassword from "./pages/ResetPassword";
 import Solicitud from "./pages/Solicitud";
 import FuncionarioDetalleWrapper from "./utils/FuncionarioWrapper";
-import ParametrosDetalleWrapper from "./utils/ParametroWrapper";
+import General from "./features/Parametros/General/General";
+import GeneralWrapper from "./utils/Wrapper Parameters/GeneralWrapper";
+import Plantillas from "./features/Parametros/Plantillas/Plantillas";
 
 function App() {
   return (
@@ -68,7 +70,7 @@ function App() {
           <Route element={<PrivateRoute />}>
             {/* Rutas protegidas bajo el layout Dashboard */}
             <Route path="/dashboard" element={<Dashboard />}>
-              <Route path="/dashboard/statistic" element={<Metricas />} />
+              <Route path="statistic" element={<Metricas />} />
               <Route path="my-profile" element={<VistaPerfil />} />
               <Route path="change-my-password" element={<ChangePassword />} />
               <Route path="all-pqr" element={<AllPqr />} />
@@ -85,14 +87,12 @@ function App() {
               <Route path="nuevo-pqr" element={<NuevoPqr />} />
               <Route path="admin/cliente" element={<Clientes />} />
               <Route path="admin/parametros" element={<Parametros />} />
-              <Route
-                path="admin/parametros/detalle/:code"
-                element={<ParametrosDetalleWrapper />}
-              />
-              <Route
-                path="admin/parametros/crear"
-                element={<ParametrosDetalleWrapper />}
-              />
+              {/* Rutas para los parametros */}
+              <Route path="admin/parametros/general" element={<General />} />
+              <Route path="admin/parametros/general/:code" element={<GeneralWrapper />} />
+              <Route path="admin/parametros/general/crear" element={<GeneralWrapper />} />
+              <Route path="admin/parametros/templates" element={<Plantillas />} />
+
               <Route path="admin/funcionarios" element={<Funcionarios />} />
               <Route
                 path="admin/funcionario/editar/:code"
@@ -102,17 +102,17 @@ function App() {
                 path="admin/funcionario/crear"
                 element={<FuncionarioDetalleWrapper />}
               />
-              <Route path="/dashboard/PQR/detalle/:id" element={<PqrData />} />
+              <Route path="PQR/detalle/:id" element={<PqrData />} />
               <Route
-                path="/dashboard/cliente/detalle/:id"
+                path="cliente/detalle/:id"
                 element={<ClienteDetalle />}
               />
               <Route
-                path="/dashboard/cliente/editar/:id"
+                path="cliente/editar/:id"
                 element={<EditarCliente />}
               />
               <Route
-                path="/dashboard/funcionarios/resumen/:id"
+                path="funcionarios/resumen/:id"
                 element={<FuncionarioResumen />}
               />
             </Route>

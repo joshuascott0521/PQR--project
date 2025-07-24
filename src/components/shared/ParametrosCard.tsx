@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 interface ParametrosCardProps {
     parametros: Parameters;
+    categoria: string; // ← NUEVA
 }
 
-const ParametrosCard = ({ parametros }: ParametrosCardProps) => {
+
+const ParametrosCard = ({ parametros, categoria }: ParametrosCardProps) => {
     const navigate = useNavigate();
 
     return (
@@ -56,8 +58,8 @@ const ParametrosCard = ({ parametros }: ParametrosCardProps) => {
 
                     <FaEdit
                         size={30}
-                        className="ml-3 text-yellow-400  hover:text-yellow-500 cursor-pointer active:scale-90 flex-shrink-0"
-                        onClick={() => navigate(`/dashboard/admin/parametros/detalle/${parametros.codigo}`)}
+                        className="ml-3 text-yellow-400 hover:text-yellow-500 cursor-pointer active:scale-90 flex-shrink-0"
+                        onClick={() => navigate(`/dashboard/admin/parametros/${categoria}/${parametros.codigo}`)}
                     />
                 </div>
 

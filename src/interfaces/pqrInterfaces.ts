@@ -249,6 +249,19 @@ export interface Dependencia {
   estado: boolean
 }
 
+export interface ParameterCard {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  color: string;
+  bgColor: string;
+}
+
+export interface ParametersProps {
+    Editing?: boolean;
+}
+
 export interface Password {
   id: string;
   passwordAntigua: string;

@@ -1,16 +1,17 @@
 import { FilePlus, Settings } from "lucide-react";
-import { FloatingLabel } from "../../components/shared/FloatingLabel";
+
 import { useEffect, useRef, useState } from "react";
-import { ParametersServices } from "../../services/pqrServices";
-import { FloatingSelect } from "../../components/shared/FloatingSelect";
+
 
 import { useNavigate, useParams } from "react-router-dom";
-import type { Parameters } from "../../interfaces/pqrInterfaces";
-import { showToast } from "../../utils/toastUtils";
+import type { Parameters, ParametersProps } from "../../../interfaces/pqrInterfaces";
+import { ParametersServices } from "../../../services/pqrServices";
+import { showToast } from "../../../utils/toastUtils";
+import { FloatingLabel } from "../../../components/shared/FloatingLabel";
+import { FloatingSelect } from "../../../components/shared/FloatingSelect";
 
-interface ParametersProps {
-    Editing?: boolean;
-}
+
+
 
 const ParametrosFrm = ({ Editing }: ParametersProps) => {
 
