@@ -2,7 +2,6 @@ import {
   ArrowRight,
   Edit3,
   FileText,
-  Send,
   Sparkles,
   SquarePen,
   Stamp,
