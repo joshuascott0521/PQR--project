@@ -4,13 +4,15 @@ import { FloatingSelectLP } from "../../components/shared/FloatingSelectLP";
 import PqrChat from "../../components/shared/PqrChat";
 import { PqrServices, typeSelectComents } from "../../services/pqrServices";
 import type { DetallePqr, Evento } from "../../interfaces/pqrInterfaces";
-import { Paperclip, X, File } from "lucide-react";
+import { Paperclip, X, File, Sparkles } from "lucide-react";
 import { useLoading } from "../../contexts/LoadingContext";
 
 import { showToast } from "../../utils/toastUtils";
 import { EliminarEmojis } from "../../utils/EliminarEmojis";
+import RespuestaIA from "../../components/shared/RespuestaIA";
 
 const PqrData = () => {
+  const [isWideScreen, setIsWideScreen] = useState(false);
   const [loadingEventoSeleccionado, setLoadingEventoSeleccionado] =
     useState(true);
   const [loadingUsuarios, setLoadingUsuarios] = useState(true);
@@ -34,7 +36,7 @@ const PqrData = () => {
   const [usuarios, setUsuarios] = useState<{ label: string; value: string }[]>(
     []
   );
-
+  const [isModalOpenIA, setIsModalOpenIA] = useState(false);
   const opcionesEventos = eventos.map((evento) => ({
     label: evento.nombre ?? "Sin nombre",
     value: evento.id ?? "",
@@ -239,11 +241,14 @@ const PqrData = () => {
   );
 
   useEffect(() => {
-    if (!requiereAsignar) {
-      setUser("");
-    }
-  }, [requiereAsignar]);
+    const handleResize = () => {
+      setIsWideScreen(window.innerWidth >= 1400);
+    };
 
+    handleResize(); // chequeo inicial
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   return (
     <>
       <div className="h-full max-h-[928px] flex flex-col justify-between">
@@ -382,8 +387,23 @@ const PqrData = () => {
                     />
                   </>
                 )}
-              </div>
+                <div
+                  className="ml-auto bg-blue-500 hover:bg-blue-700 text-white text-lg rounded-lg px-[20px] py-[5px] flex items-center gap-2"
+                  onClick={() => setIsModalOpenIA(true)}
+                >
+                  <Sparkles />
+                  {(isWideScreen || !requiereAsignar) && (
+                    <span>Proyectar Respuesta con IA</span>
+                  )}
+                </div>
 
+                {/* <button
+                  type="submit"
+                 
+                >
+                 
+                </button> */}
+              </div>
               <div>
                 <textarea
                   id="descripcion"
@@ -461,6 +481,11 @@ const PqrData = () => {
           </div>
         )}
       </div>
+      <RespuestaIA
+        isOpen={isModalOpenIA}
+        onClose={() => setIsModalOpenIA(false)}
+        numeroRadicado="202403443409"
+      />
     </>
   );
 };

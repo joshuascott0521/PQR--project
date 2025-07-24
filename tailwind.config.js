@@ -7,6 +7,9 @@ export default {
         emeraldBright: "#00bf63",
         "amarillo-gg": "#ffe900",
       },
+      screens: {
+        xl2: "13400px",
+      },
     },
   },
   plugins: [],

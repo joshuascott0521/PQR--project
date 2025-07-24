@@ -5,7 +5,7 @@ import "../Login.css";
 export default function Portal() {
   return (
     <div className="w-full h-screen relative overflow-hidden">
-      {/* 🌄 Fondo para TODAS las vistas */}
+      {/*  Fondo para TODAS las vistas */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: "url('/Login44.jpg')" }}
@@ -36,4 +36,3 @@ export default function Portal() {
     </div>
   );
 }
-
