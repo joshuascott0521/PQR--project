@@ -1,12 +1,12 @@
 import { Upload, UserRoundPen } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { UsersServices } from "../../services/pqrServices";
-import type { UserType, Usuario } from "../../interfaces/pqrInterfaces";
+import type { Usuario } from "../../interfaces/pqrInterfaces";
 import { FloatingLabel } from "../../components/shared/FloatingLabel";
-import { FloatingSelect } from "../../components/shared/FloatingSelect";
 import { useNavigate } from "react-router-dom";
 import { showToast } from "../../utils/toastUtils";
 import { PerfilSkeleton } from "../../components/shared/PerfilSkeleton";
+import { mostrarAlertaExito } from "../../libs/alerts";
 
 export const VistaPerfil = () => {
   const navigate = useNavigate();
@@ -21,14 +21,15 @@ export const VistaPerfil = () => {
     id: "",
     documento: "",
     nombre: "",
-    tipoUsuId: "",
-    tipoUsuarioNombre: "",
+    tipoUsuNombre: "",
     role: "",
     email: "",
     celular: "",
     estado: "",
+    dependenciaNombre: "",
+    firma: "",
   });
-  const [tipoFuncionario, setTipoFuncionario] = useState<UserType[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,16 +37,11 @@ export const VistaPerfil = () => {
       try {
         const funcionarioRes = await UsersServices.getById(usuarioId);
         if (!funcionarioRes.success) throw new Error(funcionarioRes.error);
-
-        const responseUserType = await UsersServices.getUserType();
-        if (!responseUserType.success) throw new Error(responseUserType.error);
-
-        setTipoFuncionario(responseUserType.data);
         setFormData(funcionarioRes.data);
       } catch (error) {
         console.error(error);
       } finally {
-         setLoading(false); // 👈 Esto asegura que se quite el skeleton
+        setLoading(false); // 👈 Esto asegura que se quite el skeleton
       }
     };
     fecthData();
@@ -57,16 +53,52 @@ export const VistaPerfil = () => {
 
   const handleArchivo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const archivo = e.target.files?.[0];
-    if (archivo && archivo.type.startsWith("image/png")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagenFirma(reader.result as string);
-      };
-      reader.readAsDataURL(archivo);
-    } else {
-      showToast("Solamente se permiten archivos PNG");
+
+    if (!archivo) return;
+
+    const maxSizeMB = 3;
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+    if (archivo.size > maxSizeBytes) {
+      showToast("La firma supera los 3 MB. Por favor usa una imagen más liviana.");
+      return;
     }
+
+    if (!archivo.type.startsWith("image/png")) {
+      showToast("Solamente se permiten archivos PNG");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const firmaBase64 = reader.result as string;
+      setImagenFirma(firmaBase64);
+      setFormData((prev) => ({ ...prev, firma: firmaBase64 }));
+    };
+    reader.readAsDataURL(archivo);
   };
+
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await UsersServices.updatePerfil(formData);
+      if (response.success) {
+        mostrarAlertaExito("Perfil actualizado exitosamente!");
+
+        navigate("/dashboard/statistic");
+      } else {
+        console.error("Error al actualizar perfil", response.error);
+      }
+    } catch (error) {
+      console.error("Error inesperado al guardar:", error);
+    }
+  }
+
+  useEffect(() => {
+    console.log("Firma en formData actualizada:", formData);
+  }, [formData.firma]);
+
 
   const handleCancel = () => {
     navigate("/dashboard/statistic");
@@ -85,7 +117,10 @@ export const VistaPerfil = () => {
         {loading ? (
           <PerfilSkeleton />
         ) : (
-          <form className="flex flex-col space-y-2 bg-white px-6 py-2.5 rounded-lg shadow-md w-full">
+          <form
+            className="flex flex-col space-y-2 bg-white px-6 py-2.5 rounded-lg shadow-md w-full"
+            onSubmit={handleSubmit}
+          >
             <h2 className="text-xl font-semibold mb-4 border-b-2 border-gray-300">
               Datos del Funcionario
             </h2>
@@ -112,21 +147,18 @@ export const VistaPerfil = () => {
                   setFormData((prev) => ({ ...prev, nombre: e.target.value }))
                 }
               />
-              <FloatingSelect
+              <FloatingLabel
+                id="tipoFuncionario"
                 label="Tipo Funcionario"
-                value={formData.tipoUsuId}
-                onChange={(value) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    tipoUsuId: value,
-                  }));
-                }}
-                options={tipoFuncionario.map((tc) => ({
-                  value: tc.id,
-                  label: tc.nombre,
-                }))}
-                placeholder="Elige una opción"
-                className="w-lg"
+                className="w-full"
+                value={formData.tipoUsuNombre}
+                disabled
+              />
+              <FloatingLabel
+                id="dependencia"
+                label="Dependencia"
+                className="w-full"
+                value={formData.dependenciaNombre}
                 disabled
               />
               <FloatingLabel
@@ -191,9 +223,9 @@ export const VistaPerfil = () => {
               <div className="w-full md:w-1/2">
                 <p className="text-sm text-gray-600 mb-1">Vista Previa:</p>
                 <div className="border-2 border-dashed border-blue-400 p-2 w-full max-w-sm h-32 rounded-lg bg-blue-50 flex items-center justify-center overflow-hidden">
-                  {imagenFirma ? (
+                  {imagenFirma || formData.firma ? (
                     <img
-                      src={imagenFirma}
+                      src={imagenFirma ?? formData.firma}
                       alt="Firma previa"
                       className="max-h-36 max-w-full object-contain"
                     />

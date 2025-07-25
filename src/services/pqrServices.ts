@@ -476,6 +476,29 @@ export const UsersServices = {
       };
     }
   },
+  updatePerfil: async (funcionario: Usuario): Promise<ApiResponse<Usuario>> => {
+    try {
+      const payload = {
+        id: funcionario.id,
+        documento: funcionario.documento,
+        nombre: funcionario.nombre,
+        email: funcionario.email,
+        celular: funcionario.celular,
+        firma: funcionario.firma,
+      };
+
+      const response = await apiClient.put("/usuario/Update-perfil", payload);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Usuario,
+        error:
+          error.response?.data?.message || "Error al actualizar funcionario",
+      };
+    }
+  },
+
   create: async (funcionario: Usuario): Promise<ApiResponse<string[]>> => {
     try {
       const response = await apiClient.post("/usuario/Create", funcionario);
@@ -525,18 +548,19 @@ export const Origen = {
 };
 
 export const ClientesServices = {
-  getAll: async (): Promise<ApiResponse<Cliente[]>> => {
+  getByPage: async (page: number, size: number): Promise<ApiResponse<Cliente[]>> => {
     try {
-      const response = await apiClient.get("/Cliente/ObtenerAllCliente");
+      const response = await apiClient.get(`/Cliente/ObtenerAllCliente/${page}/${size}`);
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al cargar Clientes",
+        error: error.response?.data?.message || "Error al cargar Clientes paginados",
       };
     }
   },
+
   getByDoc: async (doc: string): Promise<ApiResponse<Cliente>> => {
     try {
       const response = await apiClient.get(`Cliente/GetByDocumento/${doc}`);

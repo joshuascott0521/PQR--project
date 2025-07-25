@@ -16,7 +16,7 @@ export default function Portal() {
         <div className="mt-3 p-1 rounded-xl">
           <img src="/Static-new.png" />
         </div>
-        <h1 className="text-3xl text-white font-semibold text-center mt-1.5 mb-2">
+        <h1 className="text-2xl text-white font-semibold text-center mt-1.5 mb-2">
           Portal Ciudadano - PQRS
         </h1>
         <div className="rounded-lg px-4 py-3 bg-white/90">

@@ -146,10 +146,9 @@ const PqrChat = ({
                   }
                   className={`
                     flex items-center justify-center w-8 h-8 rounded-full cursor-pointer
-                    ${
-                      detalle.tercero.tipoTercero === "Cliente"
-                        ? "bg-green-200 text-green-700"
-                        : detalle.tercero.tipoTercero === "Funcionario"
+                    ${detalle.tercero.tipoTercero === "Cliente"
+                      ? "bg-green-200 text-green-700"
+                      : detalle.tercero.tipoTercero === "Funcionario"
                         ? "bg-yellow-200 text-yellow-700"
                         : "bg-gray-200 text-gray-700"
                     }
@@ -196,14 +195,14 @@ const PqrChat = ({
                 detalle.tercero.tipoTercero === "Cliente"
                   ? "#e2ffed"
                   : detalle.tercero.tipoTercero === "Funcionario"
-                  ? "#fff1dc"
-                  : "gray",
+                    ? "#fff1dc"
+                    : "gray",
             }}
           >
             {detalle.descripcion}
 
             {detalle.terceroAsignado && (
-              <div className="flex max-w-96 mt-2 gap-3">
+              <div className="flex max-w-[420px] mt-2 gap-3">
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-yellow-400 text-yellow-700 bg-opacity-50">
                   <i className="fas fa-user"></i>
                 </div>
@@ -214,7 +213,16 @@ const PqrChat = ({
                     </p>
                   )}
                   <p className="font-semibold text-sm leading-tight text-gray-900">
-                    {`${detalle.terceroAsignado.nombre} (${detalle.terceroAsignado.cargoTercero})`}
+                    {`${detalle.terceroAsignado.nombre} (${detalle.terceroAsignado.cargoTercero}) `}
+                    {detalle.solicitudId && (
+                      <span
+                        className={`${
+                          detalle.estadoSolicitud === "Respondido" ? "text-[#6D28D9]" : "text-gray-900"
+                        }`}
+                      >
+                        No. {detalle.solicitudId} - {detalle.estadoSolicitud}
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
@@ -266,11 +274,10 @@ const PqrChat = ({
 
             {/* Tabla de notificaciones */}
             <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                expandedItem === detalle.item
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedItem === detalle.item
                   ? "max-h-[1000px] opacity-100 mt-4"
                   : "max-h-0 opacity-0"
-              }`}
+                }`}
             >
               <div className="border border-gray-200 rounded-md">
                 <table className="min-w-full text-sm text-left text-gray-700 bg-white">

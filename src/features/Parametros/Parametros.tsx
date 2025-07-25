@@ -1,4 +1,4 @@
-import { Settings, Calendar, FileText, ScrollText, Cloud } from 'lucide-react';
+import { Settings, Calendar, FileText, ScrollText, Cloud, FileTerminal } from 'lucide-react';
 import type { ParameterCard } from '../../interfaces/pqrInterfaces';
 import { ParameterCard as Card } from '../../components/shared/ParameterCard';
 import { useNavigate } from 'react-router-dom';
@@ -24,9 +24,17 @@ function Parametros() {
     },
     {
       id: 'templates',
-      title: 'Plantillas y Prompts',
-      description: 'Administra las plantillas de respuesta y los prompts de IA.',
+      title: 'Plantillas',
+      description: 'Administra las plantillas de respuesta.',
       icon: <FileText className="w-8 h-8" />,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50'
+    },
+    {
+      id: 'prompts',
+      title: 'Prompts',
+      description: 'Administra los prompts de IA.',
+      icon: <FileTerminal  className="w-8 h-8" />,
       color: 'text-green-600',
       bgColor: 'bg-green-50'
     },

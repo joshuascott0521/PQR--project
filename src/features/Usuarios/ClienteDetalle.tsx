@@ -57,7 +57,7 @@ const ClienteDetalle = () => {
 
         const clienteEnriquecido = {
           ...clienteRes.data,
-          tiponame: tipo?.nombre || "Sin tipo",
+          tipoName: tipo?.nombre || "Sin tipo",
         };
 
         setCliente(clienteEnriquecido);

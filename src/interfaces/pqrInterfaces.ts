@@ -181,6 +181,8 @@ export interface Detalle {
   notificado?: boolean;
   notificable?: boolean;
   fechaCreacionStr?: string;
+  solicitudId?: number;
+  estadoSolicitud?: string;
 }
 export interface Tercero {
   tipoTercero?: string;
@@ -227,8 +229,7 @@ export interface Usuario {
   id: string;
   documento: string;
   nombre: string;
-  tipoUsuId: string;
-  tipoUsuarioNombre?: string;
+  tipoUsuId?: string;
   tipoUsuNombre?: string;
   role?: string;
   email: string;
@@ -241,6 +242,7 @@ export interface Usuario {
   verifyPassword?: string;
   dependenciaId?: number | null;
   dependenciaNombre?: string;
+  firma?: string;
 }
 
 export interface Dependencia {
