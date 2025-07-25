@@ -9,7 +9,7 @@ export const PerfilSkeleton = () => {
         <Skeleton circle width={35} height={35} />
         <Skeleton height={33} width={180} />
       </div> */}
-      <div className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg space-y-4">
+      <div className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg ">
         <form className="flex flex-col bg-white px-6 py-2.5 rounded-lg shadow-md w-full">
           <Skeleton height={24} width={200} className=" mb-[-20px]" />
           <Skeleton height={2} className="bg-gray-300 m-0" />
@@ -17,7 +17,7 @@ export const PerfilSkeleton = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pb-3">
             {Array.from({ length: 6 }).map((_, idx) => (
               <div key={idx} className="w-full">
-                <Skeleton height={20} width={100} className="mb-1" />
+                {/* <Skeleton height={20} width={100} className="mb-1" /> */}
                 <Skeleton height={36} className="rounded-md" />
               </div>
             ))}

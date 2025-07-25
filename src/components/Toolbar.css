@@ -1,0 +1,50 @@
+.toolbar {
+  background: #fff;
+  /* position: fixed; */
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+  .left,
+  .right {
+    display: flex;
+    gap: 4px;
+
+    button {
+      background: none;
+      color: black;
+      border: none;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+
+      svg {
+        width: 16px;
+      }
+
+      &:hover {
+        background: #c4e3ff;
+      }
+
+      &.active {
+        background: #0e8eff;
+        color: #fff;
+      }
+    }
+
+    .btnGuardar {
+      background: #0e8eff;
+      color: #fff;
+
+      &:hover {
+        background: #007ae6;
+      }
+    }
+  }
+}
