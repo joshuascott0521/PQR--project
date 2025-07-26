@@ -28,6 +28,7 @@ import type {
   UserType,
   Usuario,
   UsuarioAsignar,
+  ValidationOtp,
 } from "../interfaces/pqrInterfaces";
 
 export interface GetPqrParams {
@@ -392,6 +393,49 @@ export const PqrServices = {
       };
     }
   },
+  generateOtp: async (usuarioId: string): Promise<ApiResponse<string>> => {
+    try {
+      const response = await apiClient.post("/OTP/Generar-OTP",
+        {
+          usuarioId: usuarioId,
+        }
+      );
+      return {
+        success: true,
+        data: response.data
+      }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: '',
+        error:
+          error.response?.data?.message ||
+          "Error al generar codigo OTP",
+      };
+    }
+  },
+  validateOtp: async (usuarioId: string, otp: number): Promise<ApiResponse<ValidationOtp>> => {
+    try {
+      const response = await apiClient.post("/OTP/Verificar-OTP",
+        {
+          usuarioId: usuarioId,
+          token: otp,
+        }
+      );
+      return {
+        success: true,
+        data: response.data
+      }
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as ValidationOtp,
+        error:
+          error.response?.data?.message ||
+          "Error al validar codigo OTP",
+      };
+    }
+  }
 };
 
 export const DependenciaServices = {

@@ -333,6 +333,11 @@ export interface Parameters {
   valorHtml: string | null;
 }
 
+export interface ValidationOtp{
+  exito: boolean;
+  mensaje: string;
+}
+
 export interface AlertaNotificacion {
   id: number;
   pqrId: string;
