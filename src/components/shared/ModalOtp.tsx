@@ -6,36 +6,38 @@ interface AuthorizationModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSign: (code: number) => void;
+    otpError: string | null;
+    setOtpError: (error: string | null) => void;
 }
+
 
 const ModalOtp: React.FC<AuthorizationModalProps> = ({
     isOpen,
     onClose,
     onSign,
+    otpError,
+    setOtpError,
 }) => {
+
     const [code, setCode] = useState(['', '', '', '']);
-    const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+    const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null); // 🔒 Para controlar el timer y evitar múltiples
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [dotCount, setDotCount] = useState(1);
 
-    // Timer countdown
     useEffect(() => {
-        if (!isOpen || timeLeft === 0) return;
+        if (!isGenerating) return;
 
-        const timer = setInterval(() => {
-            setTimeLeft((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
+        const interval = setInterval(() => {
+            setDotCount((prev) => (prev % 3) + 1);
+        }, 500); // cada 0.5s cambia
 
-        return () => clearInterval(timer);
-    }, [isOpen, timeLeft]);
-
+        return () => clearInterval(interval);
+    }, [isGenerating]);
 
     const generate = async () => {
+        setIsGenerating(true);
         try {
             const userData = localStorage.getItem("userData");
             if (!userData) {
@@ -52,22 +54,42 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
             const call = await PqrServices.generateOtp(usuid);
             if (!call.success) throw new Error(call.error);
 
+            // Reiniciar estado si la solicitud fue exitosa
+            setCode(['', '', '', '']);
+            setTimeLeft(300);
+
+            // Limpia el timer anterior si existe
+            if (timerRef.current) clearInterval(timerRef.current);
+
+            // 🔁 Inicia nuevo timer
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timerRef.current!);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
         } catch (err) {
             console.error("Error al generar otp:", err);
+        } finally {
+            setIsGenerating(false); // ✅ termina loading
         }
-    }
+    };
 
-    useEffect(() => {
-        if (!isOpen) return;
-        generate();
-    }, [isOpen])
-
-    // Reset timer when modal opens
+    // ⏱ Ejecuta generate una sola vez al abrir el modal
     useEffect(() => {
         if (isOpen) {
-            setTimeLeft(300);
-            setCode(['', '', '', '']);
+            generate();
         }
+
+        return () => {
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
+        };
     }, [isOpen]);
 
     const formatTime = (seconds: number) => {
@@ -77,17 +99,14 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
     };
 
     const handleInputChange = (index: number, value: string) => {
-        if (!/^\d*$/.test(value)) return; // Only allow numbers
-
+        if (!/^\d*$/.test(value)) return;
         const newCode = [...code];
-        newCode[index] = value.slice(-1); // Only take the last character
+        newCode[index] = value.slice(-1);
         setCode(newCode);
-
-        // Auto-focus next input
-        if (value && index < 3) {
-            inputRefs.current[index + 1]?.focus();
-        }
+        setOtpError(null); // ✅ Limpiar error al modificar
+        if (value && index < 3) inputRefs.current[index + 1]?.focus();
     };
+
 
     const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
         if (e.key === 'Backspace' && !code[index] && index > 0) {
@@ -101,14 +120,22 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
     const handleSign = () => {
         const fullCode = code.join('');
         if (fullCode.length === 4) {
-            onSign(Number(fullCode)); // Convertimos el string a número
+            onSign(Number(fullCode));
         }
     };
 
-
     const handleCancel = () => {
         setCode(['', '', '', '']);
+        if (timerRef.current) clearInterval(timerRef.current);
         onClose();
+    };
+
+    const handleResend = () => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+        generate();
     };
 
     if (!isOpen) return null;
@@ -116,7 +143,6 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-3xl p-5 max-w-xl w-full mx-4 relative animate-in fade-in zoom-in duration-200">
-                {/* Close button */}
                 <button
                     onClick={handleCancel}
                     className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
@@ -124,55 +150,58 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
                     <X size={24} />
                 </button>
 
-                {/* Title */}
                 <h2 className="text-2xl font-semibold text-gray-900 mb-2">
                     Autorización para firmar
                 </h2>
 
-                {/* Description */}
                 <p className="text-gray-600 mb-4">
                     Ingrese el código que enviamos a su Email o Celular para autorizar firmar la respuesta, tiene{' '}
                     <span className="font-semibold text-blue-600">
-                        {formatTime(timeLeft)}
+                        {isGenerating
+                            ? `Generando código${'.'.repeat(dotCount)}`
+                            : formatTime(timeLeft)}
                     </span>
+
+
                 </p>
 
-                {/* Code Input Fields */}
                 <div className="flex justify-center gap-4 mb-4">
                     {code.map((digit, index) => (
                         <input
                             key={index}
-                            ref={(el) => {
-                                inputRefs.current[index] = el;
-                            }}
-
+                            ref={(el) => { inputRefs.current[index] = el; }}
                             type="text"
                             inputMode="numeric"
                             maxLength={1}
                             value={digit}
                             onChange={(e) => handleInputChange(index, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(index, e)}
-                            className="w-14 h-14 text-center text-2xl font-semibold border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
-                            disabled={timeLeft === 0}
+                            className={`w-14 h-14 text-center text-2xl font-semibold border-2 rounded-xl transition-colors
+                            ${otpError ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-blue-500'}
+                            focus:outline-none`}
+
+                            disabled={timeLeft === 0 || isGenerating}
+
                         />
                     ))}
                 </div>
 
-                {/* Timer expired message */}
+                {otpError && (
+                    <p className="text-red-500 text-sm text-center font-medium mb-3">
+                        {otpError}
+                    </p>
+                )}
+
+
                 {timeLeft === 0 && (
                     <div>
-                        <p className="text-red-500 font-bold text-center text-sm ">
+                        <p className="text-red-500 font-bold text-center text-sm">
                             El código ha expirado. Solicite uno nuevo.
                         </p>
                         <div className="text-center my-3">
                             <button
                                 className="text-blue-600 hover:text-blue-700 text-sm font-medium underline transition-colors"
-                                onClick={() => {
-                                    generate();
-                                    setTimeLeft(300);
-                                    setCode(['', '', '', '']);
-                                }}
-
+                                onClick={handleResend}
                             >
                                 Reenviar código
                             </button>
@@ -180,10 +209,6 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
                     </div>
                 )}
 
-                {/* Resend code link */}
-
-
-                {/* Action Buttons */}
                 <div className="flex gap-4">
                     <button
                         onClick={handleCancel}
@@ -199,8 +224,6 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
                         Firmar
                     </button>
                 </div>
-
-
             </div>
         </div>
     );

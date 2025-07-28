@@ -13,24 +13,28 @@ import { showToast } from "../../utils/toastUtils";
 const Metricas = () => {
   const [metricas, setMetricas] = useState<EstadoFlujoData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [otpError, setOtpError] = useState<string | null>(null);
+
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSign = (code: number) => {
-    // Aquí puedes agregar la lógica para verificar el código
     const validation = async () => {
       try {
         const response = await PqrServices.validateOtp(usuid, code);
         if (!response.success) throw new Error(response.error);
         showToast(response.data.mensaje, "success");
+        setOtpError(null); // ✅ Limpiar error si es válido
         setIsModalOpen(false);
       } catch (err) {
         console.error("Error al validar otp:", err);
+        setOtpError("El código ingresado es incorrecto."); // ❌ Mostrar error
       }
-    }
+    };
     validation();
   };
+
 
   const userData = localStorage.getItem("userData");
   if (!userData) {
@@ -95,7 +99,10 @@ const Metricas = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSign={handleSign}
+        otpError={otpError}
+        setOtpError={setOtpError}
       />
+
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 mt-3">
 

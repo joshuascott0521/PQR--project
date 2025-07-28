@@ -37,6 +37,7 @@ import FuncionarioDetalleWrapper from "./utils/FuncionarioWrapper";
 import General from "./features/Parametros/General/General";
 import GeneralWrapper from "./utils/Wrapper Parameters/GeneralWrapper";
 import Plantillas from "./features/Parametros/Plantillas/Plantillas";
+import TemplateWrapper from "./utils/Wrapper Parameters/TemplateWrapper";
 
 function App() {
   return (
@@ -92,7 +93,7 @@ function App() {
               <Route path="admin/parametros/general/:code" element={<GeneralWrapper />} />
               <Route path="admin/parametros/general/crear" element={<GeneralWrapper />} />
               <Route path="admin/parametros/templates" element={<Plantillas />} />
-
+              <Route path="admin/parametros/templates/crear" element={<TemplateWrapper />} />
               <Route path="admin/funcionarios" element={<Funcionarios />} />
               <Route
                 path="admin/funcionario/editar/:code"

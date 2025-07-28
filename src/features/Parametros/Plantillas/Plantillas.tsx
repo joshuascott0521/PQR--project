@@ -2,10 +2,16 @@ import { useState } from "react";
 import SearchParameters from "../../../components/shared/Search";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { PlantillaCard } from "../../../components/shared/PlantillaCard";
+import { useNavigate } from "react-router-dom";
 
 const Plantillas = () => {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
+  const categoria = "templates";
+  const handleNew = () => {
+    navigate(`/dashboard/admin/parametros/${categoria}/crear`);
+  };
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Encabezado */}
@@ -16,7 +22,7 @@ const Plantillas = () => {
         <SearchParameters query={query} setQuery={setQuery} />
         <button
           className="bg-green-500 hover:bg-green-600 px-4 py-1 rounded-lg text-white text-sm font-semibold flex items-center gap-2"
-          onClick={() => {}}
+          onClick={handleNew}
         >
           <IoIosAddCircleOutline className="text-2xl" />
           <span>Agregar</span>
