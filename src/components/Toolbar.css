@@ -48,3 +48,6 @@
     }
   }
 }
+.ProseMirror span[style*="font-size"] {
+  transition: font-size 0.3s ease;
+}

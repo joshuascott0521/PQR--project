@@ -1,5 +1,9 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import TextAlign from "@tiptap/extension-text-align";
+import FontSize from "../../extensions/FontSize";
+import { TextStyle } from "@tiptap/extension-text-style";
+
 import {
   ArrowRight,
   Edit3,
@@ -34,9 +38,17 @@ const RespuestaIA = ({
     extensions: [
       StarterKit,
       Underline,
+      TextStyle, // Necesario para FontSize
+      FontSize.configure({
+        types: ["textStyle"], // Indica que se aplica sobre el mark 'textStyle'
+      }),
       Link.configure({ openOnClick: false }),
       Image,
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
     ],
+
     content: `
     <div style="padding: 2rem;">
   <div  style="outline: none; border: 1px solid #60a5fa; border-radius: 0.375rem; padding: 0.5rem;">
@@ -159,16 +171,16 @@ const RespuestaIA = ({
   const toggleListaPuntos = () =>
     editor?.chain().focus().toggleBulletList().run();
 
-  const agregarLink = () => {
-    const url = window.prompt("URL del enlace:");
-    if (url)
-      editor
-        ?.chain()
-        .focus()
-        .extendMarkRange("link")
-        .setLink({ href: url })
-        .run();
-  };
+  // const agregarLink = () => {
+  //   const url = window.prompt("URL del enlace:");
+  //   if (url)
+  //     editor
+  //       ?.chain()
+  //       .focus()
+  //       .extendMarkRange("link")
+  //       .setLink({ href: url })
+  //       .run();
+  // };
   const guardarContenido = () => {
     const contenido = editor?.getHTML();
     console.log("Contenido guardado:", contenido);
@@ -273,7 +285,6 @@ const RespuestaIA = ({
                   toggleParrafo={toggleParrafo}
                   toggleListaOrdenada={toggleListaOrdenada}
                   toggleListaPuntos={toggleListaPuntos}
-                  agregarLink={agregarLink}
                   guardarContenido={guardarContenido}
                   isEditable={modoEdicionManual}
                 />

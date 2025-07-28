@@ -6,7 +6,6 @@ type EditorState = {
   isBold?: boolean;
   isItalic?: boolean;
   isUnderline?: boolean;
-  isCodeBlock?: boolean;
   isHeading1?: boolean;
   isHeading2?: boolean;
   isHeading3?: boolean;
@@ -28,7 +27,6 @@ type Props = {
   toggleParrafo: () => void;
   toggleListaOrdenada: () => void;
   toggleListaPuntos: () => void;
-  agregarLink: () => void;
   guardarContenido: () => void; // <- se ejecuta desde el botón guardar
   isEditable: boolean;
 };
@@ -39,14 +37,12 @@ const Toolbar: React.FC<Props> = ({
   toggleBold,
   toggleItalic,
   toggleUnderline,
-  toggleCodeBlock,
-  toggleH1,
-  toggleH2,
-  toggleH3,
+  //   toggleH1,
+  //   toggleH2,
+  //   toggleH3,
   toggleParrafo,
   toggleListaOrdenada,
   toggleListaPuntos,
-  agregarLink,
   guardarContenido,
   isEditable,
 }) => {
@@ -76,34 +72,22 @@ const Toolbar: React.FC<Props> = ({
         >
           U
         </button>
-        <button
-          onClick={toggleCodeBlock}
+        <select
+          onChange={(e) => {
+            (editor.chain() as any).focus().setFontSize(e.target.value).run();
+          }}
           disabled={!isEditable}
-          className={editorState.isCodeBlock ? "active" : ""}
+          defaultValue=""
         >
-          {"<>"}
-        </button>
-        <button
-          onClick={toggleH1}
-          disabled={!isEditable}
-          className={editorState.isHeading1 ? "active" : ""}
-        >
-          H1
-        </button>
-        <button
-          onClick={toggleH2}
-          disabled={!isEditable}
-          className={editorState.isHeading2 ? "active" : ""}
-        >
-          H2
-        </button>
-        <button
-          onClick={toggleH3}
-          disabled={!isEditable}
-          className={editorState.isHeading3 ? "active" : ""}
-        >
-          H3
-        </button>
+          <option value="" disabled>
+            Tamaño
+          </option>
+          <option value="12px">Pequeño</option>
+          <option value="16px">Normal</option>
+          <option value="20px">Grande</option>
+          <option value="24px">Muy grande</option>
+        </select>
+
         <button
           onClick={toggleParrafo}
           disabled={!isEditable}
@@ -124,14 +108,6 @@ const Toolbar: React.FC<Props> = ({
           className={editorState.isBulletList ? "active" : ""}
         >
           UL
-        </button>
-
-        <button
-          onClick={agregarLink}
-          disabled={!isEditable}
-          className={editorState.isLink ? "active" : ""}
-        >
-          🔗
         </button>
       </div>
 
