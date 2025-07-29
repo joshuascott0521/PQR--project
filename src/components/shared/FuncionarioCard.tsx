@@ -48,9 +48,9 @@ const FuncionarioCard = ({ mostrarEditar = false, funcionario }: FuncionarioCard
             <span className="font-semibold text-base">Cargo: </span>
             <span
               className="font-normal text-base "
-              title={funcionario.tipoUsuarioNombre}
+              title={funcionario.tipoUsuNombre}
             >
-              {funcionario.tipoUsuarioNombre}
+              {funcionario.tipoUsuNombre}
             </span>
           </p>
           <p className="mb-1 text-gray-900 text-xs font-normal truncate w-full">

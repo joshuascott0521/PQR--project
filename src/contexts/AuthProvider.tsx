@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { login as loginService, type User } from "../services/authService";
 import { AuthContext } from "./AuthContext";
 
@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const logout = () => {
     setUser(null);
@@ -15,6 +16,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("userData");
     navigate("/login");
   };
+
+  const publicRoutes = [
+    "/",
+    "/login",
+    "/login/",
+    "/login/Recuperar-contraseña",
+    "/portal-pqr",
+    "/solicitud/",
+    "/usuario/reset-password/",
+    "/consulta-pqr"
+  ];
+
+
+  const isPublicRoute = (pathname: string) => {
+  const normalizedPath = decodeURIComponent(pathname).toLowerCase();
+  return publicRoutes.some((route) =>
+    normalizedPath.startsWith(route.toLowerCase())
+  );
+};
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -60,6 +81,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const interval = setInterval(() => {
       const token = localStorage.getItem("token");
 
+      if (isPublicRoute(location.pathname)) return;
+
       if (!token) {
         // Si el token fue borrado manualmente
         console.warn("Token ausente, cerrando sesión automáticamente");
@@ -86,7 +109,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [location.pathname]);
 
 
   const login = async (email: string, password: string) => {

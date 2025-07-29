@@ -375,3 +375,45 @@ export interface DominioConstraint {
   columnName: string;
   allowedValues: string[];
 }
+
+export interface PQRConsulta {
+  id: string;
+  numero: string;
+  tipo: 'Peticion' | 'Queja' | 'Reclamo' | 'Sugerencia';
+  ciudadano: {
+    nombre: string;
+    documento: string;
+    telefono: string;
+    email: string;
+  };
+  asunto: string;
+  descripcion: string;
+  fechaRadicacion: string;
+  fechaVencimiento: string;
+  estadoActual: EstadoPQRConsulta;
+  dependenciaResponsable: string;
+  funcionarioAsignado: string;
+  prioridad: 'Baja' | 'Media' | 'Alta' | 'Urgente';
+  historial: HistorialItemConsulta[];
+  adjuntos?: string[];
+}
+
+export interface EstadoPQRConsulta {
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  color: string;
+  icono: string;
+}
+
+export interface HistorialItemConsulta {
+  id: string;
+  fecha: string;
+  hora: string;
+  estado: string;
+  descripcion: string;
+  funcionario: string;
+  dependencia: string;
+  observaciones?: string;
+  documentos?: string[];
+}

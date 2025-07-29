@@ -22,7 +22,7 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
         documento: "",
         nombre: "",
         tipoUsuId: "",
-        tipoUsuarioNombre: "",
+        tipoUsuNombre: "",
         role: "",
         email: "",
         celular: "",
@@ -142,7 +142,7 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
                         />
                         <FloatingSelect
                             label="Tipo Funcionario"
-                            value={formData.tipoUsuId}
+                            value={formData.tipoUsuId ?? ''}
                             onChange={(value) => {
                                 setFormData((prev) => ({
                                     ...prev,
