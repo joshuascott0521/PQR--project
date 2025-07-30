@@ -5,7 +5,7 @@ import {
   ClientesServices,
   TipoClienteServices,
 } from "../../services/pqrServices";
-import { Users } from "lucide-react";
+import { ChevronUp, Users } from "lucide-react";
 import { CardSkeleton } from "../../components/shared/CardSkeleton";
 import NoMoreResults from "../../components/shared/ObjetoNoDataList";
 
@@ -17,6 +17,7 @@ const Clientes = () => {
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
   const [hasMore, setHasMore] = useState(true);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const tipoClienteMap = useRef<Map<string, string>>(new Map());
@@ -82,9 +83,13 @@ const Clientes = () => {
 
     const handleScroll = () => {
       const bottomReached = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
+      const shouldShowButton = el.scrollTop > 100; // muestra el botón después de 100px de scroll
+
       if (bottomReached && !loadingMore && hasMore) {
         setPage((prev) => prev + 1);
       }
+
+      setShowScrollTop(shouldShowButton);
     };
 
     el.addEventListener("scroll", handleScroll);
@@ -103,6 +108,15 @@ const Clientes = () => {
         ref={scrollRef}
         className="flex-1 flex-col overflow-y-auto bg-gray-100 px-6 py-4 rounded-lg space-y-4"
       >
+        {showScrollTop && (
+          <button
+            onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-green-600 text-white shadow-lg hover:bg-green-700 transition-all"
+            aria-label="Subir al inicio"
+          >
+            <ChevronUp size={24} />
+          </button>
+        )}
         {!initialLoading && sinResultados && (
           <div className="flex h-full w-full items-center justify-center">
             <NoMoreResults

@@ -393,7 +393,6 @@ export interface PQRConsulta {
   estadoActual: EstadoPQRConsulta;
   dependenciaResponsable: string;
   funcionarioAsignado: string;
-  prioridad: 'Baja' | 'Media' | 'Alta' | 'Urgente';
   historial: HistorialItemConsulta[];
   adjuntos?: string[];
 }

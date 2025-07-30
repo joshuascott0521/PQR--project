@@ -18,17 +18,7 @@ interface PQRDetailsProps {
 }
 
 export const PQRDetails: React.FC<PQRDetailsProps> = ({ pqr }) => {
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'Urgente': return 'text-red-600 bg-red-50 border-red-200';
-            case 'Alta': return 'text-orange-600 bg-orange-50 border-orange-200';
-            case 'Media': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-            case 'Baja': return 'text-green-600 bg-green-50 border-green-200';
-            default: return 'text-gray-600 bg-gray-50 border-gray-200';
-        }
-    };
-
-    const getTipoColor = (tipo: string) => {
+       const getTipoColor = (tipo: string) => {
         switch (tipo) {
             case 'Peticion': return 'text-blue-600 bg-blue-50 border-blue-200';
             case 'Queja': return 'text-red-600 bg-red-50 border-red-200';
@@ -57,7 +47,7 @@ export const PQRDetails: React.FC<PQRDetailsProps> = ({ pqr }) => {
     const daysRemaining = calculateDaysRemaining(pqr.fechaVencimiento);
 
     return (
-        <div className="space-y-6 border-blue-500">
+        <div className="space-y-6">
             {/* Estado Actual */}
             <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -108,7 +98,7 @@ export const PQRDetails: React.FC<PQRDetailsProps> = ({ pqr }) => {
                             <div className="flex items-center space-x-3">
                                 <Flag className="h-5 w-5 text-gray-500" />
                                 <div>
-                                    <span className="text-sm text-gray-600">Tipo:</span>
+                                    <span className="text-sm text-gray-600">Tipo: </span>
                                     <div className={`inline-block px-3 py-1 rounded-full border text-sm font-medium mt-1 ${getTipoColor(pqr.tipo)}`}>
                                         {pqr.tipo}
                                     </div>
@@ -120,16 +110,6 @@ export const PQRDetails: React.FC<PQRDetailsProps> = ({ pqr }) => {
                                 <div>
                                     <span className="text-sm text-gray-600">Fecha de radicación:</span>
                                     <p className="font-medium">{formatDate(pqr.fechaRadicacion)}</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center space-x-3">
-                                <Flag className="h-5 w-5 text-gray-500" />
-                                <div>
-                                    <span className="text-sm text-gray-600">Prioridad:</span>
-                                    <div className={`inline-block px-3 py-1 rounded-full border text-sm font-medium mt-1 ${getPriorityColor(pqr.prioridad)}`}>
-                                        {pqr.prioridad}
-                                    </div>
                                 </div>
                             </div>
                         </div>

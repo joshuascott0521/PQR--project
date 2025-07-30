@@ -1,4 +1,4 @@
-import { ClipboardList } from "lucide-react";
+import { ChevronUp, ClipboardList } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import type { Pqr } from "../../interfaces/pqrInterfaces";
 import { PqrServices } from "../../services/pqrServices";
@@ -11,6 +11,7 @@ const AllPqr = () => {
   const [initialLoading, setInitialLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [sinResultados, setSinResultados] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -85,22 +86,26 @@ const AllPqr = () => {
 
     const handleScroll = () => {
       const bottomReached = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
+      const shouldShowButton = el.scrollTop > 100; // muestra el botón después de 100px de scroll
+
       if (bottomReached && !loadingMore && hasMore) {
         setPage((prev) => prev + 1);
       }
+
+      setShowScrollTop(shouldShowButton);
     };
 
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
   }, [loadingMore, hasMore]);
-  
+
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex mb-[15px] items-center gap-[15px]">
         <ClipboardList size={30} />
         <div className="flex font-bold text-[33px]">
           {<p>Todos los PQRs</p>}
-          {/*<p>PQRS anulados{"(" + (conteo.cantidad ?? 0) + ")"}.</p>*/}
         </div>
       </div>
 
@@ -108,6 +113,15 @@ const AllPqr = () => {
         className="flex-1 overflow-auto bg-gray-100 px-6 py-4 rounded-lg"
         ref={scrollRef}
       >
+        {showScrollTop && (
+          <button
+            onClick={() => scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
+            className="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-green-600 text-white shadow-lg hover:bg-green-700 transition-all"
+            aria-label="Subir al inicio"
+          >
+            <ChevronUp size={24} />
+          </button>
+        )}
         {!initialLoading && sinResultados && (
           <div className="flex h-full w-full items-center justify-center">
             <NoMoreResults

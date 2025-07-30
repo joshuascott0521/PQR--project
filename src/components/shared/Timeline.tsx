@@ -65,7 +65,7 @@ export const Timeline: React.FC<TimelineProps> = ({ historial }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-5 border-green-500">
+    <div className="h-full bg-white rounded-xl shadow-lg p-5 ">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Trazabilidad del PQR</h2>
       
       <div className="relative">
