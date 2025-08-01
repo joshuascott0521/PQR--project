@@ -57,7 +57,7 @@ const RecuperarContrasenaFrm = () => {
           <div className="w-full max-w-[500px] overflow-hidden">
             <img
               src="/public/Logo-static.png"
-              alt="Logo"
+              alt="Logo alcaldia"
               className="bg-a-baranoa w-full h-full object-cover"
             />
           </div>

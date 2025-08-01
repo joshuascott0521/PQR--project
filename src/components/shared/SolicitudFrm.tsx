@@ -33,7 +33,9 @@ export default function SolicitudFrm() {
 
     const archivosValidos = nuevos.filter((file) => {
       if (file.size > maxSizeBytes) {
-        toast.error(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        toast.error(
+          `El archivo "${file.name}" excede el límite de ${size} MB.`
+        );
         return false;
       }
       return true;
@@ -70,7 +72,6 @@ export default function SolicitudFrm() {
 
     if (result.success) {
       showToast("Respuesta enviada exitosamente", "success");
-
     } else {
       showToast(result.error || "Error al enviar respuesta");
     }
@@ -93,9 +94,10 @@ export default function SolicitudFrm() {
   }, [id]);
 
   const esVencida = solicitud?.diasVencidos?.toLowerCase().includes("vencida");
-  const esRespondida = solicitud?.diasVencidos?.toLowerCase().includes("respondido");
+  const esRespondida = solicitud?.diasVencidos
+    ?.toLowerCase()
+    .includes("respondido");
   const esEditable = !esVencida && !esRespondida;
-
 
   return (
     <div>
@@ -109,19 +111,16 @@ export default function SolicitudFrm() {
                   <div className="absolute left-[50px] top-[50%]  mt-2 z-0 text-[8px] bg-yellow-200 rounded-full py-1 px-2 text-black md:text-xs text-center">
                     Alcaldía de Baranoa - NIT: 890.112.371
                   </div>
-                  <div
-                    className="bg-yellow-400 text-black font-bold text-[10px] xl:text-xs px-6 md:px-8 py-2 rounded-full text-center whitespace-nowrap shadow"
-                  >
+                  <div className="bg-yellow-400 text-black font-bold text-[10px] xl:text-xs px-6 md:px-8 py-2 rounded-full text-center whitespace-nowrap shadow">
                     Sistema de Gestión de solicitudes PQR+
                   </div>
-
                 </div>
 
                 <div className="flex justify-center md:justify-end">
                   <img
                     className="w-[220px] md:w-[300px] h-auto"
-                    src="/public/Logo-static.png"
-                    alt="Logo"
+                    src="/Logo-static.png"
+                    alt="Logo alcaldia"
                   />
                 </div>
               </div>
@@ -157,7 +156,8 @@ export default function SolicitudFrm() {
                     </p>
                   </div>
                   <p className="mt-2">
-                    <span className="font-bold">Asunto: </span> {solicitud.asunto}
+                    <span className="font-bold">Asunto: </span>{" "}
+                    {solicitud.asunto}
                   </p>
                   <div className="flex flex-wrap gap-4 mt-2">
                     <p>
@@ -190,7 +190,6 @@ export default function SolicitudFrm() {
                   disabled={!esEditable}
                 />
 
-
                 {esEditable && (
                   <>
                     <div className="space-y-3 mt-4">
@@ -217,13 +216,16 @@ export default function SolicitudFrm() {
                       </div>
                       <label
                         className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit
-                        ${archivos.length >= 5
+                        ${
+                          archivos.length >= 5
                             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                             : "bg-emerald-400 text-white hover:bg-emerald-500"
-                          }`}
+                        }`}
                       >
                         <Paperclip className="w-4 h-4" />
-                        {archivos.length >= 5 ? "Límite alcanzado" : "Subir archivos"}
+                        {archivos.length >= 5
+                          ? "Límite alcanzado"
+                          : "Subir archivos"}
                         <input
                           key={inputKey}
                           type="file"
@@ -241,7 +243,6 @@ export default function SolicitudFrm() {
                       >
                         Enviar Respuesta
                       </button>
-
                     </div>
                   </>
                 )}

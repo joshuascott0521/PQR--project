@@ -104,7 +104,6 @@ const PqrData = () => {
     }
   }, [pqr]);
 
-
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
 
@@ -267,8 +266,8 @@ const PqrData = () => {
                   pqr?.estadoVencimiento === "VENCIDO"
                     ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
                     : pqr?.estadoVencimiento === "POR VENCER"
-                      ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
-                      : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
+                    ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
+                    : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
                 }
                 className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
                 aria-label="Number 13"
@@ -277,12 +276,12 @@ const PqrData = () => {
                     pqr?.estadoVencimiento === "VENCIDO"
                       ? " #dc2626"
                       : pqr?.estadoVencimiento === "POR VENCER"
-                        ? "#ffe900"
-                        : pqr?.estadoVencimiento === "EN ESPERA"
-                          ? "#38b6ff"
-                          : pqr?.estadoVencimiento === "A TIEMPO"
-                            ? "#22c55e"
-                            : "#d1d5db",
+                      ? "#ffe900"
+                      : pqr?.estadoVencimiento === "EN ESPERA"
+                      ? "#38b6ff"
+                      : pqr?.estadoVencimiento === "A TIEMPO"
+                      ? "#22c55e"
+                      : "#d1d5db",
                 }}
               >
                 {pqr?.diasRestantes}
@@ -341,10 +340,11 @@ const PqrData = () => {
             </div>
           </div>
           <div
-            className={`flex  flex-col h-full transition-all duration-300 ${["Finalizado", "Anulado"].includes(pqr?.estado || "")
+            className={`flex  flex-col h-full transition-all duration-300 ${
+              ["Finalizado", "Anulado"].includes(pqr?.estado || "")
                 ? "h-[calc(100vh-300px)] overflow-y-auto"
                 : "max-h-[300px] overflow-y-auto"
-              }`}
+            }`}
           >
             <div className="space-y-4">
               {pqr?.detalle && (
@@ -394,7 +394,7 @@ const PqrData = () => {
                   </>
                 )}
                 <div
-                  className="ml-auto bg-blue-500 hover:bg-blue-700 text-white text-lg rounded-lg px-[20px] py-[5px] flex items-center gap-2"
+                  className="ml-auto bg-blue-500 hover:bg-blue-700 text-white text-lg rounded-lg px-[20px] py-[5px] flex items-center gap-2 cursor-pointer"
                   onClick={() => setIsModalOpenIA(true)}
                 >
                   <Sparkles />
@@ -456,10 +456,11 @@ const PqrData = () => {
               <div className="flex flex-wrap items-center justify-between">
                 {eventoSeleccionado?.obligandoAnexo && (
                   <label
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${
+                      archivos.length >= 5
                         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                         : "bg-emerald-400 text-white hover:bg-emerald-500"
-                      }`}
+                    }`}
                   >
                     <Paperclip className="w-4 h-4" />
                     {archivos.length >= 5

@@ -73,7 +73,7 @@ const Header = ({ setIsCollapse }: HeaderProps) => {
       <div className="pr-3 transition-transform hover:scale-95">
         <img
           src="/public/Logo-static.png"
-          alt="Logo"
+          alt="Logo alcaldia"
           className="w-[320px]"
           loading="lazy"
         />

@@ -69,8 +69,8 @@ const LoginForm = () => {
         <div className="flex justify-start w-full h-1/6 p-2 mb-4">
           <div className="w-full max-w-[500px] overflow-hidden">
             <img
-              src="/public/Logo-static.png"
-              alt="Logo"
+              src="/Logo-static.png"
+              alt="Logo alcaldia"
               className="bg-a-baranoa w-full h-auto object-cover"
             />
           </div>

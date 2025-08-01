@@ -70,7 +70,6 @@ function App() {
           </Route>
 
           <Route element={<PrivateRoute />}>
-            {/* Rutas protegidas bajo el layout Dashboard */}
             <Route path="/dashboard" element={<Dashboard />}>
               <Route path="statistic" element={<Metricas />} />
               <Route path="my-profile" element={<VistaPerfil />} />
@@ -91,11 +90,26 @@ function App() {
               <Route path="admin/parametros" element={<Parametros />} />
               {/* Rutas para los parametros */}
               <Route path="admin/parametros/general" element={<General />} />
-              <Route path="admin/parametros/general/:code" element={<GeneralWrapper />} />
-              <Route path="admin/parametros/general/crear" element={<GeneralWrapper />} />
-              <Route path="admin/parametros/templates" element={<Plantillas />} />
-              <Route path="admin/parametros/templates/crear" element={<TemplateWrapper />} />
-              <Route path="admin/parametros/templates/:code" element={<TemplateWrapper />} />
+              <Route
+                path="admin/parametros/general/:code"
+                element={<GeneralWrapper />}
+              />
+              <Route
+                path="admin/parametros/general/crear"
+                element={<GeneralWrapper />}
+              />
+              <Route
+                path="admin/parametros/templates"
+                element={<Plantillas />}
+              />
+              <Route
+                path="admin/parametros/templates/crear"
+                element={<TemplateWrapper />}
+              />
+              <Route
+                path="admin/parametros/templates/:code"
+                element={<TemplateWrapper />}
+              />
               <Route path="admin/funcionarios" element={<Funcionarios />} />
               <Route
                 path="admin/funcionario/editar/:code"
@@ -106,14 +120,8 @@ function App() {
                 element={<FuncionarioDetalleWrapper />}
               />
               <Route path="PQR/detalle/:id" element={<PqrData />} />
-              <Route
-                path="cliente/detalle/:id"
-                element={<ClienteDetalle />}
-              />
-              <Route
-                path="cliente/editar/:id"
-                element={<EditarCliente />}
-              />
+              <Route path="cliente/detalle/:id" element={<ClienteDetalle />} />
+              <Route path="cliente/editar/:id" element={<EditarCliente />} />
               <Route
                 path="funcionarios/resumen/:id"
                 element={<FuncionarioResumen />}
