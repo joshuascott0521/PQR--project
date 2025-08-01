@@ -201,19 +201,6 @@ export interface terceroAsignado {
   cargoTercero: string;
 }
 
-/*export interface Cliente {
-  id: string;
-  documento: string;
-  nombre: string;
-  email: string;
-  celular: string;
-  direccion: string;
-  departamentoCod: number;
-  municipioCod: number;
-  tipoClienteId: string;
-  tiponame?: string;
-}*/
-
 export interface Evento {
   id?: string;
   nombre?: string;
@@ -261,7 +248,7 @@ export interface ParameterCard {
 }
 
 export interface ParametersProps {
-    Editing?: boolean;
+  Editing?: boolean;
 }
 
 export interface Password {
@@ -333,7 +320,7 @@ export interface Parameters {
   valorHtml: string | null;
 }
 
-export interface ValidationOtp{
+export interface ValidationOtp {
   exito: boolean;
   mensaje: string;
 }
@@ -415,4 +402,26 @@ export interface HistorialItemConsulta {
   dependencia: string;
   observaciones?: string;
   documentos?: string[];
+}
+
+export interface Templates {
+  Id: string;
+  NombreTipoPQR?: string | null;
+  TipoPQRId: string;
+  Subtipo?: string | null;
+  PalabrasClave: string[];
+  Normatividad: string;
+  Observaciones: string;
+  NombreDependencia?: string | null;
+  DependenciaId: number | null;
+  HtmlFile: string | null;
+  PlantillaRespuestaHTML?: string | null;
+}
+
+export interface GetTemplates {
+  id: string;
+  nombreDependencia: string;
+  nombreTipoPQR: string;
+  observaciones: string;
+  palabrasClave: string[];
 }

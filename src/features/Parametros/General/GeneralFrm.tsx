@@ -96,7 +96,6 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             const htmlContent = e.target?.result as string;
-            //setHtmlContent(htmlContent);
             setPreviewHtml(htmlContent); // 🔥 para mostrar vista previa en vivo
         };
         reader.readAsText(file);
@@ -105,7 +104,7 @@ const ParametrosFrm = ({ Editing }: ParametersProps) => {
 
 
     const handleCancel = () => {
-        navigate("/dashboard/admin/parametros");
+        navigate("/dashboard/admin/parametros/general");
     }
 
 

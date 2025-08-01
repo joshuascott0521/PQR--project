@@ -15,6 +15,7 @@ import type {
   EnviarNotificacion,
   EstadoFlujoData,
   Evento,
+  GetTemplates,
   MedioNotificacion,
   Municipio,
   NotificacionDetalle,
@@ -23,6 +24,7 @@ import type {
   Pqr,
   PqrCount,
   SolicitudRequisitoDTO,
+  Templates,
   tipoCliente,
   TipoPqr,
   UserType,
@@ -831,6 +833,90 @@ export const ParametersServices = {
     }
   },
 };
+
+export const TemplatesServices = {
+  createTemplate: async (queryParams: URLSearchParams, formData: FormData): Promise<ApiResponse<string>> => {
+    try {
+      const url = `/PlantillaRespuestaPQR/Create?${queryParams.toString()}`;
+
+      const response = await apiClient.post(url, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        transformResponse: [
+          (data) => {
+            try {
+              return JSON.parse(data);
+            } catch {
+              return { mensaje: data };
+            }
+          },
+        ],
+      });
+
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: '',
+        error: error.response?.data?.mensaje || "Error al crear la plantilla",
+      };
+    }
+  },
+
+  getByPage: async (page: number, size: number): Promise<ApiResponse<GetTemplates[]>> => {
+    try {
+      const response = await apiClient.get(`/PlantillaRespuestaPQR/GetAll/${page}/${size}`);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error: error.response?.data?.message || "Error al cargar Clientes paginados",
+      };
+    }
+  },
+
+  getByCode: async (
+    code: string
+  ): Promise<ApiResponse<Templates>> => {
+    try {
+      const respose = await apiClient.get(`/PlantillaRespuestaPQR/Get/${code}`);
+      return {
+        success: true,
+        data: respose.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as Templates,
+        error: error.response?.data?.message || "Error al cargar la plantilla",
+      };
+    }
+  },
+
+  updateTemplate: async (formData: FormData): Promise<ApiResponse<string>> => {
+    try {
+      const response = await apiClient.put("/PlantillaRespuestaPQR/Update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      })
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: '',
+        error: error.response?.data?.mensaje || "Error al actualizar la plantilla",
+      };
+    }
+  },
+};
+
 
 interface AlertasResponse {
   alertas: AlertaNotificacion[];

@@ -95,6 +95,7 @@ function App() {
               <Route path="admin/parametros/general/crear" element={<GeneralWrapper />} />
               <Route path="admin/parametros/templates" element={<Plantillas />} />
               <Route path="admin/parametros/templates/crear" element={<TemplateWrapper />} />
+              <Route path="admin/parametros/templates/:code" element={<TemplateWrapper />} />
               <Route path="admin/funcionarios" element={<Funcionarios />} />
               <Route
                 path="admin/funcionario/editar/:code"

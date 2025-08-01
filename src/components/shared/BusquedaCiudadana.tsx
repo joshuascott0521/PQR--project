@@ -19,7 +19,7 @@ export const BusquedaCiudadana: React.FC<SearchFormProps> = ({ onSearch, loading
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-7 mb-8">
+    <div className="bg-white/70 rounded-xl shadow-lg p-7 mb-8">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Consulta de PQR
@@ -73,7 +73,7 @@ export const BusquedaCiudadana: React.FC<SearchFormProps> = ({ onSearch, loading
         <button
           type="submit"
           disabled={loading || !searchQuery.trim()}
-          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
         >
           {loading ? (
             <div className="flex items-center justify-center space-x-2">

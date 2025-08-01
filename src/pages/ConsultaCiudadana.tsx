@@ -45,19 +45,19 @@ export default function ConsultaCiudadana() {
     return (
         <div className="max-h-screen h-full overflow-x-hidden bg-cover bg-center "
             style={{ backgroundImage: "url('/Login44.jpg')" }}>
-            <header className="bg-white shadow-sm border-b border-gray-200 px-3 py-4">
+            <header className="px-3 py-4">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <img
-                        src="/public/Logo-static.png"
+                        src="/public/Static-new.png"
                         alt="Logo"
-                        className="w-full max-w-[250px] md:max-w-[400px] bg-a-baranoa hover:scale-95 transition-transform duration-200"
+                        className="w-full md:max-w-[300px] bg-a-baranoa hover:scale-95 transition-transform duration-200"
                     />
 
 
                     {pqrData && (
                         <button
                             onClick={handleNewSearch}
-                            className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 font-medium"
+                            className="flex items-center space-x-2 text-white hover:text-blue-600 font-medium"
                         >
                             <ArrowLeft className="h-5 w-5" />
                             <span>Nueva consulta</span>

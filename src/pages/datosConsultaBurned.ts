@@ -24,7 +24,6 @@ export const datosConsultaBurned: { [key: string]: PQRConsulta } = {
     },
     dependenciaResponsable: 'Secretaría de Planeación Municipal',
     funcionarioAsignado: 'Ing. Carlos Alberto Mendoza',
-    prioridad: 'Media',
     historial: [
       {
         id: '1',
@@ -103,7 +102,6 @@ export const datosConsultaBurned: { [key: string]: PQRConsulta } = {
     },
     dependenciaResponsable: 'Secretaría de Planeación Municipal',
     funcionarioAsignado: 'Ing. Carlos Alberto Mendoza',
-    prioridad: 'Media',
     historial: [
       {
         id: '1',

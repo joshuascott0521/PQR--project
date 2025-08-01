@@ -1,225 +1,420 @@
-import React, { useState } from 'react';
-import { Plus, ChevronDown, Upload, X } from 'lucide-react';
-import type { ParametersProps } from '../../../interfaces/pqrInterfaces';
+import { useEffect, useRef, useState } from 'react';
+import { FilePlus, Plus, X } from 'lucide-react';
+import type { Templates, Dependencia, ParametersProps, TipoPqr } from '../../../interfaces/pqrInterfaces';
+import { DependenciaServices, TemplatesServices, TipoPqrServices } from '../../../services/pqrServices';
+import { FloatingSelect } from '../../../components/shared/FloatingSelect';
+import { FloatingLabel } from '../../../components/shared/FloatingLabel';
+import { EliminarEmojis } from '../../../utils/EliminarEmojis';
+import { showToast } from '../../../utils/toastUtils';
+import { useNavigate, useParams } from 'react-router-dom';
 
-interface Tag {
-  id: string;
-  text: string;
-}
+
 
 const TemplateForm = ({ Editing }: ParametersProps) => {
-  const [dependencia, setDependencia] = useState('Secretaría de Hacienda');
-  const [tipoPQR, setTipoPQR] = useState('Petición general');
-  const [tags, setTags] = useState<Tag[]>([
-    { id: '1', text: 'prescripción' },
-    { id: '2', text: 'Petición de competencia' }
-  ]);
-  const [observaciones, setObservaciones] = useState('Plantilla para negar prescripción y con...');
-  const [normatividad, setNormatividad] = useState(`ARTÍCULO 14. CARÁCTER REAL DEL IMPUESTO PREDIAL UNIFICADO. El Impuesto Predial Unificado es un gravamen real que recae sobre los bienes raíces ubicados dentro del Municipio de Baranoa, podrá hacerse efectivo con el respectivo predio independientemente de quien sea su propietario, de tal suerte que el...`);
+  const { code } = useParams();
+
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [tags, setTags] = useState<string[]>([]);
+  const [previewHtml, setPreviewHtml] = useState<string>("");
+  const [selectedHtmlFile, setSelectedHtmlFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [newTag, setNewTag] = useState('');
+  const [dependencia, setDependencia] = useState<Dependencia[]>([]);
+  const [tipoPQR, setTipoPQR] = useState<TipoPqr[]>([]);
+  const [formData, setFormData] = useState<Templates>({
+    Id: '',
+    TipoPQRId: '',
+    NombreTipoPQR: null,
+    PalabrasClave: [],
+    Normatividad: '',
+    Observaciones: '',
+    DependenciaId: null,
+    NombreDependencia: null,
+    HtmlFile: null,
+    PlantillaRespuestaHTML: null,
+  });
+  const navigate = useNavigate();
 
   const addTag = () => {
-    if (newTag.trim() && !tags.some(tag => tag.text.toLowerCase() === newTag.toLowerCase())) {
-      setTags([...tags, { id: Date.now().toString(), text: newTag.trim() }]);
+    const trimmedTag = newTag.trim();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags([...tags, trimmedTag]);
       setNewTag('');
     }
   };
 
-  const removeTag = (id: string) => {
-    setTags(tags.filter(tag => tag.id !== id));
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
   };
 
-  const handleTagKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addTag();
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        // Paso 1: Cargar dependencias y tipos PQR
+        const [resDependencias, resTipoPQR] = await Promise.all([
+          DependenciaServices.getAll(),
+          TipoPqrServices.getAll()
+        ]);
+
+        if (!resDependencias.success) throw new Error(resDependencias.error);
+        if (!resTipoPQR.success) throw new Error(resTipoPQR.error);
+
+        setDependencia(resDependencias.data);
+        setTipoPQR(resTipoPQR.data);
+
+        // Paso 2: Si edición, traer la plantilla
+        if (Editing && code) {
+          const response = await TemplatesServices.getByCode(code);
+          if (!response.success) throw new Error(response.error);
+
+          const plantilla = response.data;
+
+          // ✅ Mapea los tags ANTES de setFormData
+          if (Array.isArray(plantilla.PalabrasClave) && plantilla.PalabrasClave.length > 0) {
+            setTags([...plantilla.PalabrasClave]);
+          } else {
+            console.warn("No llegaron palabras claves desde el backend");
+          }
+
+          const tipo = resTipoPQR.data.find(tp => tp.nombre === plantilla.NombreTipoPQR);
+          const dependenciaObj = resDependencias.data.find(dep => dep.nombre === plantilla.NombreDependencia);
+
+          setFormData({
+            ...plantilla,
+            TipoPQRId: tipo?.id ?? '',
+            DependenciaId: dependenciaObj?.id ?? null
+          });
+
+          if (plantilla.PlantillaRespuestaHTML) {
+            setPreviewHtml(plantilla.PlantillaRespuestaHTML);
+          }
+        }
+
+
+
+      } catch (err) {
+        console.error("Error al cargar datos iniciales:", err);
+      }
+    };
+
+    fetchAllData();
+  }, [code, Editing]);
+
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith(".html")) {
+      showToast("Por favor selecciona un archivo HTML válido.", "error");
+      return;
+    }
+
+    setSelectedHtmlFile(file);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const htmlContent = e.target?.result as string;
+      setPreviewHtml(htmlContent); // 🔥 para mostrar vista previa en vivo
+    };
+    reader.readAsText(file);
+  };
+
+  const handleCancel = () => {
+    navigate("/dashboard/admin/parametros/templates");
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const palabrasObjeto = tags.map((tag) => ({ Palabra: tag }));
+
+      // Construir parámetros en query string
+      const queryParams = new URLSearchParams();
+      queryParams.append("TipoPQRId", formData.TipoPQRId);
+      queryParams.append("Normatividad", formData.Normatividad);
+      queryParams.append("Observaciones", formData.Observaciones);
+      if (Editing && code) {
+        queryParams.append("Id", code);
+      }
+      if (formData.DependenciaId !== null) {
+        queryParams.append("DependenciaId", formData.DependenciaId.toString());
+      }
+
+
+      // Agrega cada palabra por separado como array[]
+      palabrasObjeto.forEach((item) => {
+        queryParams.append("PalabrasClave", item.Palabra);
+      });
+
+      // Preparar el FormData solo con el archivo
+      const formDataToSend = new FormData();
+      if (selectedHtmlFile) {
+        formDataToSend.append("HtmlFile", selectedHtmlFile);
+      }
+
+
+
+      let response;
+
+
+
+      if (Editing) {
+        const formDataToUpdate = new FormData();
+
+        formDataToUpdate.append("Id", formData.Id); // o code, según lo que uses
+        formDataToUpdate.append("TipoPQRId", formData.TipoPQRId);
+        formDataToUpdate.append("Normatividad", formData.Normatividad);
+        formDataToUpdate.append("Observaciones", formData.Observaciones);
+        if (formData.DependenciaId !== null) {
+          formDataToUpdate.append("DependenciaId", formData.DependenciaId.toString());
+        }
+
+        tags.forEach((tag) => {
+          formDataToUpdate.append("PalabrasClave", tag);
+        });
+
+        if (selectedHtmlFile) {
+          const fieldName = Editing ? "PlantillaRespuestaHTML" : "HtmlFile";
+          formDataToUpdate.append(fieldName, selectedHtmlFile);
+        }
+
+        response = await TemplatesServices.updateTemplate(formDataToUpdate);
+      } else {
+        response = await TemplatesServices.createTemplate(queryParams, formDataToSend);
+      }
+
+      if (!response.success) throw new Error(response.error);
+      showToast(
+        Editing ? "Parámetro Actualizado Correctamente" : "Parámetro Creado Correctamente",
+        "success"
+      );
+      navigate("/dashboard/admin/parametros");
+    } catch (error: any) {
+      console.error("Error en formulario de parámetro:", error);
+      showToast("Error al guardar el parámetro", "error");
     }
   };
 
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-                <Plus className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex font-bold text-[33px]">
-                    {Editing ? <p>Editar Plantilla</p> : <p>Crear Plantilla</p>}
+      <form onSubmit={handleSubmit}>
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                  <Plus className="w-5 h-5 text-white" />
                 </div>
+                <div className="flex font-bold text-[33px]">
+                  {Editing ? <p>Editar Plantilla</p> : <p>Crear Plantilla</p>}
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
-            {/* Formulario */}
-            <div className="space-y-6">
-              {/* Dependencia */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Dependencia*
-                </label>
-                <div className="relative">
-                  <select
-                    value={dependencia}
-                    onChange={(e) => setDependencia(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
-                  >
-                    <option>Secretaría de Hacienda</option>
-                    <option>Secretaría de Gobierno</option>
-                    <option>Secretaría de Planeación</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
+              {/* Formulario */}
+              <div className="space-y-6">
+                {/* Dependencia */}
+                <FloatingSelect
+                  label="Dependencia"
+                  value={formData.DependenciaId?.toString() || ""}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      DependenciaId: value ? parseInt(value, 10) : null,
+                    }))
+                  }
+                  options={dependencia.map((d) => ({
+                    value: d.id.toString(),
+                    label: d.nombre,
+                  }))}
+                  placeholder="Elige una opción"
+                />
 
-              {/* Tipo de PQR */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tipo de PQR*
-                </label>
-                <div className="relative">
-                  <select
-                    value={tipoPQR}
-                    onChange={(e) => setTipoPQR(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white"
-                  >
-                    <option>Petición general</option>
-                    <option>Queja</option>
-                    <option>Reclamo</option>
-                    <option>Sugerencia</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
 
-              {/* Palabras claves */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Palabras claves (añada la palabra y presione Enter)*
-                </label>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag.id}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-green-500 text-white text-sm rounded-full"
-                    >
-                      {tag.text}
-                      <button
-                        onClick={() => removeTag(tag.id)}
-                        className="ml-1 hover:bg-green-600 rounded-full p-0.5"
+                {/* Tipo de PQR */}
+                <FloatingSelect
+                  label="Tipo PQR"
+                  value={formData.TipoPQRId || ""}
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      TipoPQRId: value,
+                    }))
+                  }
+                  options={tipoPQR.map((tc) => ({
+                    value: tc.id,
+                    label: tc.nombre,
+                  }))}
+                  placeholder="Elige una opción"
+                />
+
+
+                {/* Palabras claves */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Palabras claves (añada la palabra y presione Enter)*
+                  </label>
+
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center gap-1 px-3 py-1 bg-green-500 text-white text-sm rounded-full"
                       >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
+                        {tag}
+                        <button
+                          onClick={() => removeTag(tag)}
+                          className="ml-1 hover:bg-green-600 rounded-full p-0.5"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+
+                  <FloatingLabel
+                    id="palabrasClaves"
+                    label="Agregar palabra clave"
+                    value={newTag}
+                    className={`w-full ${tags.length > 0 ? "" : "mb-3"}`}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        addTag();
+                      }
+                    }}
+                  />
                 </div>
-                <input
-                  type="text"
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  onKeyPress={handleTagKeyPress}
-                  placeholder="Agregar palabra clave..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+
+                {/* Observaciones */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Observaciones
+                  </label>
+                  <textarea
+                    id="observaciones"
+                    name="observaciones"
+                    value={formData.Observaciones}
+                    onChange={(e) => {
+                      const sinEmojis = EliminarEmojis(e.target.value);
+                      setFormData((prev) => ({
+                        ...prev,
+                        Observaciones: sinEmojis,
+                      }));
+                    }}
+                    rows={4}
+                    placeholder="Para que servirá la plantilla."
+                    className="w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 border-gray-300 focus:ring-green-400 "
+                  />
+                </div>
+
+                {/* Normatividad */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Normatividad
+                  </label>
+                  <textarea
+                    id="normatividad"
+                    name="normatividad"
+                    value={formData.Normatividad}
+                    onChange={(e) => {
+                      const sinEmojis = EliminarEmojis(e.target.value);
+                      setFormData((prev) => ({
+                        ...prev,
+                        Normatividad: sinEmojis,
+                      }));
+                    }}
+                    rows={4}
+                    placeholder="Detalle la normatividad relacionada..."
+                    className="w-full border rounded-lg px-3 py-3 text-sm resize-none overflow-y-auto focus:outline-none focus:ring-2 border-gray-300 focus:ring-green-400 "
+                  />
+                </div>
+
+                {/* Subir archivos */}
+                <div>
+                  <p className="text-gray-500 font-semibold">Plantilla HTML</p>
+
+                  {/* Input de archivo oculto */}
+                  <input
+                    type="file"
+                    accept=".html"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                  />
+
+
+                  {/* Botón de subir */}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center justify-center px-4 py-2 bg-green-600 text-white text-xs leading-4 font-bold text-center cursor-pointer select-none rounded-lg gap-3 shadow-md transition-all duration-500 ease-in-out hover:shadow-lg hover:shadow-green-200 active:opacity-85 active:shadow-none focus:outline-none focus:opacity-85 focus:shadow-none w-max"
+                  >
+                    <FilePlus className="w-4 h-4" />
+                    Subir
+                  </button>
+                </div>
               </div>
 
-              {/* Observaciones */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Observación (para que sepa la plantilla)*
-                </label>
-                <textarea
-                  value={observaciones}
-                  onChange={(e) => setObservaciones(e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              {/* Vista previa */}
+              <div className="bg-gray-50 h-fit rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                  Vista previa de la Respuesta HTML:
+                </h2>
+                <iframe
+                  ref={iframeRef}
+                  title="Vista previa HTML"
+                  className="w-full border rounded"
+                  style={{
+                    minHeight: "600px",
+                    border: "none",
+                    display: "block",
+                  }}
+                  srcDoc={`<style>
+                  html, body {
+                    margin: 0;
+                    padding: 0;
+                  }
+                  a {
+                    pointer-events: none !important;
+                    cursor: default !important;
+                    text-decoration: none !important;
+                    color: inherit !important;
+                  }
+                </style>${previewHtml}`}
                 />
-              </div>
 
-              {/* Normatividad */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Normatividad
-                </label>
-                <textarea
-                  value={normatividad}
-                  onChange={(e) => setNormatividad(e.target.value)}
-                  rows={8}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm"
-                />
-              </div>
-
-              {/* Subir archivos */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Cargar plantilla de respuesta HTML:
-                </label>
-                <button className="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
-                  <Upload className="w-4 h-4" />
-                  Subir archivos
-                </button>
               </div>
             </div>
 
-            {/* Vista previa */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Vista previa de la Respuesta HTML:
-              </h2>
-              <div className="bg-white border border-gray-200 rounded-md p-4 text-sm text-gray-700 leading-relaxed  overflow-y-auto">
-                <p className="mb-3">
-                  Baranoa, [#FechaRespuesta#]<br />
-                  Señor(a):<br />
-                  [#NombreCompletoSolicitante#]<br />
-                  [#DireccionSolicitante#]<br />
-                  [#CorreoElectronicoSolicitante#]<br />
-                  Baranoa – Atlántico
-                </p>
-                
-                <p className="font-semibold mb-3">
-                  Asunto: Respuesta a solicitud del PQR con Radicado No. [#NumeroConsecutivo#]
-                </p>
-                
-                <p className="mb-3">
-                  Por medio del presente, nos permitimos dar respuesta a su petición, indicándole en 
-                  forma anticipada que este Despacho NO ACCEDE a la misma, atendiendo las 
-                  siguientes razones:
-                </p>
-                
-                <p className="font-semibold mb-2">
-                  ASPECTOS GENERALES Y ACLARACIONES RESPECTO AL FENÓMENO DE LA PRESCRIPCIÓN 
-                  DE LA ACCIÓN DE COBRO EN MATERIA TRIBUTARIA TERRITORIAL
-                </p>
-                
-                <p className="mb-3">
-                  Nos permitimos indicarle que el artículo 59 de la Ley 788 de 2002, precisa siguiente, 
-                  respecto al procedimiento tributario territorial:
-                </p>
-                
-                <p className="text-sm">
-                  (...) "ARTÍCULO 59. PROCEDIMIENTO TRIBUTARIO TERRITORIAL. Los Departamentos y 
-                  municipios aplicarán los procedimientos establecidos en el Estatuto Tributario 
-                  Nacional, para la administración, determinación, discusión, cobro, devoluciones, 
-                  régimen sancionatorio incluida su imposición, a los impuestos por ellos administrados.
-                </p>
-              </div>
+            {/* Botones de acción */}
+            <div className="flex items-center justify-end gap-3 p-6">
+              <button
+                className="px-6 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                onClick={handleCancel}
+                type='button'
+              >
+                Cancelar
+              </button>
+              <button
+                className="px-6 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors"
+                type='submit'
+              >
+                Guardar
+              </button>
             </div>
-          </div>
-
-          {/* Botones de acción */}
-          <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
-            <button className="px-6 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">
-              Cancelar
-            </button>
-            <button className="px-6 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 transition-colors">
-              Guardar
-            </button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
 
 export default TemplateForm;
+
