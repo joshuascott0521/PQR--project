@@ -61,7 +61,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
 
         {/* Imagen estática en el centro */}
         <img
-          src="/public/icon_prueba_pqr-removebg-preview.png"
+          src="/icon_prueba_pqr-removebg-preview.png"
           alt="Loading"
           className={`
             ${currentSize.image} 

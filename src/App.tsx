@@ -86,6 +86,7 @@ function App() {
               <Route path="finalizado" element={<Finalizado />} />
               <Route path="anulado" element={<Anulado />} />
               <Route path="nuevo-pqr" element={<NuevoPqr />} />
+              {/* Rutas de administradores */}
               <Route path="admin/cliente" element={<Clientes />} />
               <Route path="admin/parametros" element={<Parametros />} />
               {/* Rutas para los parametros */}

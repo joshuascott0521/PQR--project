@@ -17,6 +17,11 @@ export interface CreatePqr {
   usuarioId: string | null;
 }
 
+export interface AsideProps {
+  isCollapse: boolean;
+  setIsCollapse: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 export interface Pqr {
   id: string;
   clienteId: string;

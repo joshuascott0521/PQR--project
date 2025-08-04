@@ -4,8 +4,9 @@ import type { User } from "../services/authService";
 export interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: (redirect?: boolean) => void;
   loading: boolean;
+  sessionExpired: boolean;
 }
 
 

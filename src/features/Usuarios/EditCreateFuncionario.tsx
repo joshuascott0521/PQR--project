@@ -7,6 +7,7 @@ import { DependenciaServices, UsersServices } from '../../services/pqrServices';
 import { FloatingLabel } from '../../components/shared/FloatingLabel';
 import { FloatingSelect } from '../../components/shared/FloatingSelect';
 import { showToast } from '../../utils/toastUtils';
+import { WrapperVisibilidadPassword } from '../../components/shared/WrapperVisibilidadPassword';
 
 interface FuncionariosProps {
     Editing?: boolean;
@@ -194,28 +195,22 @@ const FuncionarioCreateEdit = ({ Editing }: FuncionariosProps) => {
                             }
                         />
                         {!Editing &&
-                            <FloatingLabel
-                                id="password"
-                                label="Contraseña"
-                                className="w-full"
-                                value={formData.password}
-                                type='password'
-                                onChange={(e) =>
-                                    setFormData((prev) => ({ ...prev, password: e.target.value }))
-                                }
-                            />
-                        }
-                        {!Editing &&
-                            <FloatingLabel
-                                id="verifyPassword"
-                                label="Confirmar Contraseña"
-                                className="w-full"
-                                value={formData.verifyPassword}
-                                type='password'
-                                onChange={(e) =>
-                                    setFormData((prev) => ({ ...prev, verifyPassword: e.target.value }))
-                                }
-                            />
+                            <>
+                                <WrapperVisibilidadPassword
+                                    as= {FloatingLabel}
+                                    id='password'
+                                    label='Contraseña'
+                                    value= {formData.password}
+                                    onChange={(e) => setFormData(prev => ({...prev, password: e.target.value}))}
+                                />
+                                <WrapperVisibilidadPassword
+                                    as= {FloatingLabel}
+                                    id='verifyPassword'
+                                    label='Confirmar Contraseña'
+                                    value= {formData.verifyPassword}
+                                    onChange={(e) => setFormData(prev => ({...prev, verifyPassword: e.target.value}))}
+                                />
+                            </>
                         }
                     </div>
                     <div className="flex justify-end gap-4 mt-auto pt-6 border-gray-200">

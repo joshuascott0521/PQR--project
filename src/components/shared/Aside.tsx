@@ -2,11 +2,8 @@ import { NavLink } from "react-router-dom";
 
 import { FaCircle } from "react-icons/fa";
 import { House, Eye, ClipboardCheck, FileCheck, FileX, Clipboard, ShieldUser, Users, SlidersHorizontal, ClipboardList } from "lucide-react"
+import type { AsideProps } from "../../interfaces/pqrInterfaces";
 
-interface AsideProps {
-  isCollapse: boolean;
-  setIsCollapse: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 const menuItems = [
   { label: "inicio", path: "/dashboard/statistic", icon: <House /> },

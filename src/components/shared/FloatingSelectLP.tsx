@@ -31,7 +31,7 @@ export const FloatingSelectLP: React.FC<FloatingSelectProps> = ({
   loading = false,
 }) => {
   return (
-    <div className="relative w-full max-w-60">
+    <div className={cn("relative w-full", className)}>
       <SelectPrimitive.Root
         value={value}
         onValueChange={onChange}

@@ -3,6 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { showToast } from "../../utils/toastUtils";
 import { useNavigate } from "react-router-dom";
 import { setShouldAnimate } from "../../utils/animationStore";
+import { WrapperVisibilidadPassword } from "../../components/shared/WrapperVisibilidadPassword";
 
 const LoginForm = () => {
   const { login } = useAuth();
@@ -95,15 +96,16 @@ const LoginForm = () => {
             <label htmlFor="password" className="text-white mb-2 pl-4">
               PASSWORD
             </label>
-            <input
-              type="password"
+            <WrapperVisibilidadPassword
+              as="input"
               id="password"
-              className="w-[90%] h-12 border-none rounded-[2rem] p-2 bg-white bg-opacity-30 backdrop-blur placeholder-white focus:outline-none pl-4"
               placeholder="Ingresa tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="current-password"
+              wrapperClassName="w-[90%]"
+              inputClassName="h-12 border-none rounded-[2rem] p-2 bg-white bg-opacity-30 backdrop-blur placeholder-white focus:outline-none pl-4"
             />
           </div>
         </div>

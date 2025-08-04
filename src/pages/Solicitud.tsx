@@ -34,7 +34,7 @@ export default function Solicitud() {
           <div className="w-full max-w-md flex flex-col h-full">
             <div>
               <img
-                src="/public/PqrLogo.png"
+                src="/PqrLogo.png"
                 alt="Logo"
                 className="w-40 h-auto mx-auto"
               />

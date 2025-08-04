@@ -338,7 +338,7 @@ const TemplateForm = ({ Editing }: ParametersProps) => {
 
                 {/* Subir archivos */}
                 <div>
-                  <p className="text-gray-500 font-semibold">Plantilla HTML</p>
+                  <p className="text-gray-700 font-semibold">Plantilla HTML</p>
 
                   {/* Input de archivo oculto */}
                   <input

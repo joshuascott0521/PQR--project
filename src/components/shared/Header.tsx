@@ -11,9 +11,10 @@ import { CSSTransition } from "react-transition-group";
 
 interface HeaderProps {
   setIsCollapse: React.Dispatch<React.SetStateAction<boolean>>;
+  isCollapse?: boolean;
 }
 
-const Header = ({ setIsCollapse }: HeaderProps) => {
+const Header = ({ setIsCollapse, isCollapse }: HeaderProps) => {
   const nodeRef = useRef(null);
 
   const navigate = useNavigate();
@@ -63,16 +64,18 @@ const Header = ({ setIsCollapse }: HeaderProps) => {
   return (
     <div className="h-[85px] flex items-center justify-between px-4 sm:px-6 border-b-2 bg-white w-full transition-all duration-300">
       <div
+        title={isCollapse ? "Expandir" : "Contraer"}
+        aria-pressed={!!isCollapse}
         className="pr-6 cursor-pointer active:scale-90"
         onClick={() => setIsCollapse((prev) => !prev)}
-        title="Contraer/Expandir"
+
       >
         <Menu className="text-gray-500" />
       </div>
 
       <div className="pr-3 transition-transform hover:scale-95">
         <img
-          src="/public/Logo-static.png"
+          src="/Logo-static.png"
           alt="Logo alcaldia"
           className="w-[320px]"
           loading="lazy"

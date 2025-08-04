@@ -18,7 +18,7 @@ const Login = () => {
           <div className="w-[90%] h-[70%]">
             <div className="">
               <img
-                src="/public/PqrLogo.png"
+                src="/PqrLogo.png"
                 alt="logo pqr"
                 className="w-[160px] h-auto"
               />

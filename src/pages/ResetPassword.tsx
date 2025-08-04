@@ -81,7 +81,7 @@ const ResetPassword = () => {
         <div className="w-[90%] h-[80%]">
           <div className="">
             <img
-              src="/public/PqrLogo.png"
+              src="/PqrLogo.png"
               alt="logo pqr"
               className="w-[160px] h-auto"
             />
@@ -125,7 +125,7 @@ const ResetPassword = () => {
           }`}
         >
           <img
-            src="/public/Logo-static.png"
+            src="/Logo-static.png"
             alt="Logo alcaldia"
             className="w-full max-w-[500px] h-20 object-contain mb-4"
           />

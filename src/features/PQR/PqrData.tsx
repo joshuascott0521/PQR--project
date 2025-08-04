@@ -10,6 +10,8 @@ import { useLoading } from "../../contexts/LoadingContext";
 import { showToast } from "../../utils/toastUtils";
 import { EliminarEmojis } from "../../utils/EliminarEmojis";
 import RespuestaIA from "../../components/shared/RespuestaIA";
+import { useCallback } from "react";
+
 
 const PqrData = () => {
   const [isWideScreen, setIsWideScreen] = useState(false);
@@ -42,6 +44,24 @@ const PqrData = () => {
     value: evento.id ?? "",
   }));
 
+  const fetchEventos = useCallback(async () => {
+    setLoadingEventoSeleccionado(true);
+    try {
+      const response = await typeSelectComents.getEvento(id!);
+      if (response.success && response.data) {
+        if (response.data.some((e: Evento) => e.id && e.id !== "")) {
+          setEventos(response.data);
+        } else {
+          setEventos([]);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingEventoSeleccionado(false);
+    }
+  }, [id]);
+
   useEffect(() => {
     const fetchPqr = async () => {
       showLoading("Procesando información...");
@@ -58,20 +78,6 @@ const PqrData = () => {
       }
     };
 
-    const fetchEventos = async () => {
-      setLoadingEventoSeleccionado(false);
-
-      try {
-        const response = await typeSelectComents.getEvento(id!);
-        if (response.success && response.data) {
-          if (response.data.find((e: Evento) => e.id !== "")) {
-            setEventos(response.data);
-          }
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
     const fetchUsuarios = async () => {
       setLoadingUsuarios(true); // <-- Inicia la carga
       try {
@@ -96,13 +102,9 @@ const PqrData = () => {
     fetchEventos();
     fetchPqr();
     fetchUsuarios();
-  }, [id]);
+  }, [id, fetchEventos]);
 
-  useEffect(() => {
-    if (pqr) {
-      console.log("🔵🔵🔵Detalles🔵🔵🔵 ", pqr);
-    }
-  }, [pqr]);
+
 
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
@@ -214,6 +216,8 @@ const PqrData = () => {
         setEventoSeleccionado(null);
         setUser("");
 
+        await fetchEventos();
+
         hideLoading();
         const newPqr = await PqrServices.getById(id!);
         if (newPqr.success) {
@@ -266,8 +270,8 @@ const PqrData = () => {
                   pqr?.estadoVencimiento === "VENCIDO"
                     ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
                     : pqr?.estadoVencimiento === "POR VENCER"
-                    ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
-                    : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
+                      ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
+                      : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
                 }
                 className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
                 aria-label="Number 13"
@@ -276,12 +280,12 @@ const PqrData = () => {
                     pqr?.estadoVencimiento === "VENCIDO"
                       ? " #dc2626"
                       : pqr?.estadoVencimiento === "POR VENCER"
-                      ? "#ffe900"
-                      : pqr?.estadoVencimiento === "EN ESPERA"
-                      ? "#38b6ff"
-                      : pqr?.estadoVencimiento === "A TIEMPO"
-                      ? "#22c55e"
-                      : "#d1d5db",
+                        ? "#ffe900"
+                        : pqr?.estadoVencimiento === "EN ESPERA"
+                          ? "#38b6ff"
+                          : pqr?.estadoVencimiento === "A TIEMPO"
+                            ? "#22c55e"
+                            : "#d1d5db",
                 }}
               >
                 {pqr?.diasRestantes}
@@ -340,11 +344,10 @@ const PqrData = () => {
             </div>
           </div>
           <div
-            className={`flex  flex-col h-full transition-all duration-300 ${
-              ["Finalizado", "Anulado"].includes(pqr?.estado || "")
-                ? "h-[calc(100vh-300px)] overflow-y-auto"
-                : "max-h-[300px] overflow-y-auto"
-            }`}
+            className={`flex  flex-col h-full transition-all duration-300 ${["Finalizado", "Anulado"].includes(pqr?.estado || "")
+              ? "h-[calc(100vh-300px)] overflow-y-auto"
+              : "max-h-[300px] overflow-y-auto"
+              }`}
           >
             <div className="space-y-4">
               {pqr?.detalle && (
@@ -375,6 +378,7 @@ const PqrData = () => {
                     setEventoSeleccionado(seleccionado);
                   }}
                   options={opcionesEventos}
+                  className="max-w-60"
                 />
 
                 {requiereAsignar && (
@@ -390,6 +394,7 @@ const PqrData = () => {
                       }}
                       options={usuarios}
                       showLabelPlaceholder={false}
+                      className="max-w-60"
                     />
                   </>
                 )}
@@ -456,11 +461,10 @@ const PqrData = () => {
               <div className="flex flex-wrap items-center justify-between">
                 {eventoSeleccionado?.obligandoAnexo && (
                   <label
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${
-                      archivos.length >= 5
-                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                        : "bg-emerald-400 text-white hover:bg-emerald-500"
-                    }`}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-emerald-400 text-white hover:bg-emerald-500"
+                      }`}
                   >
                     <Paperclip className="w-4 h-4" />
                     {archivos.length >= 5

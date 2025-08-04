@@ -48,7 +48,7 @@ export default function ConsultaCiudadana() {
             <header className="px-3 py-4">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                     <img
-                        src="/public/Static-new.png"
+                        src="/Static-new.png"
                         alt="Logo"
                         className="w-full md:max-w-[300px] bg-a-baranoa hover:scale-95 transition-transform duration-200"
                     />

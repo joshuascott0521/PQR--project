@@ -56,7 +56,7 @@ const RecuperarContrasenaFrm = () => {
         <div className="flex justify-start w-full h-1/6 p-[11px] mb-4">
           <div className="w-full max-w-[500px] overflow-hidden">
             <img
-              src="/public/Logo-static.png"
+              src="/Logo-static.png"
               alt="Logo alcaldia"
               className="bg-a-baranoa w-full h-full object-cover"
             />

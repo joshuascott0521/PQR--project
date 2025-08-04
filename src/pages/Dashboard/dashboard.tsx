@@ -3,12 +3,25 @@ import { ToastContainer } from "react-toastify";
 import Aside from "../../components/shared/Aside";
 import AsidePublico from "../../components/shared/AsidePublico";
 import Header from "../../components/shared/Header";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Dashboard = () => {
-  const tipoUsuId = "Administrador";
+  const raw = localStorage.getItem("userData");
+  const tipoUsuId = raw ? (() => { try { return JSON.parse(raw)?.tipoUsuId;} catch { return null;} })() : null;
 
-  const [isCollapse, setIsCollapse] = useState(false);
+  const storageKey = useMemo(() => {
+    const id = raw ? (() => { try { return JSON.parse(raw)?.id;} catch { return null;} })() : null;
+    return id ? `asideCollapsed:${id}` : "asideCollapsed:anon";
+  }, []);
+
+  const [isCollapse, setIsCollapse] = useState<boolean>(() => {
+    const saved = localStorage.getItem(storageKey);
+    return saved === "1";
+  });
+
+  useEffect(() => {
+    localStorage.setItem(storageKey, isCollapse ? "1" : "0");
+  }, [isCollapse, storageKey]);
 
   const openNotification = false;
   const moreOption = false;
@@ -19,7 +32,7 @@ const Dashboard = () => {
 
       {/* Header */}
       <div className="w-full flex-shrink-0">
-        <Header setIsCollapse={setIsCollapse} />
+        <Header setIsCollapse={setIsCollapse} isCollapse = {isCollapse}/>
       </div>
 
       {/* Contenido principal */}
@@ -28,7 +41,7 @@ const Dashboard = () => {
         {tipoUsuId === "Administrador" ? (
           <Aside isCollapse={isCollapse} setIsCollapse={setIsCollapse} />
         ) : (
-          <AsidePublico />
+          <AsidePublico isCollapse={isCollapse} setIsCollapse={setIsCollapse}/>
         )}
 
         {/* Main content */}
