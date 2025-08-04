@@ -2,12 +2,13 @@ import {
   ArrowRight,
   Edit3,
   FileText,
+  Save,
   Sparkles,
   SquarePen,
   Stamp,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 // Importaciones de Lexical
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
@@ -17,7 +18,7 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 
-// Importaciones de Nodos de Lexical (CORREGIDO)
+// Importaciones de Nodos de Lexical
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { CodeHighlightNode, CodeNode } from "@lexical/code";
@@ -27,6 +28,10 @@ import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { css } from "@emotion/css";
 import ToolbarPlugin from "../../Plugins/ToolbarPlugin";
 import type { EditorThemeClasses } from "lexical";
+import EditablePlugin from "../../Plugins/EditablePlugin";
+import CapturePlugin, {
+  type CapturePluginApi,
+} from "../../Plugins/CapturePlugin";
 
 interface ModalRespuestaIAProps {
   isOpen: boolean;
@@ -40,7 +45,8 @@ const RespuestaIA = ({
   numeroRadicado,
 }: ModalRespuestaIAProps) => {
   const [ajusteIA, setAjusteIA] = useState("");
-  const [, setModoEdicionManual] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
+  const captureRef = useRef<CapturePluginApi>(null);
 
   const theme: EditorThemeClasses = {
     ltr: css({ textAlign: "left" }),
@@ -84,22 +90,29 @@ const RespuestaIA = ({
         fontSize: "smaller",
       }),
     },
-    // Estilos para la alineación del texto
     align: {
       center: css({ textAlign: "center" }),
       right: css({ textAlign: "right" }),
       left: css({ textAlign: "left" }),
       justify: css({ textAlign: "justify" }),
     },
+    heading: {
+      h1: css({ fontSize: "2rem", margin: "1rem 0", fontWeight: "normal" }),
+      h2: css({ fontSize: "1.5rem", margin: "1rem 0", fontWeight: "normal" }),
+      h3: css({ fontSize: "1.17rem", margin: "1rem 0", fontWeight: "normal" }),
+      h4: css({ fontSize: "1rem", margin: "1rem 0", fontWeight: "normal" }),
+      h5: css({ fontSize: "0.83rem", margin: "1rem 0", fontWeight: "normal" }),
+      h6: css({ fontSize: "0.67rem", margin: "1rem 0", fontWeight: "normal" }),
+    },
   };
 
-  // CONFIGURACIÓN INICIAL CORREGIDA: Se eliminó TextFormatNode y se agregaron otros nodos útiles.
   const initialConfig = {
     namespace: "RespuestaIA-1",
     theme,
     onError: (error: Error) => {
       console.error("Error en el editor Lexical:", error);
     },
+    editable: isEditable,
     nodes: [
       HeadingNode,
       ListNode,
@@ -113,6 +126,20 @@ const RespuestaIA = ({
   };
 
   if (!isOpen) return null;
+
+  const handleSave = () => {
+    setIsEditable(false);
+    if (captureRef.current) {
+      const editorState = captureRef.current.getEditorState();
+      const editorStateJSON = editorState.toJSON();
+
+      console.log("✅ Contenido del editor (Objeto JSON):", editorStateJSON);
+      console.log(
+        "📄 Contenido como string JSON:",
+        JSON.stringify(editorStateJSON, null, 2)
+      );
+    }
+  };
 
   return (
     <div>
@@ -139,7 +166,7 @@ const RespuestaIA = ({
 
           {/* Content */}
           <div className="overflow-y-auto bg-gray-100 flex-grow">
-            {/* Asunto */}
+            {/* Asunto y Action Buttons */}
             <div className="px-6 py-4">
               <div className="bg-white p-4 rounded-full">
                 <span className="font-medium text-gray-800">Asunto: </span>
@@ -150,8 +177,6 @@ const RespuestaIA = ({
                 </span>
               </div>
             </div>
-
-            {/* Action Buttons */}
             <div className="relative flex justify-center gap-40 py-6">
               <div className=" left-0 right-0 h-0.5 bg-gray-300 z-0 mx-[346px] my-0 absolute top-[52px]" />
               <div className="flex flex-col items-center gap-2 z-10">
@@ -184,8 +209,12 @@ const RespuestaIA = ({
             <div className="mx-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
               <LexicalComposer initialConfig={initialConfig}>
                 <div className="relative">
-                  <ToolbarPlugin />
-                  <hr />
+                  {isEditable && (
+                    <>
+                      <ToolbarPlugin />
+                      <hr />
+                    </>
+                  )}
                   <RichTextPlugin
                     contentEditable={
                       <div className="p-4">
@@ -197,6 +226,7 @@ const RespuestaIA = ({
                             fontSize: "15px",
                             outline: "none",
                             resize: "none",
+                            cursor: isEditable ? "text" : "default",
                           })}
                         />
                       </div>
@@ -208,7 +238,7 @@ const RespuestaIA = ({
                     //       overflow: "hidden",
                     //       position: "absolute",
                     //       textOverflow: "ellipsis",
-                    //       top: "55px",
+                    //       top: isEditable ? "55px" : "16px",
                     //       left: "16px",
                     //       fontSize: "15px",
                     //       userSelect: "none",
@@ -216,13 +246,15 @@ const RespuestaIA = ({
                     //       pointerEvents: "none",
                     //     })}
                     //   >
-                    //     Escribe aquí tu respuesta...
+                    //     Haz clic en "Editar manual" para comenzar a escribir...
                     //   </div>
                     // }
                     ErrorBoundary={LexicalErrorBoundary}
                   />
                   <HistoryPlugin />
                   <AutoFocusPlugin />
+                  <EditablePlugin isEditable={isEditable} />
+                  <CapturePlugin ref={captureRef} />
                 </div>
               </LexicalComposer>
             </div>
@@ -231,33 +263,51 @@ const RespuestaIA = ({
           {/* Footer Actions */}
           <div className="border-t bg-white px-6 py-4 flex-shrink-0">
             <div className="flex gap-4 items-center">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  value={ajusteIA}
-                  onChange={(e) => setAjusteIA(e.target.value)}
-                  placeholder="Añadir ajuste a la IA (ej.: 'Hazlo más formal', 'Agrega artículo de notificación electrónica')"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm resize-none h-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+              {!isEditable && (
+                <>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={ajusteIA}
+                      onChange={(e) => setAjusteIA(e.target.value)}
+                      placeholder="Añadir ajuste a la IA (ej.: 'Hazlo más formal')"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm resize-none h-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
+                    <Sparkles className="h-4 w-4" />
+                    Enviar
+                  </button>
+                </>
+              )}
+              {isEditable && <div className="flex-1"></div>}
+
               <div className="flex gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
-                  <Sparkles className="h-4 w-4" />
-                  Enviar
-                </button>
-                <button
-                  onClick={() => {
-                    setModoEdicionManual(true);
-                  }}
-                  className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-sm font-medium"
-                >
-                  <SquarePen className="h-4 w-4" />
-                  Editar manual
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium">
-                  Siguiente
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                {isEditable ? (
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700  transition-colors text-sm font-medium"
+                  >
+                    <SquarePen className="h-4 w-4" />
+                    Guardar
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsEditable(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-sm font-medium"
+                  >
+                    <SquarePen className="h-4 w-4" />
+                    Editar manual
+                  </button>
+                )}
+                {!isEditable && (
+                  <>
+                    <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium">
+                      Siguiente
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

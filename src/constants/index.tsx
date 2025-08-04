@@ -1,3 +1,4 @@
+import type { HeadingTagType } from "@lexical/rich-text";
 import {
   ArrowClockwise,
   ArrowCounterclockwise,
@@ -99,3 +100,5 @@ export const RICH_TEXT_OPTIONS = [
   },
 ];
 export const LOW_PRIORIRTY = 1;
+
+export const HEADINGS: HeadingTagType[] = ["h1", "h2", "h3", "h4", "h5", "h6"];

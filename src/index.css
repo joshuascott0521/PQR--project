@@ -29,3 +29,11 @@
   transform: scale(0.95);
   transition: all 300ms ease;
 }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal !important;
+}
