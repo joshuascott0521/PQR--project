@@ -12,7 +12,7 @@ const SearchParameters = ({ query, setQuery }: SearchParametersProps) => {
     const clearSearch = () => setQuery("");
 
     return (
-        <div className="bg-white rounded-full relative w-[600px]" ref={containerRef}>
+        <div className="bg-white rounded-full relative w-full" ref={containerRef}>
             <div className="flex items-center h-9 border-2 border-gray-200 rounded-full focus-within:border-green-400 px-2">
                 <CiSearch className="text-gray-400 stroke-1 text-2xl" />
                 <input

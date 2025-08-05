@@ -25,6 +25,7 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null); // 🔒 Para controlar el timer y evitar múltiples
     const [isGenerating, setIsGenerating] = useState(false);
     const [dotCount, setDotCount] = useState(1);
+    const [canResend, setCanResend] = useState(false);
 
     useEffect(() => {
         if (!isGenerating) return;
@@ -39,6 +40,8 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
     const generate = async () => {
         setIsGenerating(true);
         try {
+            setCanResend(false); // 🔒 No permitir reenviar de inmediato
+
             const userData = localStorage.getItem("userData");
             if (!userData) {
                 console.error("Usuario no encontrado");
@@ -54,14 +57,12 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
             const call = await PqrServices.generateOtp(usuid);
             if (!call.success) throw new Error(call.error);
 
-            // Reiniciar estado si la solicitud fue exitosa
             setCode(['', '', '', '']);
             setTimeLeft(300);
 
-            // Limpia el timer anterior si existe
             if (timerRef.current) clearInterval(timerRef.current);
 
-            // 🔁 Inicia nuevo timer
+            // 🔁 Inicia cuenta regresiva
             timerRef.current = setInterval(() => {
                 setTimeLeft((prev) => {
                     if (prev <= 1) {
@@ -71,12 +72,18 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
                     return prev - 1;
                 });
             }, 1000);
+
+            // ✅ Habilitar reenviar después de 60 segundos (puedes cambiarlo a 120000 para 2 min)
+            setTimeout(() => {
+                setCanResend(true);
+            }, 60000);
         } catch (err) {
             console.error("Error al generar otp:", err);
         } finally {
-            setIsGenerating(false); // ✅ termina loading
+            setIsGenerating(false);
         }
     };
+
 
     // ⏱ Ejecuta generate una sola vez al abrir el modal
     useEffect(() => {
@@ -193,6 +200,7 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
                 )}
 
 
+                {/* Mensaje solo si el código ha expirado */}
                 {timeLeft === 0 && (
                     <div>
                         <p className="text-red-500 font-bold text-center text-sm">
@@ -208,6 +216,22 @@ const ModalOtp: React.FC<AuthorizationModalProps> = ({
                         </div>
                     </div>
                 )}
+
+                {/* Mostrar solo el botón de reenviar si el tiempo no ha expirado pero ya está habilitado */}
+                {timeLeft > 0 && canResend && (
+                    <div className="text-center my-3">
+                        <p className="text-sm text-gray-500 mb-1">
+                            ¿No recibiste el código?
+                        </p>
+                        <button
+                            className="text-blue-600 hover:text-blue-700 text-sm font-medium underline transition-colors"
+                            onClick={handleResend}
+                        >
+                            Reenviar código
+                        </button>
+                    </div>
+                )}
+
 
                 <div className="flex gap-4">
                     <button

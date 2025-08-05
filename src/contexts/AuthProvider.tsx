@@ -31,10 +31,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const normalizedPath = decodeURIComponent(pathname)
       .toLowerCase()
       .split("?")[0]
-      .replace(/\/+$/, "");
-    return publicRoutes.some(
-      (route) => route.toLowerCase().replace(/\/+$/, "") === normalizedPath
-    );
+
+    return publicRoutes.some((route) => {
+      const cleanRoute = route.toLowerCase().replace(/\/+$/, "");
+      return normalizedPath.startsWith(cleanRoute);
+    })
   };
 
   const logout = (redirect: boolean = true) => {

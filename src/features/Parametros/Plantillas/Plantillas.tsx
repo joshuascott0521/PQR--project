@@ -28,11 +28,11 @@ const Plantillas = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const fetchTemplates = async (currentPage: number) => {
+  const fetchTemplates = async (currentPage: number, filtro: string) => {
     setLoadingMore(true);
 
     try {
-      const response = await TemplatesServices.getByPage(currentPage, pageSize);
+      const response = await TemplatesServices.Busqueda(filtro, currentPage, pageSize);
       const data = response.data ?? [];
 
       if (!response.success || data.length === 0) {
@@ -58,22 +58,33 @@ const Plantillas = () => {
     }
   };
 
-  // Carga inicial
+  // Reiniciar búsqueda al cambiar el query
   useEffect(() => {
-    setInitialLoading(true);
+  const delayDebounce = setTimeout(() => {
     setTemplates([]);
-    setPage(1); // Esto disparará el siguiente useEffect
     setHasMore(true);
-  }, []);
+    setSinResultados(false);
+    setInitialLoading(true);
+
+    // fuerza recarga inmediata
+    fetchTemplates(1, query).then(() => {
+      setInitialLoading(false);
+      setPage(1); // mantener estado sincronizado
+    });
+  }, 400);
+
+  return () => clearTimeout(delayDebounce);
+}, [query]);
+
 
   // Reacción a cambios de página
   useEffect(() => {
-    fetchTemplates(page).then(() => {
+    fetchTemplates(page, query).then(() => {
       if (page === 1) setInitialLoading(false);
     });
   }, [page]);
 
-  // Scroll + botón "subir"
+  // Scroll infinito y botón subir
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -82,7 +93,7 @@ const Plantillas = () => {
       const bottomReached = el.scrollTop + el.clientHeight >= el.scrollHeight - 20;
       const shouldShowButton = el.scrollTop > 100;
 
-      if (bottomReached && !loadingMore && hasMore) {
+      if (!query && bottomReached && !loadingMore && hasMore) {
         setPage((prev) => prev + 1);
       }
 
@@ -91,7 +102,7 @@ const Plantillas = () => {
 
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
-  }, [loadingMore, hasMore]);
+  }, [loadingMore, hasMore, query]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">

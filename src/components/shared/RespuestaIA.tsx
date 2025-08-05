@@ -320,7 +320,8 @@ const RespuestaIA = ({
                   {!solicitudFirmaActiva ? (
                     <button
                       onClick={() => setIsSelectModalOpen(true)}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+                      disabled = {!firmado}
                     >
                       Solicitar firma
                     </button>
