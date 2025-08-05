@@ -156,7 +156,7 @@ const PqrData = () => {
 
     try {
       const response = await IA.resultadoIA({
-        PQRId: pqr.tipoPQRId,
+        pqrId: pqr.id,
         usuarioId: userStorage.id,
       });
 
@@ -170,7 +170,6 @@ const PqrData = () => {
       showToast("Ocurrió un error al ejecutar la IA.");
       console.error(error);
     }
-    // console.log(prueba);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -281,13 +280,6 @@ const PqrData = () => {
   const requiereAsignar = eventosQueRequierenAsignacion.includes(
     nombreEventoSeleccionado
   );
-
-  // const requiereRespuestaIA = eventosQueRespuestaIA.includes(
-  //   nombreEventoSeleccionado
-  // );
-  console.log("XDDDDDDDDDDDDD", requiereAsignar);
-  console.log("JOSHUAAQ", eventoSeleccionado?.nombre);
-  // console.log("enwociwneociwneciuebvicb", requiereRespuestaIA);
 
   useEffect(() => {
     const handleResize = () => {
