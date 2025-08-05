@@ -11,7 +11,6 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import type { NotificacionDetalle } from "../../interfaces/pqrInterfaces";
 import NotificationForm from "./NotificationForm";
 import { Plus } from "lucide-react";
-// import { toast } from "react-toastify";
 
 const PqrChat = ({
   detalles,
@@ -35,6 +34,9 @@ const PqrChat = ({
     const eventosExcluidos = ["Anular", "Comentario", "Ingreso"];
     return !!nombreEvento && !eventosExcluidos.includes(nombreEvento.trim());
   };
+  const [descripcionExpandida, setDescripcionExpandida] = useState<
+    string | null
+  >(null);
 
   const getDetalle = (id: any, tipoTercero: any) => {
     if (tipoTercero === "Cliente") {
@@ -65,14 +67,14 @@ const PqrChat = ({
         );
         if (result.success) {
           if (result.data.length === 0) {
-            showToast("Este ítem no ha sido notificado todavía.");
+            showToast("Este evento no ha sido notificado todavía.");
           }
           setNotificaciones((prev) => ({
             ...prev,
             [item]: result.data, // Guardar aunque esté vacío
           }));
         } else {
-          showToast(result.error || "Error al cargar notificaciones");
+          showToast("Este evento no ha sido notificado todavía.");
           setNotificaciones((prev) => ({
             ...prev,
             [item]: [],
@@ -126,6 +128,13 @@ const PqrChat = ({
       }
     }
   };
+  const MAX_LENGTH = 200;
+
+  const getDescripcionCorta = (texto: string, item: string | number) => {
+    const estaExpandida = descripcionExpandida === item;
+    if (estaExpandida || texto.length <= MAX_LENGTH) return texto;
+    return texto.slice(0, MAX_LENGTH) + "...";
+  };
 
   return (
     <>
@@ -146,9 +155,10 @@ const PqrChat = ({
                   }
                   className={`
                     flex items-center justify-center w-8 h-8 rounded-full cursor-pointer
-                    ${detalle.tercero.tipoTercero === "Cliente"
-                      ? "bg-green-200 text-green-700"
-                      : detalle.tercero.tipoTercero === "Funcionario"
+                    ${
+                      detalle.tercero.tipoTercero === "Cliente"
+                        ? "bg-green-200 text-green-700"
+                        : detalle.tercero.tipoTercero === "Funcionario"
                         ? "bg-yellow-200 text-yellow-700"
                         : "bg-gray-200 text-gray-700"
                     }
@@ -195,8 +205,8 @@ const PqrChat = ({
                 detalle.tercero.tipoTercero === "Cliente"
                   ? "#e2ffed"
                   : detalle.tercero.tipoTercero === "Funcionario"
-                    ? "#fff1dc"
-                    : "gray",
+                  ? "#fff1dc"
+                  : "gray",
             }}
           >
             {detalle.descripcion}
@@ -217,7 +227,9 @@ const PqrChat = ({
                     {detalle.solicitudId && (
                       <span
                         className={`${
-                          detalle.estadoSolicitud === "Respondido" ? "text-[#6D28D9]" : "text-gray-900"
+                          detalle.estadoSolicitud === "Respondido"
+                            ? "text-[#6D28D9]"
+                            : "text-gray-900"
                         }`}
                       >
                         No. {detalle.solicitudId} - {detalle.estadoSolicitud}
@@ -274,10 +286,11 @@ const PqrChat = ({
 
             {/* Tabla de notificaciones */}
             <div
-              className={`overflow-hidden transition-all duration-300 ease-in-out ${expandedItem === detalle.item
+              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                expandedItem === detalle.item
                   ? "max-h-[1000px] opacity-100 mt-4"
                   : "max-h-0 opacity-0"
-                }`}
+              }`}
             >
               <div className="border border-gray-200 rounded-md">
                 <table className="min-w-full text-sm text-left text-gray-700 bg-white">

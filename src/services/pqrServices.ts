@@ -3,6 +3,7 @@ import apiClientPublic from "../api/apiClientPublic";
 import type {
   Adjunto,
   AlertaNotificacion,
+  AnalisisIA,
   ApiResponse,
   ArchivoSubido,
   Cliente,
@@ -398,47 +399,42 @@ export const PqrServices = {
   },
   generateOtp: async (usuarioId: string): Promise<ApiResponse<string>> => {
     try {
-      const response = await apiClient.post("/OTP/Generar-OTP",
-        {
-          usuarioId: usuarioId,
-        }
-      );
+      const response = await apiClient.post("/OTP/Generar-OTP", {
+        usuarioId: usuarioId,
+      });
       return {
         success: true,
-        data: response.data
-      }
+        data: response.data,
+      };
     } catch (error: any) {
       return {
         success: false,
-        data: '',
-        error:
-          error.response?.data?.message ||
-          "Error al generar codigo OTP",
+        data: "",
+        error: error.response?.data?.message || "Error al generar codigo OTP",
       };
     }
   },
-  validateOtp: async (usuarioId: string, otp: number): Promise<ApiResponse<ValidationOtp>> => {
+  validateOtp: async (
+    usuarioId: string,
+    otp: number
+  ): Promise<ApiResponse<ValidationOtp>> => {
     try {
-      const response = await apiClient.post("/OTP/Verificar-OTP",
-        {
-          usuarioId: usuarioId,
-          token: otp,
-        }
-      );
+      const response = await apiClient.post("/OTP/Verificar-OTP", {
+        usuarioId: usuarioId,
+        token: otp,
+      });
       return {
         success: true,
-        data: response.data
-      }
+        data: response.data,
+      };
     } catch (error: any) {
       return {
         success: false,
         data: {} as ValidationOtp,
-        error:
-          error.response?.data?.message ||
-          "Error al validar codigo OTP",
+        error: error.response?.data?.message || "Error al validar codigo OTP",
       };
     }
-  }
+  },
 };
 
 export const DependenciaServices = {
@@ -574,16 +570,19 @@ export const UsersServices = {
       };
     }
   },
-  getFuncionariosFirmantes: async (usuid: string): Promise<ApiResponse<SolicitudFirmante[]>> => {
+  getFuncionariosFirmantes: async (
+    usuid: string
+  ): Promise<ApiResponse<SolicitudFirmante[]>> => {
     try {
-      const response = await apiClient.get(`/usuario/AsignarByIdConcad?usuid=${usuid}`);
+      const response = await apiClient.get(
+        `/usuario/AsignarByIdConcad?usuid=${usuid}`
+      );
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error:
-          error.response?.data?.message || "Error al obtener usuarios",
+        error: error.response?.data?.message || "Error al obtener usuarios",
       };
     }
   },
@@ -608,15 +607,21 @@ export const Origen = {
 };
 
 export const ClientesServices = {
-  getByPage: async (page: number, size: number): Promise<ApiResponse<Cliente[]>> => {
+  getByPage: async (
+    page: number,
+    size: number
+  ): Promise<ApiResponse<Cliente[]>> => {
     try {
-      const response = await apiClient.get(`/Cliente/ObtenerAllCliente/${page}/${size}`);
+      const response = await apiClient.get(
+        `/Cliente/ObtenerAllCliente/${page}/${size}`
+      );
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al cargar Clientes paginados",
+        error:
+          error.response?.data?.message || "Error al cargar Clientes paginados",
       };
     }
   },
@@ -663,7 +668,35 @@ export const ClientesServices = {
     }
   },
 };
-
+export const IA = {
+  resultadoIA: async (
+    analisisIA: AnalisisIA
+  ): Promise<ApiResponse<AnalisisIA>> => {
+    const response = await apiClient.post(
+      "api/IA/RealizarAnalisis",
+      analisisIA
+    );
+    return { success: true, data: response.data };
+  },
+  generarRespuestaIA: async (
+    analisisIA: AnalisisIA
+  ): Promise<ApiResponse<AnalisisIA>> => {
+    const response = await apiClient.post(
+      "api/IA/GenerarRespuesta",
+      analisisIA
+    );
+    return { success: true, data: response.data };
+  },
+  refinarRespuestaIA: async (
+    analisisIA: AnalisisIA
+  ): Promise<ApiResponse<AnalisisIA>> => {
+    const response = await apiClient.post(
+      "api/IA/RefinarRespuesta",
+      analisisIA
+    );
+    return { success: true, data: response.data };
+  },
+};
 export const ArchivoServices = {
   descargar: async (
     urlArchivo: string,
@@ -722,7 +755,10 @@ export const SolicitudServices = {
     adjuntos: Adjunto[];
   }): Promise<ApiResponse<string>> => {
     try {
-      const response = await apiClientPublic.put("/PQRSolicitud/Update", payload);
+      const response = await apiClientPublic.put(
+        "/PQRSolicitud/Update",
+        payload
+      );
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
@@ -849,7 +885,10 @@ export const ParametersServices = {
 };
 
 export const TemplatesServices = {
-  createTemplate: async (queryParams: URLSearchParams, formData: FormData): Promise<ApiResponse<string>> => {
+  createTemplate: async (
+    queryParams: URLSearchParams,
+    formData: FormData
+  ): Promise<ApiResponse<string>> => {
     try {
       const url = `/PlantillaRespuestaPQR/Create?${queryParams.toString()}`;
 
@@ -873,28 +912,32 @@ export const TemplatesServices = {
     } catch (error: any) {
       return {
         success: false,
-        data: '',
+        data: "",
         error: error.response?.data?.mensaje || "Error al crear la plantilla",
       };
     }
   },
 
-  getByPage: async (page: number, size: number): Promise<ApiResponse<GetTemplates[]>> => {
+  getByPage: async (
+    page: number,
+    size: number
+  ): Promise<ApiResponse<GetTemplates[]>> => {
     try {
-      const response = await apiClient.get(`/PlantillaRespuestaPQR/GetAll/${page}/${size}`);
+      const response = await apiClient.get(
+        `/PlantillaRespuestaPQR/GetAll/${page}/${size}`
+      );
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al cargar Clientes paginados",
+        error:
+          error.response?.data?.message || "Error al cargar Clientes paginados",
       };
     }
   },
 
-  getByCode: async (
-    code: string
-  ): Promise<ApiResponse<Templates>> => {
+  getByCode: async (code: string): Promise<ApiResponse<Templates>> => {
     try {
       const respose = await apiClient.get(`/PlantillaRespuestaPQR/Get/${code}`);
       return {
@@ -912,11 +955,15 @@ export const TemplatesServices = {
 
   updateTemplate: async (formData: FormData): Promise<ApiResponse<string>> => {
     try {
-      const response = await apiClient.put("/PlantillaRespuestaPQR/Update", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
+      const response = await apiClient.put(
+        "/PlantillaRespuestaPQR/Update",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      })
+      );
       return {
         success: true,
         data: response.data,
@@ -924,13 +971,13 @@ export const TemplatesServices = {
     } catch (error: any) {
       return {
         success: false,
-        data: '',
-        error: error.response?.data?.mensaje || "Error al actualizar la plantilla",
+        data: "",
+        error:
+          error.response?.data?.mensaje || "Error al actualizar la plantilla",
       };
     }
   },
 };
-
 
 interface AlertasResponse {
   alertas: AlertaNotificacion[];

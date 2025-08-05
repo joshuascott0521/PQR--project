@@ -240,7 +240,7 @@ export interface Usuario {
 export interface Dependencia {
   id: number;
   nombre: string;
-  estado: boolean
+  estado: boolean;
 }
 
 export interface ParameterCard {
@@ -371,7 +371,7 @@ export interface DominioConstraint {
 export interface PQRConsulta {
   id: string;
   numero: string;
-  tipo: 'Peticion' | 'Queja' | 'Reclamo' | 'Sugerencia';
+  tipo: "Peticion" | "Queja" | "Reclamo" | "Sugerencia";
   ciudadano: {
     nombre: string;
     documento: string;
@@ -431,7 +431,12 @@ export interface GetTemplates {
   palabrasClave: string[];
 }
 
-export interface SolicitudFirmante{
+export interface SolicitudFirmante {
   id: string;
   Nombre: string;
 }
+export type AnalisisIA = {
+  PQRId: string;
+  usuarioId: string; // exactamente como lo espera la API
+  newContextPromt?: string;
+};

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FloatingSelectLP } from "../../components/shared/FloatingSelectLP";
 import PqrChat from "../../components/shared/PqrChat";
-import { PqrServices, typeSelectComents } from "../../services/pqrServices";
+import { IA, PqrServices, typeSelectComents } from "../../services/pqrServices";
 import type { DetallePqr, Evento } from "../../interfaces/pqrInterfaces";
 import { Paperclip, X, File, Sparkles } from "lucide-react";
 import { useLoading } from "../../contexts/LoadingContext";
@@ -12,8 +12,9 @@ import { EliminarEmojis } from "../../utils/EliminarEmojis";
 import RespuestaIA from "../../components/shared/RespuestaIA";
 import { useCallback } from "react";
 
-
 const PqrData = () => {
+  // const [usuid, setUsuid] = useState<string | null>(null);
+
   const [isWideScreen, setIsWideScreen] = useState(false);
   const [loadingEventoSeleccionado, setLoadingEventoSeleccionado] =
     useState(true);
@@ -61,6 +62,12 @@ const PqrData = () => {
       setLoadingEventoSeleccionado(false);
     }
   }, [id]);
+  const getUsuarioId = (): string | null => {
+    const userData = localStorage.getItem("userData");
+    if (!userData) return null;
+    const userStorage = JSON.parse(userData);
+    return userStorage?.id || null;
+  };
 
   useEffect(() => {
     const fetchPqr = async () => {
@@ -104,8 +111,6 @@ const PqrData = () => {
     fetchUsuarios();
   }, [id, fetchEventos]);
 
-
-
   const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
     const nuevos = e.target.files ? Array.from(e.target.files) : [];
 
@@ -132,6 +137,40 @@ const PqrData = () => {
     const copia = [...archivos];
     copia.splice(index, 1);
     setArchivos(copia);
+  };
+  const clickIA = async () => {
+    const userData = localStorage.getItem("userData");
+    const userStorage = userData ? JSON.parse(userData) : null;
+
+    const usuidGlobal = userStorage?.id;
+
+    if (!pqr?.tipoPQRId) {
+      console.error("Error: pqrId no está definido.");
+      return;
+    }
+
+    if (!usuidGlobal) {
+      console.error("Error: usuarioId no está definido.");
+      return;
+    }
+
+    try {
+      const response = await IA.resultadoIA({
+        PQRId: pqr.tipoPQRId,
+        usuarioId: userStorage.id,
+      });
+
+      if (response.success) {
+        showToast("Análisis de IA realizado correctamente.", "success");
+        console.log("Resultado IA:", response.data);
+      } else {
+        showToast("Error al realizar análisis con IA.");
+      }
+    } catch (error: any) {
+      showToast("Ocurrió un error al ejecutar la IA.");
+      console.error(error);
+    }
+    // console.log(prueba);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -178,15 +217,7 @@ const PqrData = () => {
         }));
       }
 
-      const userData = localStorage.getItem("userData");
-      if (!userData) {
-        setError("Usuario no encontrado");
-        hideLoading();
-        return;
-      }
-
-      const userStorage = JSON.parse(userData);
-      const usuid = userStorage?.id;
+      const usuid = getUsuarioId();
       if (!usuid) {
         setError("ID de usuario inválido");
         hideLoading();
@@ -243,12 +274,20 @@ const PqrData = () => {
   };
 
   const eventosQueRequierenAsignacion = ["Asignar", "Solicitar a Funcionario"];
+  // const eventosQueRespuestaIA = "Analisis Agente IA";
 
   const nombreEventoSeleccionado = eventoSeleccionado?.nombre ?? "";
 
   const requiereAsignar = eventosQueRequierenAsignacion.includes(
     nombreEventoSeleccionado
   );
+
+  // const requiereRespuestaIA = eventosQueRespuestaIA.includes(
+  //   nombreEventoSeleccionado
+  // );
+  console.log("XDDDDDDDDDDDDD", requiereAsignar);
+  console.log("JOSHUAAQ", eventoSeleccionado?.nombre);
+  // console.log("enwociwneociwneciuebvicb", requiereRespuestaIA);
 
   useEffect(() => {
     const handleResize = () => {
@@ -259,6 +298,12 @@ const PqrData = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+  const userData = localStorage.getItem("userData");
+  const userStorage = userData ? JSON.parse(userData) : null;
+  const usuidGlobal = userStorage?.id || null;
+
+  console.log("CARE VERGA", usuidGlobal);
+
   return (
     <>
       <div className="h-full max-h-[928px] flex flex-col justify-between">
@@ -270,8 +315,8 @@ const PqrData = () => {
                   pqr?.estadoVencimiento === "VENCIDO"
                     ? `Este pqr está vencido hace ${pqr?.diasRestantes} días.`
                     : pqr?.estadoVencimiento === "POR VENCER"
-                      ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
-                      : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
+                    ? `Este pqr está por vencer en ${pqr?.diasRestantes} días.`
+                    : `Este pqr está a tiempo. Quedan ${pqr?.diasRestantes} días.`
                 }
                 className="flex items-center justify-center w-[47px] h-[47px] rounded-full bg-[#FFEB3B] text-white  font-semibold text-lg flex-shrink-0"
                 aria-label="Number 13"
@@ -280,12 +325,12 @@ const PqrData = () => {
                     pqr?.estadoVencimiento === "VENCIDO"
                       ? " #dc2626"
                       : pqr?.estadoVencimiento === "POR VENCER"
-                        ? "#ffe900"
-                        : pqr?.estadoVencimiento === "EN ESPERA"
-                          ? "#38b6ff"
-                          : pqr?.estadoVencimiento === "A TIEMPO"
-                            ? "#22c55e"
-                            : "#d1d5db",
+                      ? "#ffe900"
+                      : pqr?.estadoVencimiento === "EN ESPERA"
+                      ? "#38b6ff"
+                      : pqr?.estadoVencimiento === "A TIEMPO"
+                      ? "#22c55e"
+                      : "#d1d5db",
                 }}
               >
                 {pqr?.diasRestantes}
@@ -344,10 +389,11 @@ const PqrData = () => {
             </div>
           </div>
           <div
-            className={`flex  flex-col h-full transition-all duration-300 ${["Finalizado", "Anulado"].includes(pqr?.estado || "")
-              ? "h-[calc(100vh-300px)] overflow-y-auto"
-              : "max-h-[300px] overflow-y-auto"
-              }`}
+            className={`flex  flex-col h-full transition-all duration-300 ${
+              ["Finalizado", "Anulado"].includes(pqr?.estado || "")
+                ? "h-[calc(100vh-300px)] overflow-y-auto"
+                : "max-h-[300px] overflow-y-auto"
+            }`}
           >
             <div className="space-y-4">
               {pqr?.detalle && (
@@ -365,7 +411,7 @@ const PqrData = () => {
         {pqr?.estado !== "Finalizado" && pqr?.estado !== "Anulado" && (
           <div className="border border-gray-300 rounded-md p-4 mx-auto h-full mt-3 max-h-[265px] w-full">
             <form className="" onSubmit={handleSubmit}>
-              <div className="flex flex-wrap gap-6 items-center">
+              <div className="flex flex-wrap gap-6 items-center h-[38px]">
                 <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
                   Nuevo evento:
                 </label>
@@ -383,9 +429,17 @@ const PqrData = () => {
 
                 {requiereAsignar && (
                   <>
-                    <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
-                      Asignar a:
-                    </label>
+                    {eventoSeleccionado?.nombre === "Asignar" && (
+                      <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                        Asignar a:
+                      </label>
+                    )}
+                    {eventoSeleccionado?.nombre ===
+                      "Solicitar a Funcionario" && (
+                      <label className="text-sm text-gray-700 flex items-center gap-2 whitespace-nowrap">
+                        Solicitar a:
+                      </label>
+                    )}
                     <FloatingSelectLP
                       loading={loadingUsuarios}
                       value={user}
@@ -398,15 +452,28 @@ const PqrData = () => {
                     />
                   </>
                 )}
-                <div
-                  className="ml-auto bg-blue-500 hover:bg-blue-700 text-white text-lg rounded-lg px-[20px] py-[5px] flex items-center gap-2 cursor-pointer"
-                  onClick={() => setIsModalOpenIA(true)}
-                >
-                  <Sparkles />
-                  {(isWideScreen || !requiereAsignar) && (
+                {(eventoSeleccionado?.nombre === "Respuesta Agente IA" ||
+                  eventoSeleccionado?.nombre ===
+                    "Finalizado por Respuesta") && (
+                  <div
+                    className="ml-auto bg-blue-500 hover:bg-blue-700 text-white text-lg rounded-lg px-[20px] py-[5px] flex items-center gap-2 cursor-pointer"
+                    onClick={() => setIsModalOpenIA(true)}
+                  >
+                    <Sparkles />
                     <span>Proyectar Respuesta con IA</span>
-                  )}
-                </div>
+                  </div>
+                )}
+
+                {eventoSeleccionado?.nombre === "Analisis Agente IA" && (
+                  <div
+                    className="ml-auto bg-blue-500 hover:bg-blue-700 text-white text-lg rounded-lg px-[20px] py-[5px] flex items-center gap-2 cursor-pointer"
+                    onClick={() => clickIA()}
+                  >
+                    <Sparkles />
+
+                    <span>Analizar con Agente IA</span>
+                  </div>
+                )}
 
                 {/* <button
                   type="submit"
@@ -461,10 +528,11 @@ const PqrData = () => {
               <div className="flex flex-wrap items-center justify-between">
                 {eventoSeleccionado?.obligandoAnexo && (
                   <label
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${archivos.length >= 5
-                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                      : "bg-emerald-400 text-white hover:bg-emerald-500"
-                      }`}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full cursor-pointer w-fit ${
+                      archivos.length >= 5
+                        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        : "bg-emerald-400 text-white hover:bg-emerald-500"
+                    }`}
                   >
                     <Paperclip className="w-4 h-4" />
                     {archivos.length >= 5
