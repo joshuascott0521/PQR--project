@@ -430,3 +430,8 @@ export interface GetTemplates {
   observaciones: string;
   palabrasClave: string[];
 }
+
+export interface SolicitudFirmante{
+  id: string;
+  Nombre: string;
+}

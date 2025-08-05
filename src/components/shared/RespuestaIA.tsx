@@ -1,11 +1,13 @@
 import {
+  ArrowLeft,
   ArrowRight,
   Edit3,
   FileText,
-  Save,
+  Paperclip,
   Sparkles,
   SquarePen,
   Stamp,
+  Trash2,
   X,
 } from "lucide-react";
 import { useState, useRef } from "react";
@@ -32,6 +34,11 @@ import EditablePlugin from "../../Plugins/EditablePlugin";
 import CapturePlugin, {
   type CapturePluginApi,
 } from "../../Plugins/CapturePlugin";
+import { PqrServices } from "../../services/pqrServices";
+import { showToast } from "../../utils/toastUtils";
+import ModalOtp from "./ModalOtp";
+import { ModalSelectFirma } from "./ModalSelectFirma";
+import { ModalSellado } from "./ModalSellado";
 
 interface ModalRespuestaIAProps {
   isOpen: boolean;
@@ -47,6 +54,87 @@ const RespuestaIA = ({
   const [ajusteIA, setAjusteIA] = useState("");
   const [isEditable, setIsEditable] = useState(false);
   const captureRef = useRef<CapturePluginApi>(null);
+
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const handleNext = () => setStep((s) => (s < 2 ? (s + 1) as 0 | 1 | 2 : s));
+  const handlePrev = () => setStep((s) => (s > 0 ? (s - 1) as 0 | 1 | 2 : s));
+
+  {/* Hook de control para el modal de OTP */ }
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+
+  {/* Hook de control para el modal de seleccion de firmantes */ }
+  const [isSelectModalOpen, setIsSelectModalOpen] = useState(false);
+
+  {/* Hook de control para el manejo de errores en el OTP. Nota: este hook se envia por props al componente*/ }
+  const [otpError, setOtpError] = useState<string | null>(null);
+
+  {/* Hook de control para el modal de confirmación de sellado */ }
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+  {/* Obtener el id del funcionario en sesion*/ }
+  const userData = localStorage.getItem("userData");
+  if (!userData) return null;
+  const user = JSON.parse(userData);
+  const usuid = user?.id;
+  if (!usuid) return null;
+
+  const [firmado, setFirmado] = useState(false);
+  const [solicitudFirmaActiva, setSolicitudFirmaActiva] = useState(false);
+  const [, setSolicitudFuncionario] = useState<string | null>(null);
+
+  {/*
+      En esta funcion se obtiene el otp que se ingresa en el modal,
+      una vez se tiene se envia junto con el id del usuario en
+      sesión para verificar la validez del codigo. Si es valido el
+      modal se cierra y se muestra un toast de exito. En esta
+      funcion en la validacion de exito de la peticion se
+      ubicaria el consumo (si lo hay) para que se posicione la
+      firma en el html.
+  
+      IMPORTANTE: esta funcion debe ser ubicada en el archivo donde
+      se va a llamar el modal ya que se envia como props al 
+      componente.
+    */}
+  const handleSign = (otp: number) => {
+    const validation = async () => {
+      try {
+        const response = await PqrServices.validateOtp(usuid, otp);
+        if (!response.success) throw new Error(response.error);
+        showToast(response.data.mensaje, "success");
+        setOtpError(null);
+        setIsOtpModalOpen(false);
+        setFirmado(true);
+      } catch (err) {
+        console.error("Error al validar otp:", err);
+        setOtpError("El código ingresado es incorrecto.");
+      }
+    };
+    validation();
+  };
+
+  const handleDeleteSign = () => {
+    setFirmado(false)
+    showToast("Firma Eliminada");
+  };
+
+  const handleRequestSignature = ({ funcionario }: { funcionario: string }) => {
+    if (solicitudFirmaActiva) {
+      showToast("Ya existe una solicitud de firma en curso.");
+      return;
+    }
+    setSolicitudFirmaActiva(true);
+    setSolicitudFuncionario(funcionario);
+  };
+
+  const handleCancelSignatureRequest = () => {
+    if (!solicitudFirmaActiva) {
+      showToast("No hay solicitud de firma para cancelar.");
+      return;
+    }
+    setSolicitudFirmaActiva(false);
+    setSolicitudFuncionario(null);
+    showToast("Solicitud de firma cancelada", "success");
+  };
 
   const theme: EditorThemeClasses = {
     ltr: css({ textAlign: "left" }),
@@ -141,6 +229,161 @@ const RespuestaIA = ({
     }
   };
 
+  const renderFooter = () => {
+    switch (step) {
+      case 0:
+        return (
+          <div className="border-t bg-white px-6 py-4 flex-shrink-0">
+            <div className="flex gap-4 items-center">
+              {!isEditable && (
+                <>
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={ajusteIA}
+                      onChange={(e) => setAjusteIA(e.target.value)}
+                      placeholder="Añadir ajuste a la IA (ej.: 'Hazlo más formal')"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm resize-none h-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <button
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Enviar
+                  </button>
+                </>
+              )}
+              {isEditable && <div className="flex-1"></div>}
+              <div className="flex gap-3">
+                {isEditable ? (
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    <SquarePen className="w-4 h-4" />
+                    Guardar
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsEditable(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-sm font-medium"
+                  >
+                    <SquarePen className="w-4 h-4" />
+                    Editar Manual
+                  </button>
+                )}
+                {!isEditable && (
+                  <button
+                    onClick={handleNext}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    Siguiente
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      case 1:
+        return (
+          <div className="border-t bg-white px-6 py-4 flex-shrink-0">
+            <div className="grid grid-cols-3 items-center">
+              <div className="justify-self-start">
+                <button
+                  onClick={handlePrev}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 text-sm font-medium"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Anterior
+                </button>
+              </div>
+              <div className="justify-self-center">
+                <div className="flex gap-3">
+                  {!firmado ? (
+                    <button
+                      onClick={() => setIsOtpModalOpen(true)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+                    >
+                      Firmar
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleDeleteSign}
+                      className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Eliminar Firma
+                    </button>
+                  )}
+                  {!solicitudFirmaActiva ? (
+                    <button
+                      onClick={() => setIsSelectModalOpen(true)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+                    >
+                      Solicitar firma
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleCancelSignatureRequest}
+                      className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Eliminar solicitud
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="justify-self-end">
+                <button
+                  onClick={handleNext}
+                  className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
+                >
+                  Siguiente
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="border-t bg-white px-6 py-4 flex-shrink-0">
+            <div className="grid grid-cols-3 items-center">
+              <div className="justify-self-start">
+                <button
+                  onClick={handlePrev}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 text-sm font-medium"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Anterior
+                </button>
+              </div>
+              <div className="justify-self-center">
+                <button
+                  onClick={() => { }}
+                  className="flex items-center gap-2 px-4 text-white py-2 bg-blue-600 rounded-md hover:bg-blue-700 text-sm font-medium"
+                >
+                  <Paperclip className="w-4 h-4" />
+                  Agregar soporte a respuesta PDF
+                </button>
+              </div>
+              <div className="justify-self-end">
+                <button
+                  onClick={() => setIsConfirmModalOpen(true)}
+                  className="bg-green-500 text-white font-semibold px-4 flex items-center gap-2 py-2 rounded-lg text-sm hover:bg-green-600 transition"
+                >
+                  <Stamp />
+                  Sellar y finalizar
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+    }
+  }
+
   return (
     <div>
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -179,24 +422,30 @@ const RespuestaIA = ({
             </div>
             <div className="relative flex justify-center gap-40 py-6">
               <div className=" left-0 right-0 h-0.5 bg-gray-300 z-0 mx-[346px] my-0 absolute top-[52px]" />
+              {/* Paso 0: Proyección */}
               <div className="flex flex-col items-center gap-2 z-10">
-                <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center
+                      ${step >= 0 ? "bg-blue-600" : "bg-gray-400"} transition-colors`}>
                   <FileText className="w-7 h-7 text-white" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">
                   Proyectar
                 </span>
               </div>
+              {/* Paso 1: Firmado */}
               <div className="flex flex-col items-center gap-2 z-10">
-                <div className="w-14 h-14 bg-gray-400 rounded-full flex items-center justify-center">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center
+                      ${step >= 1 ? "bg-blue-600" : "bg-gray-400"} transition-colors`}>
                   <Edit3 className="w-7 h-7 text-white" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">
                   Firmar
                 </span>
               </div>
+              {/* Paso 2: Sellado*/}
               <div className="flex flex-col items-center gap-2 z-10">
-                <div className="w-14 h-14 bg-gray-400 rounded-full flex items-center justify-center">
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center
+                      ${step >= 2 ? "bg-blue-600" : "bg-gray-400"} transition-colors`}>
                   <Stamp className="w-7 h-7 text-white" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">
@@ -259,58 +508,29 @@ const RespuestaIA = ({
               </LexicalComposer>
             </div>
           </div>
-
-          {/* Footer Actions */}
-          <div className="border-t bg-white px-6 py-4 flex-shrink-0">
-            <div className="flex gap-4 items-center">
-              {!isEditable && (
-                <>
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      value={ajusteIA}
-                      onChange={(e) => setAjusteIA(e.target.value)}
-                      placeholder="Añadir ajuste a la IA (ej.: 'Hazlo más formal')"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm resize-none h-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
-                    <Sparkles className="h-4 w-4" />
-                    Enviar
-                  </button>
-                </>
-              )}
-              {isEditable && <div className="flex-1"></div>}
-
-              <div className="flex gap-3">
-                {isEditable ? (
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700  transition-colors text-sm font-medium"
-                  >
-                    <SquarePen className="h-4 w-4" />
-                    Guardar
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setIsEditable(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors text-sm font-medium"
-                  >
-                    <SquarePen className="h-4 w-4" />
-                    Editar manual
-                  </button>
-                )}
-                {!isEditable && (
-                  <>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm font-medium">
-                      Siguiente
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
+          {renderFooter()}
+          <ModalOtp
+            isOpen={isOtpModalOpen}
+            onClose={() => setIsOtpModalOpen(false)}
+            onSign={handleSign}
+            otpError={otpError}
+            setOtpError={setOtpError}
+          />
+          <ModalSelectFirma
+            isOpen={isSelectModalOpen}
+            onClose={() => setIsSelectModalOpen(false)}
+            onRequestSignature={handleRequestSignature}
+          />
+          <ModalSellado
+            isOpen={isConfirmModalOpen}
+            onClose={() => setIsConfirmModalOpen(false)}
+            onBack={() => { }}
+            onConfirm={() => {
+              showToast("Documento sellado exitosamente", "success")
+              setIsConfirmModalOpen(false);
+              onClose();
+            }}
+          />
         </div>
       </div>
     </div>

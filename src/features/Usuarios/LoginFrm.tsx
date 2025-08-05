@@ -94,7 +94,7 @@ const LoginForm = () => {
           </div>
           <div className="w-full flex flex-col items-start pl-10">
             <label htmlFor="password" className="text-white mb-2 pl-4">
-              PASSWORD
+              CONTRASEÑA
             </label>
             <WrapperVisibilidadPassword
               as="input"

@@ -7,11 +7,13 @@ import {
   FileCheck,
   FileX,
   Clipboard,
+  ClipboardList,
 } from "lucide-react";
 import type { AsideProps } from "../../interfaces/pqrInterfaces";
 
 const menuItems = [
   { label: "inicio", path: "/dashboard/statistic", icon: <House /> },
+  { label: "PQRs", path: "/dashboard/all-pqr", icon: <ClipboardList /> },
   {
     label: "Vencidos",
     path: "/dashboard/vencidos",
@@ -50,7 +52,7 @@ const AsidePublico = ({ isCollapse, }: AsideProps) => {
           <li
             key={index}
             className={`flex-1 flex items-center gap-3 w-full text-xl
-                   ${index === 1 || index === 5 ? "border-t-2 py-0.5" : ""}
+                   ${index === 2 || index === 6 ? "border-t-2 py-0.5" : ""}
                  `}
           >
             <NavLink

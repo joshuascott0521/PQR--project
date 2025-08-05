@@ -1,37 +1,51 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { FloatingSelectLP } from './FloatingSelectLP'; // Ajusta la ruta si está en otro directorio
 import { showToast } from '../../utils/toastUtils';
+import type { SolicitudFirmante } from '../../interfaces/pqrInterfaces';
+import { UsersServices } from '../../services/pqrServices';
 
 interface SelectFirmanteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onViewChange: (view: 'confirm') => void;
+  onRequestSignature?: (payload: { funcionario: string }) => void;
 }
 
 export const ModalSelectFirma: React.FC<SelectFirmanteModalProps> = ({
   isOpen,
   onClose,
+  onRequestSignature,
 }) => {
   const [selectedFuncionario, setSelectedFuncionario] = useState('');
+  const userData = localStorage.getItem("userData");
+  if (!userData) return null;
+  const user = JSON.parse(userData);
+  const usuid = user?.id;
+  if (!usuid) return null;
 
-  const funcionarios = [
-    'Juan Pérez - Director General',
-    'María García - Subdirectora',
-    'Carlos López - Jefe de Área',
-    'Ana Martínez - Coordinadora'
-  ];
+  const [funcionarios, setFuncionarios] = useState<SolicitudFirmante[]>([]);
 
-  const options = funcionarios.map((f) => ({
-    value: f,
-    label: f
-  }));
+  useEffect(() => {
+    const firmantes = async()=>{
+      try{
+        const response = await UsersServices.getFuncionariosFirmantes(usuid);
+        if(!response.success) throw new Error(response.error);
+
+        setFuncionarios(response.data);
+      }catch(err){
+        console.error(err);
+      }
+    }
+    firmantes();
+  }, []);
 
   if (!isOpen) return null;
 
   const handleSelectView = () => {
     if (selectedFuncionario) {
-      showToast(`Firma solicitada a ${selectedFuncionario}`, "success")
+      onRequestSignature?.({ funcionario: selectedFuncionario });
+      showToast("Firma solicitada a exitosamente", "success");
+      setSelectedFuncionario('');
       onClose();
     }
   };
@@ -62,7 +76,10 @@ export const ModalSelectFirma: React.FC<SelectFirmanteModalProps> = ({
             <FloatingSelectLP
               value={selectedFuncionario}
               onChange={(value) => setSelectedFuncionario(value)}
-              options={options}
+              options={funcionarios.map((fun) => ({
+                value: fun.id,
+                label: fun.Nombre
+              }))}
               placeholder="Seleccione un Funcionario"
             />
           </div>
@@ -78,11 +95,10 @@ export const ModalSelectFirma: React.FC<SelectFirmanteModalProps> = ({
             <button
               onClick={handleSelectView}
               disabled={!selectedFuncionario}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                selectedFuncionario
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${selectedFuncionario
                   ? 'bg-blue-500 text-white hover:bg-blue-600'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
+                }`}
             >
               Solicitar
             </button>

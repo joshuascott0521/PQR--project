@@ -23,6 +23,7 @@ import type {
   Password,
   Pqr,
   PqrCount,
+  SolicitudFirmante,
   SolicitudRequisitoDTO,
   Templates,
   tipoCliente,
@@ -570,6 +571,19 @@ export const UsersServices = {
         data: {} as Password,
         error:
           error.response?.data?.message || "Error al actualizar contraseña",
+      };
+    }
+  },
+  getFuncionariosFirmantes: async (usuid: string): Promise<ApiResponse<SolicitudFirmante[]>> => {
+    try {
+      const response = await apiClient.get(`/usuario/AsignarByIdConcad?usuid=${usuid}`);
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: [],
+        error:
+          error.response?.data?.message || "Error al obtener usuarios",
       };
     }
   },
