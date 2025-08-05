@@ -156,7 +156,7 @@ const PqrData = () => {
 
     try {
       const response = await IA.resultadoIA({
-        PQRId: pqr.tipoPQRId,
+        pqrId: pqr.id,
         usuarioId: userStorage.id,
       });
 
@@ -170,7 +170,6 @@ const PqrData = () => {
       showToast("Ocurrió un error al ejecutar la IA.");
       console.error(error);
     }
-    // console.log(prueba);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -282,13 +281,6 @@ const PqrData = () => {
     nombreEventoSeleccionado
   );
 
-  // const requiereRespuestaIA = eventosQueRespuestaIA.includes(
-  //   nombreEventoSeleccionado
-  // );
-  console.log("XDDDDDDDDDDDDD", requiereAsignar);
-  console.log("JOSHUAAQ", eventoSeleccionado?.nombre);
-  // console.log("enwociwneociwneciuebvicb", requiereRespuestaIA);
-
   useEffect(() => {
     const handleResize = () => {
       setIsWideScreen(window.innerWidth >= 1400);
@@ -298,11 +290,6 @@ const PqrData = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  const userData = localStorage.getItem("userData");
-  const userStorage = userData ? JSON.parse(userData) : null;
-  const usuidGlobal = userStorage?.id || null;
-
-  console.log("CARE VERGA", usuidGlobal);
 
   return (
     <>
