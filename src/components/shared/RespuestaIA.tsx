@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Edit3,
+  File,
   FileText,
   Paperclip,
   Sparkles,
@@ -81,6 +82,10 @@ const RespuestaIA = ({
   const [firmado, setFirmado] = useState(false);
   const [solicitudFirmaActiva, setSolicitudFirmaActiva] = useState(false);
   const [, setSolicitudFuncionario] = useState<string | null>(null);
+
+  const [archivos, setArchivos] = useState<File[]>([]);
+  const [inputKey, setInputKey] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   {/*
       En esta funcion se obtiene el otp que se ingresa en el modal,
@@ -321,7 +326,7 @@ const RespuestaIA = ({
                     <button
                       onClick={() => setIsSelectModalOpen(true)}
                       className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
-                      disabled = {!firmado}
+                      disabled={!firmado}
                     >
                       Solicitar firma
                     </button>
@@ -363,12 +368,22 @@ const RespuestaIA = ({
               </div>
               <div className="justify-self-center">
                 <button
-                  onClick={() => { }}
+                  onClick={() => fileInputRef.current?.click()}
                   className="flex items-center gap-2 px-4 text-white py-2 bg-blue-600 rounded-md hover:bg-blue-700 text-sm font-medium"
                 >
                   <Paperclip className="w-4 h-4" />
                   Agregar soporte a respuesta PDF
                 </button>
+                <input
+                  key={inputKey}
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf"
+                  multiple
+                  className="hidden"
+                  onChange={handleArchivos}
+
+                />
               </div>
               <div className="justify-self-end">
                 <button
@@ -383,7 +398,29 @@ const RespuestaIA = ({
           </div>
         );
     }
-  }
+  };
+
+  const handleArchivos = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nuevos = e.target.files ? Array.from(e.target.files) : [];
+    const size = 5;
+    const maxSizeBytes = size * 1024 * 1024;
+    const archivosValidos = nuevos.filter((file) => {
+      if (file.size > maxSizeBytes) {
+        showToast(`El archivo "${file.name}" excede el límite de ${size} MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    setArchivos((prev) => [...prev, ...archivosValidos]);
+    setInputKey((prev) => prev + 1);
+  };
+
+  const eliminarArchivo = (index: number) => {
+    const copia = [...archivos];
+    copia.splice(index, 1);
+    setArchivos(copia);
+  };
 
   return (
     <div>
@@ -456,7 +493,7 @@ const RespuestaIA = ({
             </div>
 
             {/* Document Content */}
-            <div className="mx-6 mb-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div className="mx-6 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm">
               <LexicalComposer initialConfig={initialConfig}>
                 <div className="relative">
                   {isEditable && (
@@ -481,24 +518,7 @@ const RespuestaIA = ({
                         />
                       </div>
                     }
-                    // placeholder={
-                    //   <div
-                    //     className={css({
-                    //       color: "#999",
-                    //       overflow: "hidden",
-                    //       position: "absolute",
-                    //       textOverflow: "ellipsis",
-                    //       top: isEditable ? "55px" : "16px",
-                    //       left: "16px",
-                    //       fontSize: "15px",
-                    //       userSelect: "none",
-                    //       display: "inline-block",
-                    //       pointerEvents: "none",
-                    //     })}
-                    //   >
-                    //     Haz clic en "Editar manual" para comenzar a escribir...
-                    //   </div>
-                    // }
+
                     ErrorBoundary={LexicalErrorBoundary}
                   />
                   <HistoryPlugin />
@@ -507,6 +527,34 @@ const RespuestaIA = ({
                   <CapturePlugin ref={captureRef} />
                 </div>
               </LexicalComposer>
+            </div>
+            <div className="mt-0 ml-7">
+              <div className="flex gap-2  flex-wrap py-2 items-center">
+                {archivos.length > 0 ? (
+                  archivos.map((archivo, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-gray-50 border border-gray-300 rounded-full cursor-default px-3 py-1 max-w-[189px] flex-shrink-0"
+                      title={archivo.name}
+                    >
+                      <File className="w-4 h-4 text-gray-700" />
+                      <p className="text-sm text-gray-800 truncate flex-1">
+                        {archivo.name}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => eliminarArchivo(index)}
+                        className="text-red-500 hover:text-red-600 transition-colors"
+                        aria-label="Eliminar archivo"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <div className=""></div>
+                )}
+              </div>
             </div>
           </div>
           {renderFooter()}

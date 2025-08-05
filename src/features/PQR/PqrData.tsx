@@ -298,6 +298,14 @@ const PqrData = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if(!eventoSeleccionado?.obligandoAnexo && archivos.length > 0){
+      setArchivos([]);
+      setInputKey((prev) => prev+1);
+    }
+  }, [eventoSeleccionado]);
+  
   const userData = localStorage.getItem("userData");
   const userStorage = userData ? JSON.parse(userData) : null;
   const usuidGlobal = userStorage?.id || null;
