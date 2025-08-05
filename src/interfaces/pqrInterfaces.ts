@@ -436,7 +436,7 @@ export interface SolicitudFirmante {
   Nombre: string;
 }
 export type AnalisisIA = {
-  PQRId: string;
+  pqrId: string;
   usuarioId: string; // exactamente como lo espera la API
   newContextPromt?: string;
 };
