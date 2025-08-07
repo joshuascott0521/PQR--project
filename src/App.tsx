@@ -39,6 +39,7 @@ import GeneralWrapper from "./utils/Wrapper Parameters/GeneralWrapper";
 import Plantillas from "./features/Parametros/Plantillas/Plantillas";
 import TemplateWrapper from "./utils/Wrapper Parameters/TemplateWrapper";
 import ConsultaCiudadana from "./pages/ConsultaCiudadana";
+import SolicitudFirma from "./pages/SolicitudFirma";
 
 function App() {
   return (
@@ -137,6 +138,7 @@ function App() {
             element={<ResetPassword />}
           />
           <Route path="consulta-pqr" element={<ConsultaCiudadana />} />
+          <Route path="signature" element={<SolicitudFirma />} />
         </Routes>
         <GlobalLoadingOverlay />
       </AuthProvider>

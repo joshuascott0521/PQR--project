@@ -519,26 +519,36 @@ export const UsersServices = {
       };
     }
   },
-  updatePerfil: async (funcionario: Usuario): Promise<ApiResponse<Usuario>> => {
+  updatePerfil: async (funcionario: Record<string, string>, firma?: File): Promise<ApiResponse<Usuario>> => {
     try {
-      const payload = {
-        id: funcionario.id,
-        documento: funcionario.documento,
-        nombre: funcionario.nombre,
-        email: funcionario.email,
-        celular: funcionario.celular,
-        firma: funcionario.firma,
+      const formData = new FormData();
+      const cambiosPermitidos = ["Id", "Documento", "Nombre", "Email", "Celular"];
+      for (const [key, value] of Object.entries(funcionario)) {
+        if(cambiosPermitidos.includes(key) && value !== undefined && value !== null){
+          formData.append(key, value.toString());
+        };
       };
 
-      const response = await apiClient.put("/usuario/Update-perfil", payload);
-      return { success: true, data: response.data };
+      if(firma){
+        formData.append("FirmaArchivo", firma);
+      };
+
+      const response = await apiClient.put(`usuario/Update-Perfil`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
+      return{
+        success: true,
+        data: response.data
+      }
     } catch (error: any) {
-      return {
+      return{
         success: false,
         data: {} as Usuario,
-        error:
-          error.response?.data?.message || "Error al actualizar funcionario",
-      };
+        error: error.response?.data?.message || "Error al actualizar perfil",
+      }
     }
   },
 

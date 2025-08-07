@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     "/solicitud/",
     "/usuario/reset-password/",
     "/consulta-pqr",
+    "/signature"
   ];
 
   const isPublicRoute = (pathname: string) => {
@@ -78,10 +79,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (error) {
         console.error("Token malformado:", error);
         logout();
+      } finally {
+        setLoading(false)
       }
+    } else {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, []);
 
   useEffect(() => {

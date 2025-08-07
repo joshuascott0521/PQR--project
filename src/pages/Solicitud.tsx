@@ -31,15 +31,15 @@ export default function Solicitud() {
 
         {/* Columna derecha: Branding */}
         <div className="w-1/2 h-full fixed right-0 top-0 backdrop-blur-sm bg-image px-6 pr-10 py-10 flex items-center justify-center z-10">
-          <div className="w-full max-w-md flex flex-col h-full">
+          <div className="w-full max-w-md flex flex-col h-fit">
             <div>
               <img
-                src="/PqrLogo.png"
+                src="/PqrLogoFixed.png"
                 alt="Logo"
-                className="w-40 h-auto mx-auto"
+                className="w-32 h-auto"
               />
             </div>
-            <div className="text-white text-center">
+            <div className="text-white">
               <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-4">
                 Gestiona en <br /> minutos tus PQR
               </h1>

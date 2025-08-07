@@ -81,19 +81,40 @@ export const VistaPerfil = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await UsersServices.updatePerfil(formData);
-      if (response.success) {
-        mostrarAlertaExito("Perfil actualizado exitosamente!");
 
-        navigate("/dashboard/statistic");
-      } else {
-        console.error("Error al actualizar perfil", response.error);
+    try {
+      let firmaFile: File | undefined;
+
+      if (imagenFirma) {
+        const response = await fetch(imagenFirma);
+        const blob = await response.blob();
+        firmaFile = new File([blob], "firma.png", { type: "image/png" });
       }
+
+      // Alias para que coincida con lo que espera el backend
+      const funcionarioPayload = {
+        Id: formData.id,
+        Documento: formData.documento,
+        Nombre: formData.nombre,
+        Email: formData.email,
+        Celular: formData.celular,
+      };
+
+      const response = await UsersServices.updatePerfil(funcionarioPayload, firmaFile);
+
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+
+      mostrarAlertaExito("Perfil actualizado correctamente");
+      navigate("/dashboard/statistic");
     } catch (error) {
       console.error("Error inesperado al guardar:", error);
+      showToast("Ocurrió un error al actualizar el perfil.");
     }
-  }
+  };
+
+
 
   useEffect(() => {
     console.log("Firma en formData actualizada:", formData);
@@ -225,10 +246,13 @@ export const VistaPerfil = () => {
                 <div className="border-2 border-dashed border-blue-400 p-2 w-full max-w-sm h-32 rounded-lg bg-blue-50 flex items-center justify-center overflow-hidden">
                   {imagenFirma || formData.firma ? (
                     <img
-                      src={imagenFirma ?? formData.firma}
+                      src={
+                        (imagenFirma ?? (formData.firma?.startsWith("data:") ? formData.firma : `data:image/png;base64,${formData.firma}`))
+                      }
                       alt="Firma previa"
                       className="max-h-36 max-w-full object-contain"
                     />
+
                   ) : (
                     <span className="text-gray-400 text-sm">
                       Aún no se ha subido firma

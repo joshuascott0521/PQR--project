@@ -298,12 +298,6 @@ const PqrData = () => {
     }
   }, [eventoSeleccionado]);
   
-  const userData = localStorage.getItem("userData");
-  const userStorage = userData ? JSON.parse(userData) : null;
-  const usuidGlobal = userStorage?.id || null;
-
-  console.log("CARE VERGA", usuidGlobal);
-
   return (
     <>
       <div className="h-full max-h-[928px] flex flex-col justify-between">
