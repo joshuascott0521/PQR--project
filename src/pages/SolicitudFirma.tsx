@@ -190,17 +190,17 @@ export default function SolicitudFirma() {
                                     </div>
                                 </div>
                             </div>
-                            <p className="text-lg mb-4 text-center text-white mt-3">
+                            <p className="text-lg my-4 text-center text-white">
                                 Transforma la gestión de solicitudes en una experiencia ágil y sin complicaciones.
                             </p>
-                            <div className="w-16 h-[5px] bg-white mx-auto my-4"></div>
+                            <div className="w-16 h-[5px] bg-white mx-auto my-10"></div>
                             <input
                                 type="button"
                                 value="Conócenos"
                                 onClick={() =>
                                     window.open("https://www.creapptech.com/", "_blank")
                                 }
-                                className="bg-emeraldBright rounded-3xl mb-10 w-36 h-8 text-white text-lg font-bold flex mx-auto cursor-pointer"
+                                className="bg-emeraldBright rounded-3xl mb-5 w-36 h-8 text-white text-lg font-bold flex mx-auto cursor-pointer"
                             />
                             <p className="text-md px-2 text-center text-white">
                                 © Creapptech S.A.S - Soluciones integrales basadas en tecnología.
