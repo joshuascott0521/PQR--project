@@ -292,12 +292,12 @@ const PqrData = () => {
   }, []);
 
   useEffect(() => {
-    if(!eventoSeleccionado?.obligandoAnexo && archivos.length > 0){
+    if (!eventoSeleccionado?.obligandoAnexo && archivos.length > 0) {
       setArchivos([]);
-      setInputKey((prev) => prev+1);
+      setInputKey((prev) => prev + 1);
     }
   }, [eventoSeleccionado]);
-  
+
   return (
     <>
       <div className="h-full max-h-[928px] flex flex-col justify-between">
@@ -556,7 +556,8 @@ const PqrData = () => {
       <RespuestaIA
         isOpen={isModalOpenIA}
         onClose={() => setIsModalOpenIA(false)}
-        numeroRadicado="202403443409"
+        numeroRadicado={"202403443409"}
+        pqrData={pqr?.id}
       />
     </>
   );

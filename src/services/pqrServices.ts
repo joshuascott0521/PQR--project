@@ -679,6 +679,25 @@ export const ClientesServices = {
   },
 };
 export const IA = {
+  getRespuestaByPqrId: async (id: string): Promise<ApiResponse<AnalisisIA>> => {
+    try {
+      const response = await apiClient.get<ApiResponse<AnalisisIA>>(
+        `api/IA/GetRespuestaByPQRId/${id}`
+      );
+      return {
+        success: response.data.success,
+        data: response.data.data,
+        message: response.data.message,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        data: {} as AnalisisIA,
+        message:
+          error.response?.data?.message || "Error al obtener respuesta IA",
+      };
+    }
+  },
   resultadoIA: async (
     analisisIA: AnalisisIA
   ): Promise<ApiResponse<AnalisisIA>> => {
@@ -987,15 +1006,23 @@ export const TemplatesServices = {
       };
     }
   },
-  Busqueda: async (filtroGlobal: string, pageNumber: number, pageSize: number): Promise<ApiResponse<GetTemplates[]>> => {
+  Busqueda: async (
+    filtroGlobal: string,
+    pageNumber: number,
+    pageSize: number
+  ): Promise<ApiResponse<GetTemplates[]>> => {
     try {
-      const response = await apiClient.get(`/PlantillaRespuestaPQR/Buscar?filtroGlobal=${filtroGlobal}&pageNumber=${pageNumber}&pageSize=${pageSize}`);
+      const response = await apiClient.get(
+        `/PlantillaRespuestaPQR/Buscar?filtroGlobal=${filtroGlobal}&pageNumber=${pageNumber}&pageSize=${pageSize}`
+      );
       return { success: true, data: response.data };
     } catch (error: any) {
       return {
         success: false,
         data: [],
-        error: error.response?.data?.message || "Error al cargar Plantillas paginadas",
+        error:
+          error.response?.data?.message ||
+          "Error al cargar Plantillas paginadas",
       };
     }
   },

@@ -436,7 +436,14 @@ export interface SolicitudFirmante {
   Nombre: string;
 }
 export type AnalisisIA = {
+  id?: string;
+  estado?: string;
   pqrId: string;
-  usuarioId: string; // exactamente como lo espera la API
+  version?: number;
+  respuestaBody?: string;
+  tipoGeneracion?: string;
+  promt?: string;
+  fechaVersion?: string;
+  usuarioId?: string; // exactamente como lo espera la API
   newContextPromt?: string;
 };

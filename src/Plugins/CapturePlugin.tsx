@@ -1,24 +1,31 @@
+// src/Plugins/CapturePlugin.tsx
+
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useImperativeHandle, forwardRef } from "react";
 import type { EditorState } from "lexical";
+import { $generateHtmlFromNodes } from "@lexical/html";
 
-/**
- * Define la forma de la ref que se expondrá al componente padre.
- */
 export interface CapturePluginApi {
   getEditorState: () => EditorState;
+  getHtml: () => string; // getHtml debe devolver string, no ser opcional.
 }
 
-/**
- * Plugin que expone una API para capturar el estado del editor.
- */
 const CapturePlugin = forwardRef<CapturePluginApi, {}>((props, ref) => {
   const [editor] = useLexicalComposerContext();
 
-  // Expone la función getEditorState a través de la ref.
+  // Combina ambas definiciones en una SOLA llamada a useImperativeHandle
   useImperativeHandle(ref, () => ({
-    getEditorState: () => {
-      return editor.getEditorState();
+    getEditorState: () => editor.getEditorState(),
+    getHtml: () => {
+      const editorState = editor.getEditorState();
+      let html = "";
+
+      // Es crucial ejecutar la conversión dentro de un editor.read() o editor.update()
+      editorState.read(() => {
+        html = $generateHtmlFromNodes(editor, null);
+      });
+
+      return html;
     },
   }));
 

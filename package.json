@@ -17,6 +17,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@heroicons/react": "^2.2.0",
+    "@lexical/html": "^0.33.1",
     "@lexical/react": "^0.33.1",
     "@lexical/rich-text": "^0.33.1",
     "@material-tailwind/react": "^2.1.10",
